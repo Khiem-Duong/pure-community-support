@@ -9,6 +9,11 @@
   <meta property="og:description" content="Hue traditional handicrafts with a community purpose.">
   <meta property="og:type" content="website">
 
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+
   <style>
     /* ─── Fonts ─────────────────────────────────────────────── */
     @font-face {
@@ -17,32 +22,26 @@
       font-weight: 400;
       font-display: swap;
     }
-    @font-face {
-      font-family: 'Gilmer';
-      src: url('-temp/Logos & fonts/gilmer-light.otf') format('opentype');
-      font-weight: 300;
-      font-display: swap;
-    }
 
     /* ─── Custom Properties ─────────────────────────────────── */
     :root {
-      --plum:       #5B3A56;
-      --plum-mid:   #8C6885;
-      --plum-light: #F4EEF3;
-      --gold:       #B68A4E;
-      --dark:       #2A1528;
-      --text:       #1a1220;
-      --muted:      #7a6878;
-      --white:      #ffffff;
-      --border:     rgba(91, 58, 86, 0.15);
+      --cream:    #F5F1EA;
+      --greige:   #DAD1C4;
+      --tan:      #B2967D;
+      --purple:   #652E86;
+      --brown:    #4A342A;
+      --muted:    #6B4E3C;
+      --white:    #ffffff;
+      --border:   rgba(178,150,125,0.2);
 
-      --font-display: 'Gemola', Georgia, serif;
-      --font-body:    'Gilmer', system-ui, -apple-system, sans-serif;
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-body:    'Be Vietnam Pro', sans-serif;
+      --font-gemola:  'Gemola', Georgia, serif;
 
       --transition: 0.3s ease;
-      --shadow-sm:  0 2px 8px rgba(42, 21, 40, 0.08);
-      --shadow-md:  0 6px 24px rgba(42, 21, 40, 0.12);
-      --shadow-lg:  0 16px 48px rgba(42, 21, 40, 0.18);
+      --shadow-sm:  0 2px 8px rgba(74,52,42,0.08);
+      --shadow-md:  0 6px 24px rgba(74,52,42,0.12);
+      --shadow-lg:  0 16px 48px rgba(74,52,42,0.18);
     }
 
     /* ─── Reset ─────────────────────────────────────────────── */
@@ -50,8 +49,8 @@
     html { scroll-behavior: smooth; }
     body {
       font-family: var(--font-body);
-      color: var(--text);
-      background: var(--white);
+      color: var(--brown);
+      background: var(--cream);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
@@ -65,23 +64,48 @@
       margin: 0 auto;
       padding: 0 24px;
     }
+
+    /* D5 Eyebrow pattern */
     .section-label {
+      display: flex;
+      align-items: center;
+      gap: 14px;
       font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--gold);
-      margin-bottom: 12px;
+      color: var(--tan);
+      margin-bottom: 22px;
     }
+    .section-label::before {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 2px;
+      background: var(--tan);
+      flex-shrink: 0;
+    }
+    /* Centered labels don't use the bar pseudo-element */
+    .section-label.centered {
+      justify-content: center;
+    }
+    .section-label.centered::before {
+      display: none;
+    }
+
     .section-title {
       font-family: var(--font-display);
       font-size: clamp(28px, 4vw, 44px);
       font-weight: 400;
-      line-height: 1.15;
-      color: var(--dark);
+      line-height: 1.1;
+      color: var(--brown);
     }
-    .section-title.light { color: var(--white); }
+    .section-title.light { color: var(--cream); }
+    .section-title em {
+      font-style: italic;
+      color: var(--purple);
+    }
 
     /* ─── Buttons ───────────────────────────────────────────── */
     .btn {
@@ -101,41 +125,55 @@
         box-shadow var(--transition),
         transform var(--transition);
     }
-    .btn-primary {
-      background: var(--plum);
-      color: var(--white);
+    .btn-fill {
+      background: var(--brown);
+      color: var(--cream);
+      border: 1.5px solid var(--brown);
     }
-    .btn-primary:hover {
-      background: var(--dark);
+    .btn-fill:hover {
+      background: var(--purple);
+      border-color: var(--purple);
       box-shadow: var(--shadow-md);
       transform: translateY(-2px);
     }
-    .btn-outline {
+    .btn-outline-dark {
       background: transparent;
-      color: var(--white);
-      border: 1.5px solid rgba(255,255,255,0.6);
+      color: var(--brown);
+      border: 1.5px solid var(--brown);
     }
-    .btn-outline:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: var(--white);
+    .btn-outline-dark:hover {
+      background: var(--brown);
+      color: var(--cream);
       transform: translateY(-2px);
     }
     .btn-ghost {
       background: transparent;
-      color: var(--plum);
-      border: 1.5px solid var(--border);
+      color: var(--brown);
+      border: 1.5px solid var(--brown);
     }
     .btn-ghost:hover {
-      background: var(--plum-light);
-      border-color: var(--plum);
+      background: var(--brown);
+      color: var(--cream);
       transform: translateY(-2px);
     }
-    .btn-gold {
-      background: var(--gold);
-      color: var(--white);
+    .btn-outline-light {
+      background: transparent;
+      color: rgba(245,241,234,0.8);
+      border: 1px solid rgba(245,241,234,0.4);
     }
-    .btn-gold:hover {
-      background: #9a7340;
+    .btn-outline-light:hover {
+      border-color: var(--cream);
+      color: var(--cream);
+      transform: translateY(-2px);
+    }
+    .btn-brown {
+      background: var(--brown);
+      color: var(--cream);
+      border: 1.5px solid var(--brown);
+    }
+    .btn-brown:hover {
+      background: var(--purple);
+      border-color: var(--purple);
       box-shadow: var(--shadow-md);
       transform: translateY(-2px);
     }
@@ -145,19 +183,16 @@
       display: inline-block;
       width: 40px;
       height: 48px;
-      color: var(--plum);
     }
     .lotus-icon.sm { width: 24px; height: 28px; }
     .lotus-icon.lg { width: 56px; height: 68px; }
-    .lotus-icon.white { color: var(--white); }
-    .lotus-icon.gold  { color: var(--gold); }
 
     /* ─── Navigation ────────────────────────────────────────── */
     .nav {
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      background: rgba(42, 21, 40, 0.96);
+      background: #4A342A;
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
       transition: background var(--transition);
@@ -179,17 +214,18 @@
       line-height: 1;
     }
     .nav-logo-pure {
-      font-family: var(--font-display);
+      font-family: var(--font-gemola);
       font-size: 22px;
-      color: var(--white);
+      color: var(--cream);
       letter-spacing: 0.04em;
     }
     .nav-logo-sub {
+      font-family: var(--font-body);
       font-size: 9px;
       font-weight: 600;
       letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--plum-mid);
+      color: var(--tan);
       margin-top: 2px;
     }
     .nav-links {
@@ -198,11 +234,12 @@
       gap: 36px;
     }
     .nav-link {
+      font-family: var(--font-body);
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.75);
+      color: rgba(245,241,234,0.7);
       position: relative;
       padding-bottom: 2px;
       transition: color var(--transition);
@@ -212,10 +249,10 @@
       position: absolute;
       bottom: -2px; left: 0;
       width: 0; height: 1px;
-      background: var(--gold);
+      background: var(--tan);
       transition: width var(--transition);
     }
-    .nav-link:hover { color: var(--white); }
+    .nav-link:hover { color: var(--cream); }
     .nav-link:hover::after { width: 100%; }
 
     .nav-right {
@@ -227,10 +264,11 @@
       display: flex;
       align-items: center;
       gap: 4px;
+      font-family: var(--font-body);
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.08em;
-      color: rgba(255,255,255,0.5);
+      color: rgba(245,241,234,0.45);
     }
     .lang-switcher span {
       cursor: pointer;
@@ -238,114 +276,154 @@
       border-radius: 2px;
       transition: color var(--transition), background var(--transition);
     }
-    .lang-switcher span.active { color: var(--white); background: rgba(255,255,255,0.1); }
-    .lang-switcher span:hover  { color: var(--white); }
+    .lang-switcher span.active { color: var(--cream); background: rgba(255,255,255,0.1); }
+    .lang-switcher span:hover  { color: var(--cream); }
     .lang-switcher .sep { color: rgba(255,255,255,0.2); }
+    .nav-cta {
+      background: var(--tan);
+      color: var(--cream);
+      border: none;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 10px 22px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .nav-cta:hover { background: #8B6E5A; }
 
-    /* ─── Hero ──────────────────────────────────────────────── */
+    /* ─── Hero (D5 Editorial Split) ─────────────────────────── */
     .hero {
-      position: relative;
-      height: 100vh;
-      min-height: 640px;
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      background: var(--cream);
+      padding-top: 68px;
+    }
+    .hero-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .hero-left {
+      padding: 72px 60px;
       display: flex;
-      align-items: center;
-      overflow: hidden;
-      background: var(--dark);
-    }
-    .hero-bg {
-      position: absolute;
-      inset: 0;
-      background-image: url('https://picsum.photos/seed/hue-river/1600/900');
-      background-size: cover;
-      background-position: center;
-      opacity: 0.35;
-      transition: transform 8s ease;
-    }
-    .hero:hover .hero-bg { transform: scale(1.03); }
-    .hero-overlay {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        135deg,
-        rgba(42,21,40,0.85) 0%,
-        rgba(42,21,40,0.5) 60%,
-        rgba(91,58,86,0.3) 100%
-      );
-    }
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      max-width: 640px;
+      flex-direction: column;
+      justify-content: center;
+      border-right: 1px solid var(--greige);
     }
     .hero-eyebrow {
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 24px;
+      gap: 14px;
+      margin-bottom: 22px;
     }
-    .hero-eyebrow-line {
-      width: 32px; height: 1px;
-      background: var(--gold);
+    .hero-eyebrow-bar {
+      width: 32px;
+      height: 2px;
+      background: var(--tan);
+      flex-shrink: 0;
     }
     .hero-eyebrow-text {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.2em;
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: var(--tan);
     }
     .hero-title {
       font-family: var(--font-display);
-      font-size: clamp(44px, 7vw, 80px);
+      font-size: clamp(44px, 6vw, 80px);
       font-weight: 400;
       line-height: 1.05;
-      color: var(--white);
-      margin-bottom: 20px;
+      color: var(--brown);
+      margin-bottom: 24px;
     }
-    .hero-sub {
-      font-size: 17px;
-      font-weight: 300;
-      color: rgba(255,255,255,0.72);
-      line-height: 1.65;
-      max-width: 480px;
+    .hero-title em {
+      font-style: italic;
+      color: var(--purple);
+    }
+    .hero-body {
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 440px;
+      margin-bottom: 16px;
+    }
+    .hero-vi {
+      font-family: var(--font-body);
+      font-style: italic;
+      color: var(--tan);
+      padding-left: 16px;
+      border-left: 2px solid var(--tan);
+      font-size: 14px;
+      line-height: 1.7;
       margin-bottom: 40px;
+      max-width: 380px;
     }
     .hero-actions {
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
     }
-    .hero-scroll {
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-caption {
       position: absolute;
-      bottom: 36px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      color: rgba(255,255,255,0.4);
+      bottom: 0; left: 0; right: 0;
+      background: rgba(245,241,234,0.92);
+      border-top: 2px solid var(--tan);
+      padding: 14px 24px;
+      font-family: var(--font-body);
       font-size: 10px;
-      letter-spacing: 0.15em;
+      font-weight: 700;
+      letter-spacing: 0.16em;
       text-transform: uppercase;
-      z-index: 1;
+      color: var(--tan);
     }
-    .scroll-line {
-      width: 1px;
-      height: 40px;
-      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
-      animation: scrollPulse 2s ease-in-out infinite;
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--greige);
     }
-    @keyframes scrollPulse {
-      0%, 100% { opacity: 0.4; transform: scaleY(1); }
-      50%       { opacity: 0.8; transform: scaleY(1.15); }
+    .hero-stat {
+      padding: 24px 32px;
+      border-right: 1px solid var(--greige);
+    }
+    .hero-stat:last-child { border-right: none; }
+    .hero-stat-number {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 400;
+      color: var(--purple);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .hero-stat-label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--tan);
     }
 
     /* ─── Category Strip ────────────────────────────────────── */
     .categories {
-      background: var(--plum-light);
+      background: #EDE8DF;
       padding: 56px 0;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--greige);
     }
     .categories-inner {
       display: grid;
@@ -358,9 +436,9 @@
       align-items: center;
       gap: 16px;
       padding: 32px 20px;
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 4px;
+      background: var(--cream);
+      border: 1px solid var(--greige);
+      border-radius: 0;
       text-align: center;
       cursor: pointer;
       transition:
@@ -370,8 +448,8 @@
     }
     .category-card:hover {
       transform: translateY(-6px);
-      box-shadow: var(--shadow-md);
-      border-color: var(--plum);
+      box-shadow: var(--shadow-sm);
+      border-color: var(--tan);
     }
     .category-icon {
       width: 52px;
@@ -379,19 +457,25 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform var(--transition);
+      color: var(--tan);
+      transition: transform var(--transition), color var(--transition);
     }
-    .category-card:hover .category-icon { transform: scale(1.1); }
+    .category-card:hover .category-icon {
+      transform: scale(1.1);
+      color: var(--purple);
+    }
     .category-name {
+      font-family: var(--font-body);
       font-size: 13px;
       font-weight: 600;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: var(--plum);
+      color: var(--brown);
     }
     .category-count {
+      font-family: var(--font-body);
       font-size: 12px;
-      color: var(--muted);
+      color: var(--tan);
     }
 
     /* ─── Image Divider ─────────────────────────────────────── */
@@ -413,19 +497,22 @@
       inset: 0;
       background: linear-gradient(
         to bottom,
-        rgba(42,21,40,0.2) 0%,
-        rgba(42,21,40,0.08) 50%,
-        rgba(42,21,40,0.2) 100%
+        rgba(74,52,42,0.25) 0%,
+        rgba(74,52,42,0.08) 50%,
+        rgba(74,52,42,0.25) 100%
       );
     }
 
     /* ─── Section Padding ───────────────────────────────────── */
     .section { padding: 96px 0; }
-    .section.bg-light { background: var(--plum-light); }
-    .section.bg-dark  { background: var(--dark); }
+    .section.bg-light { background: #EDE8DF; }
+    .section.bg-dark  { background: var(--brown); }
+    .section.bg-cream { background: var(--cream); }
 
     .section-header { margin-bottom: 56px; }
     .section-header.centered { text-align: center; }
+    .section-header.centered .section-label { justify-content: center; }
+    .section-header.centered .section-label::before { display: none; }
 
     /* ─── Featured Products ─────────────────────────────────── */
     .products-grid {
@@ -437,8 +524,8 @@
     .product-card {
       display: flex;
       flex-direction: column;
-      border: 1px solid var(--border);
-      border-radius: 4px;
+      border: 1px solid var(--greige);
+      border-radius: 0;
       overflow: hidden;
       background: var(--white);
       cursor: pointer;
@@ -453,7 +540,7 @@
     .product-img-wrap {
       aspect-ratio: 4/5;
       overflow: hidden;
-      background: var(--plum-light);
+      background: #EDE8DF;
     }
     .product-img-wrap img {
       width: 100%;
@@ -470,22 +557,24 @@
       gap: 6px;
     }
     .product-category-tag {
+      font-family: var(--font-body);
       font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.15em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: var(--tan);
     }
     .product-name {
       font-family: var(--font-display);
       font-size: 18px;
       font-weight: 400;
-      color: var(--dark);
+      color: var(--brown);
       line-height: 1.3;
     }
     .product-name-vi {
+      font-family: var(--font-body);
       font-size: 12px;
-      color: var(--muted);
+      color: var(--tan);
       font-style: italic;
     }
     .product-footer {
@@ -493,14 +582,16 @@
       align-items: center;
       justify-content: space-between;
       padding: 14px 18px;
-      border-top: 1px solid var(--border);
+      border-top: 1px solid var(--greige);
     }
     .product-price {
+      font-family: var(--font-body);
       font-size: 15px;
       font-weight: 600;
-      color: var(--plum);
+      color: var(--purple);
     }
     .product-stock {
+      font-family: var(--font-body);
       font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.1em;
@@ -527,7 +618,7 @@
       left: calc(16.66% + 26px);
       right: calc(16.66% + 26px);
       height: 1px;
-      background: var(--border);
+      background: var(--greige);
     }
     .how-step {
       display: flex;
@@ -541,40 +632,42 @@
       width: 52px;
       height: 52px;
       border-radius: 50%;
-      border: 1.5px solid var(--plum);
+      border: 1.5px solid var(--tan);
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: var(--font-display);
       font-size: 20px;
-      color: var(--plum);
-      background: var(--white);
+      color: var(--tan);
+      background: #EDE8DF;
       margin-bottom: 24px;
       position: relative;
       z-index: 1;
-      transition: background var(--transition), color var(--transition);
+      transition: background var(--transition), color var(--transition), border-color var(--transition);
     }
     .how-step:hover .how-step-num {
-      background: var(--plum);
-      color: var(--white);
+      background: var(--brown);
+      color: var(--cream);
+      border-color: var(--brown);
     }
     .how-step-icon {
       margin-bottom: 16px;
-      color: var(--plum-mid);
+      color: var(--tan);
       transition: color var(--transition), transform var(--transition);
     }
     .how-step:hover .how-step-icon {
-      color: var(--plum);
+      color: var(--purple);
       transform: scale(1.1);
     }
     .how-step-title {
       font-family: var(--font-display);
       font-size: 22px;
       font-weight: 400;
-      color: var(--dark);
+      color: var(--brown);
       margin-bottom: 10px;
     }
     .how-step-desc {
+      font-family: var(--font-body);
       font-size: 14px;
       color: var(--muted);
       line-height: 1.7;
@@ -586,33 +679,34 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 2px;
-      background: rgba(255,255,255,0.06);
+      background: rgba(245,241,234,0.06);
       margin-bottom: 56px;
     }
     .impact-item {
-      background: rgba(255,255,255,0.04);
+      background: rgba(245,241,234,0.04);
       padding: 40px 24px;
       text-align: center;
       transition: background var(--transition);
     }
-    .impact-item:hover { background: rgba(255,255,255,0.08); }
+    .impact-item:hover { background: rgba(245,241,234,0.08); }
     .impact-number {
       font-family: var(--font-display);
       font-size: clamp(36px, 5vw, 56px);
       font-weight: 400;
-      color: var(--white);
+      color: var(--cream);
       line-height: 1;
       margin-bottom: 8px;
     }
     .impact-number span {
-      color: var(--gold);
+      color: var(--tan);
     }
     .impact-label {
+      font-family: var(--font-body);
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
+      color: rgba(245,241,234,0.5);
     }
     .impact-lotus-divider {
       display: flex;
@@ -620,13 +714,12 @@
       justify-content: center;
       gap: 20px;
       margin-bottom: 40px;
-      opacity: 0.3;
     }
     .impact-lotus-divider-line {
       flex: 1;
       max-width: 120px;
       height: 1px;
-      background: var(--white);
+      background: rgba(245,241,234,0.2);
     }
 
     /* ─── Campaigns ─────────────────────────────────────────── */
@@ -639,8 +732,8 @@
     .campaign-card {
       display: grid;
       grid-template-columns: 160px 1fr;
-      border: 1px solid var(--border);
-      border-radius: 4px;
+      border: 1px solid var(--greige);
+      border-radius: 0;
       overflow: hidden;
       background: var(--white);
       transition:
@@ -651,7 +744,7 @@
     .campaign-card:hover {
       transform: translateY(-4px);
       box-shadow: var(--shadow-md);
-      border-color: var(--plum);
+      border-color: var(--tan);
     }
     .campaign-img {
       overflow: hidden;
@@ -673,13 +766,14 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      font-family: var(--font-body);
       font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
     .campaign-status.running { color: #15803d; }
-    .campaign-status.planned { color: var(--gold); }
+    .campaign-status.planned { color: var(--tan); }
     .campaign-status-dot {
       width: 6px; height: 6px;
       border-radius: 50%;
@@ -689,26 +783,28 @@
       font-family: var(--font-display);
       font-size: 20px;
       font-weight: 400;
-      color: var(--dark);
+      color: var(--brown);
       line-height: 1.3;
     }
     .campaign-desc {
+      font-family: var(--font-body);
       font-size: 13px;
       color: var(--muted);
       line-height: 1.65;
       flex: 1;
     }
     .campaign-link {
+      font-family: var(--font-body);
       font-size: 12px;
       font-weight: 600;
       letter-spacing: 0.06em;
-      color: var(--plum);
+      color: var(--tan);
       display: inline-flex;
       align-items: center;
       gap: 6px;
       transition: gap var(--transition), color var(--transition);
     }
-    .campaign-card:hover .campaign-link { gap: 10px; color: var(--dark); }
+    .campaign-card:hover .campaign-link { gap: 10px; color: var(--brown); }
 
     /* ─── Artisans ──────────────────────────────────────────── */
     .artisans-inner {
@@ -719,6 +815,7 @@
     }
     .artisans-text { max-width: 480px; }
     .artisans-text p {
+      font-family: var(--font-body);
       font-size: 16px;
       color: var(--muted);
       line-height: 1.8;
@@ -733,7 +830,7 @@
     }
     .artisans-img-item {
       overflow: hidden;
-      border-radius: 2px;
+      border-radius: 0;
     }
     .artisans-img-item:first-child {
       grid-row: span 2;
@@ -754,8 +851,8 @@
       margin-bottom: 48px;
     }
     .blog-card {
-      border: 1px solid var(--border);
-      border-radius: 4px;
+      border: 1px solid var(--greige);
+      border-radius: 0;
       overflow: hidden;
       background: var(--white);
       transition:
@@ -787,24 +884,26 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      font-family: var(--font-body);
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
     }
-    .blog-cat  { color: var(--gold); }
-    .blog-date { color: var(--muted); }
-    .blog-sep  { color: var(--border); }
+    .blog-cat  { color: var(--tan); }
+    .blog-date { color: var(--tan); }
+    .blog-sep  { color: var(--greige); }
     .blog-title {
       font-family: var(--font-display);
       font-size: 20px;
       font-weight: 400;
-      color: var(--dark);
+      color: var(--brown);
       line-height: 1.35;
       transition: color var(--transition);
     }
-    .blog-card:hover .blog-title { color: var(--plum); }
+    .blog-card:hover .blog-title { color: var(--purple); }
     .blog-excerpt {
+      font-family: var(--font-body);
       font-size: 13px;
       color: var(--muted);
       line-height: 1.65;
@@ -813,7 +912,7 @@
     /* ─── Get Involved ──────────────────────────────────────── */
     .get-involved {
       padding: 96px 0;
-      background: var(--plum-light);
+      background: #EDE8DF;
       text-align: center;
     }
     .get-involved-inner {
@@ -824,15 +923,29 @@
       margin-bottom: 16px;
     }
     .get-involved-inner p {
+      font-family: var(--font-body);
       font-size: 15px;
       color: var(--muted);
       line-height: 1.8;
       margin-bottom: 36px;
     }
+    .get-involved-label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-bottom: 22px;
+    }
 
     /* ─── Footer ────────────────────────────────────────────── */
     .footer {
-      background: var(--dark);
+      background: var(--brown);
       padding: 64px 0 32px;
     }
     .footer-top {
@@ -840,22 +953,24 @@
       grid-template-columns: 1.5fr 1fr 1fr 1fr;
       gap: 48px;
       padding-bottom: 48px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(245,241,234,0.08);
       margin-bottom: 32px;
     }
     .footer-brand p {
+      font-family: var(--font-body);
       font-size: 13px;
-      color: rgba(255,255,255,0.45);
+      color: rgba(245,241,234,0.45);
       line-height: 1.75;
       margin-top: 16px;
       max-width: 280px;
     }
     .footer-col-title {
+      font-family: var(--font-body);
       font-size: 10px;
       font-weight: 600;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.35);
+      color: rgba(245,241,234,0.35);
       margin-bottom: 18px;
     }
     .footer-links {
@@ -864,27 +979,30 @@
       gap: 10px;
     }
     .footer-link {
+      font-family: var(--font-body);
       font-size: 13px;
-      color: rgba(255,255,255,0.55);
+      color: rgba(245,241,234,0.55);
       transition: color var(--transition);
     }
-    .footer-link:hover { color: var(--white); }
+    .footer-link:hover { color: var(--cream); }
     .footer-offices {
       display: flex;
       flex-direction: column;
       gap: 16px;
     }
     .footer-office-city {
+      font-family: var(--font-body);
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--gold);
+      color: var(--tan);
       margin-bottom: 4px;
     }
     .footer-office-addr {
+      font-family: var(--font-body);
       font-size: 12px;
-      color: rgba(255,255,255,0.4);
+      color: rgba(245,241,234,0.4);
       line-height: 1.5;
     }
     .footer-bottom {
@@ -893,21 +1011,23 @@
       justify-content: space-between;
     }
     .footer-copy {
+      font-family: var(--font-body);
       font-size: 12px;
-      color: rgba(255,255,255,0.25);
+      color: rgba(245,241,234,0.25);
     }
     .footer-lang {
       display: flex;
       gap: 12px;
+      font-family: var(--font-body);
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.1em;
     }
     .footer-lang a {
-      color: rgba(255,255,255,0.35);
+      color: rgba(245,241,234,0.35);
       transition: color var(--transition);
     }
-    .footer-lang a:hover { color: var(--white); }
+    .footer-lang a:hover { color: var(--cream); }
 
     /* ─── Responsive ────────────────────────────────────────── */
     @media (max-width: 1024px) {
@@ -917,6 +1037,9 @@
     }
     @media (max-width: 768px) {
       .nav-links        { display: none; }
+      .hero-main        { grid-template-columns: 1fr; }
+      .hero-left        { border-right: none; border-bottom: 1px solid var(--greige); padding: 48px 24px; }
+      .hero-right       { min-height: 56vw; }
       .categories-inner { grid-template-columns: repeat(2, 1fr); }
       .products-grid    { grid-template-columns: repeat(2, 1fr); }
       .how-grid         { grid-template-columns: 1fr; }
@@ -928,6 +1051,9 @@
       .blog-grid        { grid-template-columns: 1fr; }
       .impact-grid      { grid-template-columns: 1fr 1fr; }
       .footer-top       { grid-template-columns: 1fr; gap: 32px; }
+      .hero-stats       { grid-template-columns: 1fr; }
+      .hero-stat        { border-right: none; border-bottom: 1px solid var(--greige); }
+      .hero-stat:last-child { border-bottom: none; }
     }
     @media (max-width: 480px) {
       .categories-inner { grid-template-columns: 1fr 1fr; }
@@ -945,7 +1071,7 @@
 
       <a href="/" class="nav-logo">
         <!-- Lotus icon -->
-        <svg class="lotus-icon white" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <svg class="lotus-icon" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="color:var(--tan);">
           <path d="M50 70 C44 58 42 38 50 8 C58 38 56 58 50 70Z" fill="currentColor"/>
           <path d="M50 70 C42 62 28 50 18 22 C32 36 44 54 50 70Z" fill="currentColor"/>
           <path d="M50 70 C58 62 72 50 82 22 C68 36 56 54 50 70Z" fill="currentColor"/>
@@ -973,36 +1099,53 @@
           <span class="sep">/</span>
           <span><a href="/vi/">VI</a></span>
         </div>
-        <a href="/shop" class="btn btn-primary" style="padding: 10px 22px; font-size: 12px;">Shop Now</a>
+        <a href="/shop" class="nav-cta">Shop Now</a>
       </div>
 
     </div>
   </nav>
 
 
-  <!-- ═══ HERO ══════════════════════════════════════════════ -->
+  <!-- ═══ HERO (D5 Editorial Split) ══════════════════════ -->
   <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-overlay"></div>
-    <div class="container hero-content">
-      <div class="hero-eyebrow">
-        <div class="hero-eyebrow-line"></div>
-        <span class="hero-eyebrow-text">Hue Traditional Handicrafts</span>
+    <div class="hero-main">
+      <div class="hero-left">
+        <div class="hero-eyebrow">
+          <div class="hero-eyebrow-bar"></div>
+          <span class="hero-eyebrow-text">Hue Traditional Handicrafts</span>
+        </div>
+        <h1 class="hero-title">Crafted with<br><em>Purpose</em>.</h1>
+        <p class="hero-body">
+          Each piece carries the heritage of Hue's artisans.
+          Half of every sale goes directly to supporting families
+          and children in our community.
+        </p>
+        <p class="hero-vi">
+          Mỗi sản phẩm mang theo di sản của các nghệ nhân Huế. Một nửa doanh thu được dành cho cộng đồng.
+        </p>
+        <div class="hero-actions">
+          <a href="/shop"  class="btn btn-fill">Shop Now</a>
+          <a href="/about" class="btn btn-outline-dark">Our Story</a>
+        </div>
       </div>
-      <h1 class="hero-title">Crafted with<br>Purpose.</h1>
-      <p class="hero-sub">
-        Each piece carries the heritage of Hue's artisans.
-        Half of every sale goes directly to supporting families
-        and children in our community.
-      </p>
-      <div class="hero-actions">
-        <a href="/shop"  class="btn btn-primary">Shop Now</a>
-        <a href="/about" class="btn btn-outline">Our Story</a>
+      <div class="hero-right">
+        <img src="https://picsum.photos/seed/hue-river/800/900" alt="Hue artisan at work" loading="lazy">
+        <div class="hero-caption">Hue artisans · Handmade in Vietnam</div>
       </div>
     </div>
-    <div class="hero-scroll">
-      <span>Scroll</span>
-      <div class="scroll-line"></div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-number">50%</div>
+        <div class="hero-stat-label">Net profit to community</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number">10+</div>
+        <div class="hero-stat-label">Years of community work</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-number">Huế</div>
+        <div class="hero-stat-label">Vietnam</div>
+      </div>
     </div>
   </section>
 
@@ -1017,13 +1160,13 @@
           <div class="category-icon">
             <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" width="52" height="52">
               <!-- Gong / circle with resonance lines -->
-              <circle cx="26" cy="26" r="18" stroke="#5B3A56" stroke-width="2" fill="none"/>
-              <circle cx="26" cy="26" r="11" stroke="#5B3A56" stroke-width="1.5" fill="none" opacity="0.5"/>
-              <circle cx="26" cy="26" r="4"  fill="#5B3A56"/>
-              <line x1="26" y1="4"  x2="26" y2="8"  stroke="#5B3A56" stroke-width="2" stroke-linecap="round"/>
-              <line x1="26" y1="44" x2="26" y2="48" stroke="#5B3A56" stroke-width="2" stroke-linecap="round"/>
-              <line x1="4"  y1="26" x2="8"  y2="26" stroke="#5B3A56" stroke-width="2" stroke-linecap="round"/>
-              <line x1="44" y1="26" x2="48" y2="26" stroke="#5B3A56" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="26" cy="26" r="18" stroke="currentColor" stroke-width="2" fill="none"/>
+              <circle cx="26" cy="26" r="11" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
+              <circle cx="26" cy="26" r="4"  fill="currentColor"/>
+              <line x1="26" y1="4"  x2="26" y2="8"  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="26" y1="44" x2="26" y2="48" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="4"  y1="26" x2="8"  y2="26" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="44" y1="26" x2="48" y2="26" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </div>
           <span class="category-name">Traditional Objects</span>
@@ -1036,8 +1179,8 @@
             <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" width="52" height="52">
               <!-- Kimono / garment shape -->
               <path d="M14 8 L26 16 L38 8 L44 20 L36 22 L36 46 L16 46 L16 22 L8 20 Z"
-                    stroke="#5B3A56" stroke-width="2" stroke-linejoin="round" fill="none"/>
-              <line x1="26" y1="16" x2="26" y2="46" stroke="#5B3A56" stroke-width="1.5" opacity="0.4"/>
+                    stroke="currentColor" stroke-width="2" stroke-linejoin="round" fill="none"/>
+              <line x1="26" y1="16" x2="26" y2="46" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
             </svg>
           </div>
           <span class="category-name">Apparel</span>
@@ -1049,9 +1192,9 @@
           <div class="category-icon">
             <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" width="52" height="52">
               <!-- Tote bag -->
-              <rect x="10" y="18" width="32" height="28" rx="2" stroke="#5B3A56" stroke-width="2" fill="none"/>
-              <path d="M18 18 C18 12 22 8 26 8 C30 8 34 12 34 18" stroke="#5B3A56" stroke-width="2" fill="none" stroke-linecap="round"/>
-              <line x1="10" y1="28" x2="42" y2="28" stroke="#5B3A56" stroke-width="1.5" opacity="0.4"/>
+              <rect x="10" y="18" width="32" height="28" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path d="M18 18 C18 12 22 8 26 8 C30 8 34 12 34 18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <line x1="10" y1="28" x2="42" y2="28" stroke="currentColor" stroke-width="1.5" opacity="0.4"/>
             </svg>
           </div>
           <span class="category-name">Bags</span>
@@ -1063,10 +1206,10 @@
           <div class="category-icon">
             <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg" width="52" height="52">
               <!-- Pillow shape -->
-              <rect x="6" y="14" width="40" height="26" rx="13" stroke="#5B3A56" stroke-width="2" fill="none"/>
-              <path d="M6 27 C14 22 20 32 26 27 C32 22 38 32 46 27" stroke="#5B3A56" stroke-width="1.5" fill="none" opacity="0.5"/>
+              <rect x="6" y="14" width="40" height="26" rx="13" stroke="currentColor" stroke-width="2" fill="none"/>
+              <path d="M6 27 C14 22 20 32 26 27 C32 22 38 32 46 27" stroke="currentColor" stroke-width="1.5" fill="none" opacity="0.5"/>
               <!-- Lotus petal detail -->
-              <path d="M26 18 C24 21 24 24 26 27 C28 24 28 21 26 18Z" fill="#5B3A56" opacity="0.4"/>
+              <path d="M26 18 C24 21 24 24 26 27 C28 24 28 21 26 18Z" fill="currentColor" opacity="0.4"/>
             </svg>
           </div>
           <span class="category-name">Home &amp; Living</span>
@@ -1086,7 +1229,7 @@
 
 
   <!-- ═══ FEATURED PRODUCTS ════════════════════════════════ -->
-  <section class="section">
+  <section class="section bg-cream">
     <div class="container">
       <div class="section-header">
         <p class="section-label">Our Collection</p>
@@ -1168,7 +1311,7 @@
   <section class="section bg-light">
     <div class="container">
       <div class="section-header centered">
-        <p class="section-label">The Model</p>
+        <p class="section-label centered">The Model</p>
         <h2 class="section-title">How Every Purchase Helps</h2>
       </div>
 
@@ -1222,7 +1365,7 @@
       </div>
 
       <div class="how-cta">
-        <a href="/about" class="btn btn-ghost">Learn More About Our Mission</a>
+        <a href="/about" class="btn btn-outline-dark">Learn More About Our Mission</a>
       </div>
 
     </div>
@@ -1240,8 +1383,8 @@
   <section class="section bg-dark">
     <div class="container">
       <div class="section-header centered">
-        <p class="section-label">Our Impact</p>
-        <h2 class="section-title light">Every Purchase Leaves a Mark</h2>
+        <p class="section-label centered" style="color:var(--tan);">Our Impact</p>
+        <h2 class="section-title light">Every Purchase Leaves <em style="font-style:italic;color:var(--tan);">a Mark</em></h2>
       </div>
 
       <div class="impact-grid">
@@ -1265,7 +1408,7 @@
 
       <div class="impact-lotus-divider">
         <div class="impact-lotus-divider-line"></div>
-        <svg width="20" height="24" viewBox="0 0 100 120" fill="white" xmlns="http://www.w3.org/2000/svg">
+        <svg width="20" height="24" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="fill:var(--tan);opacity:0.4;">
           <path d="M50 70 C44 58 42 38 50 8 C58 38 56 58 50 70Z"/>
           <path d="M50 70 C42 62 28 50 18 22 C32 36 44 54 50 70Z"/>
           <path d="M50 70 C58 62 72 50 82 22 C68 36 56 54 50 70Z"/>
@@ -1277,14 +1420,14 @@
       </div>
 
       <div class="section-cta">
-        <a href="/impact" class="btn btn-outline">See Our Full Impact</a>
+        <a href="/impact" class="btn btn-outline-light">See Our Full Impact</a>
       </div>
     </div>
   </section>
 
 
   <!-- ═══ CAMPAIGNS ═════════════════════════════════════════ -->
-  <section class="section">
+  <section class="section bg-cream">
     <div class="container">
       <div class="section-header">
         <p class="section-label">Community Work</p>
@@ -1383,7 +1526,7 @@
           <h2 class="section-title" style="margin-bottom: 24px;">Made by Hands<br>Rooted in Hue</h2>
           <p>Our products are crafted by a network of local artisan partners and our founders' own team. Each piece carries the cultural memory of Hue — passed down through generations of craft.</p>
           <p>We credit every artisan on the products they make, and a dedicated section of our site honours all those who have contributed to what Pure has become.</p>
-          <a href="/about#artisans" class="btn btn-primary">Meet the Artisans</a>
+          <a href="/about#artisans" class="btn btn-brown">Meet the Artisans</a>
         </div>
 
         <div class="artisans-img-grid">
@@ -1404,7 +1547,7 @@
 
 
   <!-- ═══ BLOG ══════════════════════════════════════════════ -->
-  <section class="section">
+  <section class="section bg-cream">
     <div class="container">
       <div class="section-header">
         <p class="section-label">Stories &amp; Updates</p>
@@ -1480,7 +1623,7 @@
       <div class="get-involved-inner">
         <!-- Lotus divider mark -->
         <div style="display:flex;justify-content:center;margin-bottom:24px;">
-          <svg width="28" height="34" viewBox="0 0 100 120" fill="#5B3A56" xmlns="http://www.w3.org/2000/svg" opacity="0.35">
+          <svg width="28" height="34" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="fill:var(--tan);opacity:0.4;">
             <path d="M50 70 C44 58 42 38 50 8 C58 38 56 58 50 70Z"/>
             <path d="M50 70 C42 62 28 50 18 22 C32 36 44 54 50 70Z"/>
             <path d="M50 70 C58 62 72 50 82 22 C68 36 56 54 50 70Z"/>
@@ -1489,14 +1632,14 @@
             <path d="M48 70 L48 108 Q50 114 52 108 L52 70Z"/>
           </svg>
         </div>
-        <p class="section-label" style="text-align:center;">Get Involved</p>
+        <div class="get-involved-label">Get Involved</div>
         <h2 class="section-title" style="margin-bottom:16px;">Want to Contribute?</h2>
         <p>
           Pure is built by a small team with the help of volunteers and collaborators.
           If you share our values and want to be part of what we're building in Hue,
           we'd love to hear from you.
         </p>
-        <a href="mailto:hello@purecommunitysupport.vn" class="btn btn-gold">Get in Touch</a>
+        <a href="mailto:hello@purecommunitysupport.vn" class="btn btn-brown">Get in Touch</a>
       </div>
     </div>
   </section>
@@ -1509,7 +1652,7 @@
 
         <div class="footer-brand">
           <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px;">
-            <svg width="24" height="30" viewBox="0 0 100 120" fill="#8C6885" xmlns="http://www.w3.org/2000/svg">
+            <svg width="24" height="30" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg" style="fill:var(--tan);">
               <path d="M50 70 C44 58 42 38 50 8 C58 38 56 58 50 70Z"/>
               <path d="M50 70 C42 62 28 50 18 22 C32 36 44 54 50 70Z"/>
               <path d="M50 70 C58 62 72 50 82 22 C68 36 56 54 50 70Z"/>
@@ -1517,7 +1660,7 @@
               <path d="M50 70 C62 66 82 60 96 46 C80 50 62 62 50 70Z"/>
               <path d="M48 70 L48 108 Q50 114 52 108 L52 70Z"/>
             </svg>
-            <span style="font-family:var(--font-display);font-size:20px;color:var(--white);">Pure</span>
+            <span style="font-family:var(--font-gemola);font-size:20px;color:var(--cream);">Pure</span>
           </div>
           <p>A community initiative selling Hue traditional handicrafts. Registered in Vietnam. 50% of net profit supports disadvantaged people in Hue.</p>
         </div>
@@ -1602,12 +1745,12 @@
 
     counters.forEach(c => observer.observe(c));
 
-    /* Sticky nav background tint on scroll */
+    /* Sticky nav — already dark brown, subtle opacity shift on scroll */
     const nav = document.querySelector('.nav');
     window.addEventListener('scroll', () => {
       nav.style.background = window.scrollY > 60
-        ? 'rgba(42, 21, 40, 0.98)'
-        : 'rgba(42, 21, 40, 0.96)';
+        ? 'rgba(74, 52, 42, 0.99)'
+        : '#4A342A';
     }, { passive: true });
   </script>
 
