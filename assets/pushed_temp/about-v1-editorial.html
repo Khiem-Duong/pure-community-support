@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Pure Community Support — Hue Traditional Handicrafts & Community Work in Vietnam</title>
+  <meta name="description" content="Pure Community Support is a registered community initiative in Hue, Vietnam. We sell Hue traditional handicrafts and direct 50% of net profit to support disadvantaged families — children's health, education, and living conditions. Not a charity. Not donation-based.">
+  <meta name="keywords" content="Hue traditional handicrafts, community support Vietnam, Hue artisans, handmade Vietnam, social enterprise Hue, Vietnamese handicrafts">
+  <meta property="og:title" content="About Pure Community Support — Hue, Vietnam">
+  <meta property="og:description" content="A decade of community work in Hue, now made official. We sell traditional Hue handicrafts. Half of every sale's net profit goes directly to families in need.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://purecommunitysupport.com/en/about">
+  <link rel="alternate" hreflang="vi" href="https://purecommunitysupport.com/vi/gioi-thieu">
+  <link rel="alternate" hreflang="en" href="https://purecommunitysupport.com/en/about">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    @font-face {
+      font-family: 'Gemola';
+      src: url('Logos & fonts/Gemola.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    :root {
+      --cream:   #F5F1EA;
+      --greige:  #DAD1C4;
+      --tan:     #B2967D;
+      --purple:  #652E86;
+      --brown:   #4A342A;
+      --muted:   #6B4E3C;
+      --white:   #ffffff;
+      --border:  rgba(178,150,125,0.22);
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-gemola:  'Gemola', Georgia, serif;
+      --font-body:    'Be Vietnam Pro', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--brown);
+      background: var(--cream);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ── Nav ─────────────────────────────────── */
+    .nav {
+      background: var(--brown);
+      position: relative;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4em;
+    }
+    .nav-logo img { height: 5vw; width: auto; display: block; margin-block: 1vw; }
+    .nav-links { display: flex; gap: 2em; }
+    .nav-links a {
+      color: rgba(255,255,255,0.75);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: #fff; }
+
+    /* ── Hero ────────────────────────────────── */
+    .hero {
+      background: var(--brown);
+      color: var(--white);
+      padding: 100px 4em 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(101,46,134,0.35) 0%, transparent 68%);
+      pointer-events: none;
+    }
+    .hero-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-bottom: 28px;
+    }
+    .hero-label::before {
+      content: '';
+      display: block;
+      width: 28px;
+      height: 1px;
+      background: var(--tan);
+    }
+    .hero h1 {
+      font-family: var(--font-gemola);
+      font-size: clamp(38px, 5vw, 72px);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--white);
+      max-width: 780px;
+      margin-bottom: 28px;
+    }
+    .hero-intro {
+      max-width: 580px;
+      font-size: 17px;
+      line-height: 1.65;
+      color: rgba(255,255,255,0.72);
+    }
+    .hero-intro strong { color: rgba(255,255,255,0.95); }
+
+    /* ── Section Shared ──────────────────────── */
+    .section {
+      padding: 80px 4em;
+    }
+    .section + .section {
+      border-top: 1px solid var(--border);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-bottom: 20px;
+    }
+    .eyebrow::before {
+      content: '';
+      display: block;
+      width: 22px;
+      height: 1px;
+      background: var(--tan);
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(26px, 3vw, 42px);
+      font-weight: 400;
+      line-height: 1.2;
+      color: var(--brown);
+      margin-bottom: 28px;
+    }
+    .body-text {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 660px;
+      line-height: 1.75;
+    }
+    .body-text + .body-text { margin-top: 18px; }
+    .body-text strong { color: var(--brown); font-weight: 600; }
+
+    /* ── Origin (two-column) ─────────────────── */
+    .origin-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .pull-quote {
+      background: var(--brown);
+      color: var(--white);
+      border-radius: 4px;
+      padding: 36px 32px;
+      position: relative;
+    }
+    .pull-quote::before {
+      content: '"';
+      font-family: var(--font-display);
+      font-size: 80px;
+      color: var(--tan);
+      line-height: 0.6;
+      display: block;
+      margin-bottom: 16px;
+    }
+    .pull-quote blockquote {
+      font-family: var(--font-display);
+      font-size: 20px;
+      line-height: 1.45;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 20px;
+    }
+    .pull-quote cite {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--tan);
+    }
+
+    /* ── Hue Context ─────────────────────────── */
+    .hue-section {
+      background: var(--brown);
+      color: var(--white);
+      padding: 80px 4em;
+    }
+    .hue-section .eyebrow { color: var(--tan); }
+    .hue-section .section-title { color: var(--white); }
+    .hue-section .body-text { color: rgba(255,255,255,0.7); max-width: 780px; }
+    .hue-section .body-text strong { color: rgba(255,255,255,0.95); }
+    .hue-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      margin-top: 48px;
+      overflow: hidden;
+    }
+    .hue-stat {
+      background: rgba(255,255,255,0.04);
+      padding: 28px 24px;
+    }
+    .hue-stat-num {
+      font-family: var(--font-display);
+      font-size: 40px;
+      color: var(--tan);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .hue-stat-label {
+      font-size: 13px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.4;
+    }
+
+    /* ── Model ───────────────────────────────── */
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 40px;
+    }
+    .model-step {
+      background: var(--cream);
+      padding: 28px 24px;
+      position: relative;
+    }
+    .model-step-num {
+      font-family: var(--font-display);
+      font-size: 48px;
+      color: var(--greige);
+      line-height: 1;
+      margin-bottom: 12px;
+    }
+    .model-step h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--brown);
+      margin-bottom: 8px;
+    }
+    .model-step p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .model-step.highlight { background: var(--purple); }
+    .model-step.highlight .model-step-num { color: rgba(255,255,255,0.2); }
+    .model-step.highlight h3 { color: var(--white); }
+    .model-step.highlight p { color: rgba(255,255,255,0.75); }
+
+    /* ── Pillars ─────────────────────────────── */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 40px;
+    }
+    .pillar {
+      background: var(--cream);
+      padding: 32px 28px;
+    }
+    .pillar-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--purple);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .pillar-icon svg { width: 18px; height: 18px; stroke: white; fill: none; stroke-width: 1.8; }
+    .pillar h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--brown);
+      margin-bottom: 10px;
+    }
+    .pillar p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Ethics ──────────────────────────────── */
+    .ethics-section {
+      background: #FAF7F3;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 80px 4em;
+    }
+    .ethics-list {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 36px;
+    }
+    .ethics-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      padding: 20px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    .ethics-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--purple);
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+    .ethics-item p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .ethics-item p strong { color: var(--brown); font-weight: 600; }
+
+    /* ── Artisans ────────────────────────────── */
+    .artisans-section { padding: 80px 4em; }
+    .artisan-text-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      margin-top: 36px;
+    }
+    .artisan-block {
+      border-left: 2px solid var(--tan);
+      padding-left: 22px;
+    }
+    .artisan-block h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--brown);
+      margin-bottom: 10px;
+    }
+    .artisan-block p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── CTA ─────────────────────────────────── */
+    .cta-section {
+      background: var(--purple);
+      color: var(--white);
+      padding: 72px 4em;
+      text-align: center;
+    }
+    .cta-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 3vw, 40px);
+      font-weight: 400;
+      margin-bottom: 16px;
+    }
+    .cta-section p {
+      font-size: 16px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 32px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .btn-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-block;
+      padding: 13px 28px;
+      border-radius: 3px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+    .btn-light { background: var(--white); color: var(--purple); }
+    .btn-light:hover { background: var(--cream); }
+    .btn-outline { border: 1.5px solid rgba(255,255,255,0.5); color: var(--white); }
+    .btn-outline:hover { border-color: white; background: rgba(255,255,255,0.08); }
+
+    /* ── Footer ──────────────────────────────── */
+    footer {
+      background: var(--brown);
+      color: rgba(255,255,255,0.55);
+      padding: 36px 4em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    footer a { color: rgba(255,255,255,0.55); transition: color 0.2s; }
+    footer a:hover { color: rgba(255,255,255,0.9); }
+    .footer-links { display: flex; gap: 1.5em; }
+
+    @media (max-width: 900px) {
+      .origin-grid, .artisan-text-grid { grid-template-columns: 1fr; gap: 32px; }
+      .pillars-grid, .ethics-list { grid-template-columns: 1fr; }
+      .model-grid { grid-template-columns: 1fr; }
+      .hue-stats { grid-template-columns: 1fr; }
+      .hero, .section, .hue-section, .ethics-section, .artisans-section, .cta-section { padding-left: 1.5em; padding-right: 1.5em; }
+      .nav-inner { padding: 0 1.5em; }
+      footer { padding: 24px 1.5em; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="../index.html" class="nav-logo">
+        <img src="../assets/images/Logo varijacije white.png" alt="Pure Community Support">
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="#">Shop</a></li>
+        <li><a href="#" class="active">About</a></li>
+        <li><a href="#">Cases &amp; Campaigns</a></li>
+        <li><a href="#">Impact</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <p class="hero-label">About Pure</p>
+    <h1>A Decade of Quiet Work.<br>Now, Something More.</h1>
+    <p class="hero-intro">
+      Pure Community Support is a <strong>registered community initiative in Hue, Vietnam.</strong>
+      We sell traditional Hue handicrafts made by local artisans. Half of every sale's net profit
+      goes directly to support disadvantaged families in Hue — with a focus on children's
+      health, living conditions, and education.
+    </p>
+  </header>
+
+  <!-- The Origin -->
+  <section class="section" aria-labelledby="origin-heading">
+    <div class="eyebrow">Our story</div>
+    <div class="origin-grid">
+      <div>
+        <h2 class="section-title" id="origin-heading">From personal work<br>to a formal initiative</h2>
+        <p class="body-text">
+          For over a decade, the founders of Pure and a close circle of friends have been showing up
+          for their community — quietly, without an organisation name, without a budget, and without asking for anything in return.
+          They visited families, connected people to resources, and funded small acts of support from their own pockets.
+        </p>
+        <p class="body-text">
+          This year, they decided to make it official. Not to change what they do, but to open it up —
+          so that more people could participate, more resources could flow in, and the work could continue
+          on a foundation that doesn't depend on any one person's capacity.
+        </p>
+        <p class="body-text">
+          <strong>Pure Community Support is legally registered in Vietnam as a commercial website</strong>
+          with two physical offices: one in Hue and one in Da Nang. It is not a charity.
+          It does not accept public donations. It earns its funding through the sale of
+          handcrafted goods made by Hue artisans.
+        </p>
+      </div>
+      <div>
+        <div class="pull-quote" role="figure">
+          <blockquote>
+            The work doesn't start when someone donates. It starts when someone chooses to buy something
+            made in Hue — and understands what that choice means.
+          </blockquote>
+          <cite>The founding team, Pure Community Support</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Hue -->
+  <section class="hue-section" aria-labelledby="hue-heading">
+    <div class="eyebrow">Why Hue</div>
+    <h2 class="section-title" id="hue-heading">A city of culture,<br>resilience, and need</h2>
+    <p class="body-text">
+      Hue sits at the heart of Vietnam's history. Once the imperial capital of the Nguyen dynasty,
+      it remains one of the country's most culturally rich cities — home to a UNESCO World Heritage Site,
+      a distinct culinary tradition, and craft techniques passed down through generations.
+    </p>
+    <p class="body-text" style="margin-top:16px;">
+      It is also a city that faces some of Vietnam's most severe seasonal hardships.
+      <strong>Central Vietnam bears the brunt of annual typhoon seasons</strong>, and Hue has repeatedly
+      experienced flooding that disrupts lives, damages homes, and pushes already vulnerable families
+      into crisis. For the families Pure works with, these aren't abstract risks — they are recurring realities.
+    </p>
+    <p class="body-text" style="margin-top:16px;">
+      Pure is rooted in Hue because the founders are rooted in Hue. The geographic focus — Hue and the
+      surrounding area — reflects both the network the team has built over a decade and a commitment to
+      knowing the communities they serve. As the initiative grows, that reach may expand.
+    </p>
+    <div class="hue-stats" role="list">
+      <div class="hue-stat" role="listitem">
+        <div class="hue-stat-num">10+</div>
+        <div class="hue-stat-label">Years of personal community work before becoming official</div>
+      </div>
+      <div class="hue-stat" role="listitem">
+        <div class="hue-stat-num">50%</div>
+        <div class="hue-stat-label">Of net profit from every sale goes directly to community support</div>
+      </div>
+      <div class="hue-stat" role="listitem">
+        <div class="hue-stat-num">4</div>
+        <div class="hue-stat-label">Active programs running continuously — no funding goals, no end dates</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="section" aria-labelledby="model-heading">
+    <div class="eyebrow">The model</div>
+    <h2 class="section-title" id="model-heading">Commerce as a means,<br>not an end</h2>
+    <p class="body-text">
+      Pure does not ask for money. It earns it. Every product sold is a handcrafted object made in
+      Hue by local artisans. Every purchase is a direct act of support — not through charity, but through
+      commerce that is built to give back.
+    </p>
+    <div class="model-grid" role="list">
+      <div class="model-step" role="listitem">
+        <div class="model-step-num">01</div>
+        <h3>You buy a Hue handicraft</h3>
+        <p>Every product is handmade in Hue by local artisans. Traditional objects, silk apparel, woven bags, and home textiles — made with care.</p>
+      </div>
+      <div class="model-step highlight" role="listitem">
+        <div class="model-step-num">02</div>
+        <h3>50% of net profit is set aside</h3>
+        <p>After operating costs, exactly half of net profit is allocated to community support. The other half goes back into product development.</p>
+      </div>
+      <div class="model-step" role="listitem">
+        <div class="model-step-num">03</div>
+        <h3>Funds reach families in Hue</h3>
+        <p>Support goes to disadvantaged families — primarily focused on children's health, education, and living conditions, plus elderly, disabled, and crisis victims.</p>
+      </div>
+    </div>
+    <p class="body-text" style="margin-top:32px;">
+      Funds are held in a single bank account opened exclusively for this purpose.
+      All disbursements are tracked and published monthly or quarterly in the blog.
+      A formal annual impact report is planned. Every family Pure supports has given explicit consent to be featured.
+    </p>
+  </section>
+
+  <!-- Pillars -->
+  <section class="section" style="background:#FAF7F3; border-top:1px solid var(--border);" aria-labelledby="pillars-heading">
+    <div class="eyebrow">Areas of focus</div>
+    <h2 class="section-title" id="pillars-heading">Four pillars of action</h2>
+    <p class="body-text">
+      Pure's community work is organised around four areas, reflecting a decade of hands-on experience
+      with what Hue families actually need.
+    </p>
+    <div class="pillars-grid" role="list">
+      <div class="pillar" role="listitem">
+        <div class="pillar-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h3>Community Support</h3>
+        <p>Direct assistance to disadvantaged families in Hue — food and essentials kits, health support, and crisis relief. The original, ongoing thread of work that predates the organisation itself.</p>
+      </div>
+      <div class="pillar" role="listitem">
+        <div class="pillar-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <h3>Culture &amp; Heritage</h3>
+        <p>Preserving and promoting Hue's distinctive craft traditions — from the ceremonial gong and singing bowl to embroidery and weaving techniques passed across generations.</p>
+      </div>
+      <div class="pillar" role="listitem">
+        <div class="pillar-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <h3>Education &amp; Youth</h3>
+        <p>Supporting young people in Hue through the Youth Leadership Circle and Heritage Craft Class — connecting the next generation to the skills and community roots that define their city.</p>
+      </div>
+      <div class="pillar" role="listitem">
+        <div class="pillar-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h3>Crisis Relief</h3>
+        <p>Rapid response support for families affected by typhoons, floods, and other emergencies — a recurring need in central Vietnam that the team has responded to for over a decade.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Ethics -->
+  <section class="ethics-section" aria-labelledby="ethics-heading">
+    <div class="eyebrow">How we operate</div>
+    <h2 class="section-title" id="ethics-heading">Our commitments</h2>
+    <p class="body-text">
+      Pure is built on a set of firm operating principles — not policies written for show, but decisions
+      made over years of experience with what works and what doesn't.
+    </p>
+    <div class="ethics-list" role="list">
+      <div class="ethics-item" role="listitem">
+        <div class="ethics-dot" aria-hidden="true"></div>
+        <p><strong>We never accept donations.</strong> When people offer money, we always decline. Revenue comes only from product sales.</p>
+      </div>
+      <div class="ethics-item" role="listitem">
+        <div class="ethics-dot" aria-hidden="true"></div>
+        <p><strong>Consent is non-negotiable.</strong> Every beneficiary gives explicit written consent before any case or photo appears on this site.</p>
+      </div>
+      <div class="ethics-item" role="listitem">
+        <div class="ethics-dot" aria-hidden="true"></div>
+        <p><strong>We follow up.</strong> Every family Pure supports receives a quarterly follow-up visit to understand how their situation has evolved.</p>
+      </div>
+      <div class="ethics-item" role="listitem">
+        <div class="ethics-dot" aria-hidden="true"></div>
+        <p><strong>We publish our numbers.</strong> Monthly and quarterly blog posts show how much was earned and exactly where the money went.</p>
+      </div>
+      <div class="ethics-item" role="listitem">
+        <div class="ethics-dot" aria-hidden="true"></div>
+        <p><strong>Programs run without goals.</strong> Our campaigns are continuous — not fundraisers with a target date. Support doesn't stop when a number is hit.</p>
+      </div>
+      <div class="ethics-item" role="listitem">
+        <div class="ethics-dot" aria-hidden="true"></div>
+        <p><strong>The founders stay behind the scenes.</strong> This initiative is about community and craft, not personal profiles. No founder names or photos are prominently featured.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Artisans -->
+  <section class="artisans-section" aria-labelledby="artisans-heading">
+    <div class="eyebrow">The makers</div>
+    <h2 class="section-title" id="artisans-heading">Hue artisans and collaborators</h2>
+    <p class="body-text">
+      Every product in the Pure catalog is the work of a person — a Hue artisan with a specific skill,
+      a specific history, and a specific reason to still be practicing their craft. Pure exists partly
+      because of them, and they are recognised in full in the product catalog, the blog, and in a
+      dedicated section of this site.
+    </p>
+    <div class="artisan-text-grid">
+      <div class="artisan-block">
+        <h3>Traditional craft, living skill</h3>
+        <p>
+          The makers behind Pure's products practice craft traditions that define Hue — from gong and
+          bell forging to silk embroidery and hand-weaving. Their work is not a revival project.
+          These are active skills, passed down through families and communities who have kept them alive
+          through disruption, war, and economic change.
+        </p>
+      </div>
+      <div class="artisan-block">
+        <h3>Collaborators and supporters</h3>
+        <p>
+          Beyond the artisans, a broader group of volunteers and collaborators has made Pure possible —
+          people who source, coordinate, photograph, translate, and connect. They are not named here,
+          but they are part of what this project is. If you are interested in contributing, get in touch.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section" aria-labelledby="cta-heading">
+    <h2 id="cta-heading">Every purchase is a decision.</h2>
+    <p>Buy something made in Hue. Support the people who made it possible — and the families it helps.</p>
+    <div class="btn-row">
+      <a href="#" class="btn btn-light">Browse the shop</a>
+      <a href="#" class="btn btn-outline">See our impact</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <img src="../assets/images/Logo varijacije white.png" alt="Pure Community Support" style="height:40px;width:auto;">
+    <ul class="footer-links" role="list">
+      <li><a href="#">Shop</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Impact</a></li>
+      <li><a href="#">Blog</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+    <span>© 2026 Pure Community Support · Hue, Vietnam</span>
+  </footer>
+
+</body>
+</html>
