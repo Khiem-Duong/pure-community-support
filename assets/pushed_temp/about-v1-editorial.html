@@ -82,6 +82,29 @@
       transition: color 0.2s;
     }
     .nav-links a:hover, .nav-links a.active { color: #fff; }
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+    .nav-toggle-bar {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: rgba(255,255,255,0.85);
+      border-radius: 1px;
+      transition: transform 0.25s ease, opacity 0.2s ease;
+    }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
     /* ── Hero (split, real photo) ───────────── */
     .hero {
@@ -559,6 +582,23 @@
       .hue-stats { grid-template-columns: 1fr; }
       .hero-left, .section, .hue-section, .ethics-section, .artisans-section, .cta-section { padding-left: 1.5em; padding-right: 1.5em; }
       .nav-inner { padding: 0 1.5em; }
+      .nav-toggle { display: flex; }
+      .nav-links {
+        position: absolute;
+        top: 100%; left: 0; right: 0;
+        flex-direction: column;
+        gap: 0;
+        background: var(--brown);
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: max-height 0.3s ease, opacity 0.25s ease;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+      }
+      .nav-links.open { max-height: 400px; opacity: 1; }
+      .nav-links a { display: block; padding: 14px 1.5em; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .nav-links li:last-child a { border-bottom: none; }
       footer { padding: 24px 1.5em; }
     }
   </style>
@@ -571,13 +611,18 @@
       <a href="../../index.html" class="nav-logo">
         <img src="../images/Logo varijacije white.png" alt="Pure Community Support">
       </a>
-      <ul class="nav-links" role="list">
+      <ul class="nav-links" id="nav-links" role="list">
         <li><a href="#">Shop</a></li>
         <li><a href="#" class="active">About</a></li>
         <li><a href="#">Cases &amp; Campaigns</a></li>
         <li><a href="#">Impact</a></li>
         <li><a href="#">Blog</a></li>
       </ul>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
     </div>
   </nav>
 
@@ -856,6 +901,21 @@
     </ul>
     <span>© 2026 Pure Community Support · Hue, Vietnam</span>
   </footer>
+
+  <script>
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', isOpen);
+    });
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
 
 </body>
 </html>
