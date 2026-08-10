@@ -12,6 +12,12 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.2.1] - 2026-08-10
+### What changed
+- Added 3D-printable version of the PURE logo (assets/images/3d-print/)
+- pure-logo-3d-v1.0.stl: 3mm-thick relief, 120×104.7mm, traced from the white logo variant, includes lotus mark, "PURE" wordmark, and "community support" subtitle
+- preview-pure-logo-3d-v1.0.png: rendered preview of the 3D model
+
 ## [0.2.0] - 2026-06-29
 ### What changed
 - Built the full home page (index.html) — vanilla HTML/CSS/JS, no framework
