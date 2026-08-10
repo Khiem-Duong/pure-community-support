@@ -20,7 +20,7 @@
   <style>
     @font-face {
       font-family: 'Gemola';
-      src: url('Logos & fonts/Gemola.ttf') format('truetype');
+      src: url('-temp/Logos & fonts/Gemola.ttf') format('truetype');
       font-weight: 400;
       font-display: swap;
     }
@@ -51,6 +51,13 @@
     img { display: block; max-width: 100%; }
     a { color: inherit; text-decoration: none; }
     ul { list-style: none; }
+    h1, h2 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
 
     /* ── Nav ─────────────────────────────────── */
     .nav {
@@ -76,18 +83,26 @@
     }
     .nav-links a:hover, .nav-links a.active { color: #fff; }
 
-    /* ── Hero ────────────────────────────────── */
+    /* ── Hero (split, real photo) ───────────── */
     .hero {
       background: var(--brown);
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      min-height: 84vh;
+    }
+    .hero-left {
       color: var(--white);
-      padding: 100px 4em 80px;
+      padding: 100px 4em;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       position: relative;
       overflow: hidden;
     }
-    .hero::before {
+    .hero-left::before {
       content: '';
       position: absolute;
-      top: -60px; right: -60px;
+      top: -60px; left: -60px;
       width: 320px; height: 320px;
       background: radial-gradient(circle, rgba(101,46,134,0.35) 0%, transparent 68%);
       pointer-events: none;
@@ -112,20 +127,46 @@
     }
     .hero h1 {
       font-family: var(--font-gemola);
-      font-size: clamp(38px, 5vw, 72px);
+      font-size: clamp(38px, 4.4vw, 66px);
       font-weight: 400;
       line-height: 1.1;
       color: var(--white);
-      max-width: 780px;
+      max-width: 620px;
       margin-bottom: 28px;
     }
     .hero-intro {
-      max-width: 580px;
+      max-width: 520px;
       font-size: 17px;
       line-height: 1.65;
       color: rgba(255,255,255,0.72);
     }
     .hero-intro strong { color: rgba(255,255,255,0.95); }
+    .hero-right {
+      position: relative;
+      overflow: hidden;
+      min-height: 320px;
+    }
+    .hero-right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+    }
+    .hero-right-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(42,21,24,0.55) 0%, rgba(42,21,24,0.05) 40%);
+    }
+    .hero-photo-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 18px 24px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
+    }
 
     /* ── Section Shared ──────────────────────── */
     .section {
@@ -207,6 +248,26 @@
       color: var(--tan);
     }
 
+    /* ── Image divider (matches homepage) ────── */
+    .img-divider {
+      width: 100%;
+      height: 300px;
+      overflow: hidden;
+      position: relative;
+    }
+    .img-divider img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.8s ease;
+    }
+    .img-divider:hover img { transform: scale(1.04); }
+    .img-divider-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(74,52,42,0.25) 0%, rgba(74,52,42,0.08) 50%, rgba(74,52,42,0.25) 100%);
+    }
+
     /* ── Hue Context ─────────────────────────── */
     .hue-section {
       background: var(--brown);
@@ -245,6 +306,30 @@
     }
 
     /* ── Model ───────────────────────────────── */
+    .model-intro-row {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 48px;
+      align-items: end;
+      margin-bottom: 40px;
+    }
+    .model-photo {
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 4 / 3;
+    }
+    .model-photo img { width: 100%; height: 100%; object-fit: cover; }
+    .model-photo-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(42,21,24,0.78);
+      color: rgba(255,255,255,0.85);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      padding: 10px 14px;
+    }
     .model-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -253,7 +338,6 @@
       border: 1px solid var(--border);
       border-radius: 4px;
       overflow: hidden;
-      margin-top: 40px;
     }
     .model-step {
       background: var(--cream);
@@ -384,6 +468,34 @@
       color: var(--muted);
       line-height: 1.65;
     }
+    .artisan-gallery {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 40px;
+    }
+    .artisan-gallery figure {
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      aspect-ratio: 1 / 1;
+    }
+    .artisan-gallery img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .artisan-gallery figure:hover img { transform: scale(1.05); }
+    .artisan-gallery figcaption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(42,21,24,0.75), transparent);
+      color: rgba(255,255,255,0.9);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 30px 16px 12px;
+    }
 
     /* ── CTA ─────────────────────────────────── */
     .cta-section {
@@ -439,11 +551,13 @@
     .footer-links { display: flex; gap: 1.5em; }
 
     @media (max-width: 900px) {
-      .origin-grid, .artisan-text-grid { grid-template-columns: 1fr; gap: 32px; }
-      .pillars-grid, .ethics-list { grid-template-columns: 1fr; }
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { min-height: 260px; order: -1; }
+      .origin-grid, .artisan-text-grid, .model-intro-row { grid-template-columns: 1fr; gap: 32px; }
+      .pillars-grid, .ethics-list, .artisan-gallery { grid-template-columns: 1fr; }
       .model-grid { grid-template-columns: 1fr; }
       .hue-stats { grid-template-columns: 1fr; }
-      .hero, .section, .hue-section, .ethics-section, .artisans-section, .cta-section { padding-left: 1.5em; padding-right: 1.5em; }
+      .hero-left, .section, .hue-section, .ethics-section, .artisans-section, .cta-section { padding-left: 1.5em; padding-right: 1.5em; }
       .nav-inner { padding: 0 1.5em; }
       footer { padding: 24px 1.5em; }
     }
@@ -454,8 +568,8 @@
   <!-- Navigation -->
   <nav class="nav" aria-label="Main navigation">
     <div class="nav-inner">
-      <a href="../index.html" class="nav-logo">
-        <img src="../assets/images/Logo varijacije white.png" alt="Pure Community Support">
+      <a href="../../index.html" class="nav-logo">
+        <img src="../images/Logo varijacije white.png" alt="Pure Community Support">
       </a>
       <ul class="nav-links" role="list">
         <li><a href="#">Shop</a></li>
@@ -469,14 +583,21 @@
 
   <!-- Hero -->
   <header class="hero">
-    <p class="hero-label">About Pure</p>
-    <h1>A Decade of Quiet Work.<br>Now, Something More.</h1>
-    <p class="hero-intro">
-      Pure Community Support is a <strong>registered community initiative in Hue, Vietnam.</strong>
-      We sell traditional Hue handicrafts made by local artisans. Half of every sale's net profit
-      goes directly to support disadvantaged families in Hue — with a focus on children's
-      health, living conditions, and education.
-    </p>
+    <div class="hero-left">
+      <p class="hero-label">About Pure</p>
+      <h1>A Decade of Quiet Work.<br>Now, Something More.</h1>
+      <p class="hero-intro">
+        Pure Community Support is a <strong>registered community initiative in Hue, Vietnam.</strong>
+        We sell traditional Hue handicrafts made by local artisans. Half of every sale's net profit
+        goes directly to support disadvantaged families in Hue — with a focus on children's
+        health, living conditions, and education.
+      </p>
+    </div>
+    <div class="hero-right">
+      <img src="../images/Silk_kimono.jpg" alt="The Imperial City of Hue, seat of the Nguyen dynasty and the cultural heart Pure is rooted in" loading="eager">
+      <div class="hero-right-overlay" aria-hidden="true"></div>
+      <p class="hero-photo-caption">The Imperial City, Hue</p>
+    </div>
   </header>
 
   <!-- The Origin -->
@@ -513,6 +634,12 @@
       </div>
     </div>
   </section>
+
+  <!-- Image divider -->
+  <div class="img-divider">
+    <img src="../images/DSC07542.jpeg" alt="A hand striking a traditional Hue gong outdoors, one of the craft skills Pure's artisans keep alive" loading="lazy">
+    <div class="img-divider-overlay" aria-hidden="true"></div>
+  </div>
 
   <!-- Why Hue -->
   <section class="hue-section" aria-labelledby="hue-heading">
@@ -553,12 +680,20 @@
   <!-- How It Works -->
   <section class="section" aria-labelledby="model-heading">
     <div class="eyebrow">The model</div>
-    <h2 class="section-title" id="model-heading">Commerce as a means,<br>not an end</h2>
-    <p class="body-text">
-      Pure does not ask for money. It earns it. Every product sold is a handcrafted object made in
-      Hue by local artisans. Every purchase is a direct act of support — not through charity, but through
-      commerce that is built to give back.
-    </p>
+    <div class="model-intro-row">
+      <div>
+        <h2 class="section-title" id="model-heading" style="margin-bottom:20px;">Commerce as a means,<br>not an end</h2>
+        <p class="body-text">
+          Pure does not ask for money. It earns it. Every product sold is a handcrafted object made in
+          Hue by local artisans. Every purchase is a direct act of support — not through charity, but through
+          commerce that is built to give back.
+        </p>
+      </div>
+      <div class="model-photo">
+        <img src="../images/DSC07535.jpeg" alt="A handmade ceremonial gong and mallet, one of Pure's traditional Hue handicraft products" loading="lazy">
+        <p class="model-photo-caption">Ceremonial gong &amp; mallet, handcrafted in Hue</p>
+      </div>
+    </div>
     <div class="model-grid" role="list">
       <div class="model-step" role="listitem">
         <div class="model-step-num">01</div>
@@ -625,7 +760,6 @@
 
   <!-- Ethics -->
   <section class="ethics-section" aria-labelledby="ethics-heading">
-    <div class="eyebrow">How we operate</div>
     <h2 class="section-title" id="ethics-heading">Our commitments</h2>
     <p class="body-text">
       Pure is built on a set of firm operating principles — not policies written for show, but decisions
@@ -688,6 +822,16 @@
         </p>
       </div>
     </div>
+    <div class="artisan-gallery" role="list">
+      <figure role="listitem">
+        <img src="../images/Handwoven_tote_bag.jpg" alt="Handwoven Pure tote bag, one of the artisan-made products sold to fund community work" loading="lazy">
+        <figcaption>Handwoven tote bag</figcaption>
+      </figure>
+      <figure role="listitem">
+        <img src="../images/1785487884721_3929329604013453076_g3424696855698798357_3b40e286e8acb1ac8598495f0a8777a5.jpg" alt="Pure pillowcase in terracotta linen, part of the Home & Living collection" loading="lazy">
+        <figcaption>Home &amp; Living collection</figcaption>
+      </figure>
+    </div>
   </section>
 
   <!-- CTA -->
@@ -702,7 +846,7 @@
 
   <!-- Footer -->
   <footer>
-    <img src="../assets/images/Logo varijacije white.png" alt="Pure Community Support" style="height:40px;width:auto;">
+    <img src="../images/Logo varijacije white.png" alt="Pure Community Support" style="height:40px;width:auto;">
     <ul class="footer-links" role="list">
       <li><a href="#">Shop</a></li>
       <li><a href="#">About</a></li>

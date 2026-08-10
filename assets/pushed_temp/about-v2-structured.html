@@ -20,7 +20,7 @@
   <style>
     @font-face {
       font-family: 'Gemola';
-      src: url('Logos & fonts/Gemola.ttf') format('truetype');
+      src: url('-temp/Logos & fonts/Gemola.ttf') format('truetype');
       font-weight: 400;
       font-display: swap;
     }
@@ -51,6 +51,13 @@
     img { display: block; max-width: 100%; }
     a { color: inherit; text-decoration: none; }
     ul { list-style: none; }
+    h1, h2 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
 
     /* ── Nav ─────────────────────────────────── */
     .nav {
@@ -120,6 +127,36 @@
     .page-header-meta p {
       font-size: 13px;
       color: var(--tan);
+    }
+
+    /* ── Header banner photo ──────────────────── */
+    .header-banner {
+      width: 100%;
+      height: 260px;
+      overflow: hidden;
+      position: relative;
+    }
+    .header-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 35%;
+      transition: transform 0.8s ease;
+    }
+    .header-banner:hover img { transform: scale(1.03); }
+    .header-banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(74,52,42,0.3) 0%, rgba(74,52,42,0.05) 45%, rgba(74,52,42,0.3) 100%);
+    }
+    .header-banner-caption {
+      position: absolute;
+      bottom: 16px; left: 4em;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.85);
     }
 
     /* ── Main layout ─────────────────────────── */
@@ -275,10 +312,30 @@
     }
 
     /* ── Model table ─────────────────────────── */
+    .model-layout {
+      display: grid;
+      grid-template-columns: 1fr 240px;
+      gap: 32px;
+      align-items: start;
+      margin-top: 28px;
+    }
+    .model-photo-card {
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+    .model-photo-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+    .model-photo-card figcaption {
+      background: var(--brown);
+      color: rgba(255,255,255,0.8);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 10px 12px;
+      line-height: 1.4;
+    }
     .model-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 28px;
       font-size: 14px;
     }
     .model-table th {
@@ -415,6 +472,33 @@
     }
 
     /* ── Artisans ────────────────────────────── */
+    .artisan-banner {
+      width: 100%;
+      height: 220px;
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+      margin-top: 28px;
+    }
+    .artisan-banner img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+    .artisan-banner:hover img { transform: scale(1.04); }
+    .artisan-banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(42,21,24,0.72) 0%, rgba(42,21,24,0.05) 55%);
+    }
+    .artisan-banner-caption {
+      position: absolute;
+      bottom: 14px; left: 18px;
+      color: rgba(255,255,255,0.9);
+      font-size: 12px;
+      font-weight: 600;
+    }
     .artisan-note {
       background: rgba(178,150,125,0.1);
       border-left: 3px solid var(--tan);
@@ -489,8 +573,11 @@
       .mvv-grid, .programs-grid { grid-template-columns: 1fr; }
       .pillar-row { grid-template-columns: 36px 1fr; }
       .pillar-desc { grid-column: span 2; }
+      .model-layout { grid-template-columns: 1fr; }
+      .model-photo-card img { aspect-ratio: 16/9; }
       .content-block { padding: 40px 1.5em; }
       .page-header { padding: 32px 1.5em 28px; }
+      .header-banner-caption { left: 1.5em; }
       .cta-block { padding: 40px 1.5em; }
       footer { padding: 24px 1.5em; }
       .nav-inner { padding: 0 1.5em; }
@@ -502,8 +589,8 @@
   <!-- Navigation -->
   <nav class="nav" aria-label="Main navigation">
     <div class="nav-inner">
-      <a href="../index.html" class="nav-logo">
-        <img src="../assets/images/Logo varijacije white.png" alt="Pure Community Support">
+      <a href="../../index.html" class="nav-logo">
+        <img src="../images/Logo varijacije white.png" alt="Pure Community Support">
       </a>
       <ul class="nav-links" role="list">
         <li><a href="#">Shop</a></li>
@@ -525,6 +612,13 @@
       <div class="page-tag">Est. officially 2026</div>
       <p>10+ years of community work<br>in Hue, Vietnam</p>
     </div>
+  </div>
+
+  <!-- Header banner photo -->
+  <div class="header-banner">
+    <img src="../images/Silk_kimono.jpg" alt="The Imperial City of Hue, seat of the Nguyen dynasty and the cultural heart Pure is rooted in" loading="eager">
+    <div class="header-banner-overlay" aria-hidden="true"></div>
+    <p class="header-banner-caption">The Imperial City, Hue</p>
   </div>
 
   <!-- Two-column layout -->
@@ -638,40 +732,46 @@
           Pure earns its community funding through product sales. Every handcrafted object sold
           generates a clear, auditable contribution to the support work.
         </p>
-        <table class="model-table">
-          <thead>
-            <tr>
-              <th>Item</th>
-              <th>Detail</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Revenue source</td>
-              <td>Sale of Hue traditional handicrafts — gongs, bells, silk apparel, woven bags, home textiles. All handmade in Hue by local artisans.</td>
-            </tr>
-            <tr>
-              <td>Profit split</td>
-              <td><strong style="color:var(--brown)">50% of net profit</strong> (after operating costs) goes to community support. The remaining 50% goes back into product development.</td>
-            </tr>
-            <tr>
-              <td>Donations</td>
-              <td>Not accepted. When people offer to donate, it is always declined. Revenue comes only from product sales — this is non-negotiable.</td>
-            </tr>
-            <tr>
-              <td>Financial oversight</td>
-              <td>One general bank account, opened exclusively for this purpose. All disbursements are tracked and published monthly or quarterly in the blog.</td>
-            </tr>
-            <tr>
-              <td>Beneficiary follow-up</td>
-              <td>Every family Pure supports receives a quarterly follow-up visit. A formal annual impact report is planned.</td>
-            </tr>
-            <tr>
-              <td>Consent</td>
-              <td>Explicit written consent is required before any beneficiary case or photo appears on this site. Cases without consent are never published.</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="model-layout">
+          <table class="model-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Revenue source</td>
+                <td>Sale of Hue traditional handicrafts — gongs, bells, silk apparel, woven bags, home textiles. All handmade in Hue by local artisans.</td>
+              </tr>
+              <tr>
+                <td>Profit split</td>
+                <td><strong style="color:var(--brown)">50% of net profit</strong> (after operating costs) goes to community support. The remaining 50% goes back into product development.</td>
+              </tr>
+              <tr>
+                <td>Donations</td>
+                <td>Not accepted. When people offer to donate, it is always declined. Revenue comes only from product sales — this is non-negotiable.</td>
+              </tr>
+              <tr>
+                <td>Financial oversight</td>
+                <td>One general bank account, opened exclusively for this purpose. All disbursements are tracked and published monthly or quarterly in the blog.</td>
+              </tr>
+              <tr>
+                <td>Beneficiary follow-up</td>
+                <td>Every family Pure supports receives a quarterly follow-up visit. A formal annual impact report is planned.</td>
+              </tr>
+              <tr>
+                <td>Consent</td>
+                <td>Explicit written consent is required before any beneficiary case or photo appears on this site. Cases without consent are never published.</td>
+              </tr>
+            </tbody>
+          </table>
+          <figure class="model-photo-card">
+            <img src="../images/DSC07535.jpeg" alt="A handmade ceremonial gong and mallet, one of Pure's traditional Hue handicraft products" loading="lazy">
+            <figcaption>Ceremonial gong &amp; mallet, handcrafted in Hue</figcaption>
+          </figure>
+        </div>
       </section>
 
       <!-- Pillars -->
@@ -779,6 +879,11 @@
           a skill with a history that long predates this organisation. Their names, stories, and craft
           traditions are documented in the product catalog and the blog.
         </p>
+        <figure class="artisan-banner">
+          <img src="../images/DSC07542.jpeg" alt="A hand striking a traditional Hue gong outdoors, one of the craft skills Pure's artisans keep alive" loading="lazy">
+          <div class="artisan-banner-overlay" aria-hidden="true"></div>
+          <figcaption class="artisan-banner-caption">Traditional gong craft, still practiced today</figcaption>
+        </figure>
         <div class="artisan-note">
           <p>
             <strong>A dedicated artisan recognition section</strong> is maintained on this site, listing
@@ -807,7 +912,7 @@
 
   <!-- Footer -->
   <footer>
-    <img src="../assets/images/Logo varijacije white.png" alt="Pure Community Support" style="height:38px;width:auto;">
+    <img src="../images/Logo varijacije white.png" alt="Pure Community Support" style="height:38px;width:auto;">
     <ul class="footer-links" role="list">
       <li><a href="#">Shop</a></li>
       <li><a href="#">About</a></li>

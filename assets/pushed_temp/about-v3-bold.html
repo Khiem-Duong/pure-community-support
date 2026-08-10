@@ -20,7 +20,7 @@
   <style>
     @font-face {
       font-family: 'Gemola';
-      src: url('Logos & fonts/Gemola.ttf') format('truetype');
+      src: url('-temp/Logos & fonts/Gemola.ttf') format('truetype');
       font-weight: 400;
       font-display: swap;
     }
@@ -51,6 +51,13 @@
     img { display: block; max-width: 100%; }
     a { color: inherit; text-decoration: none; }
     ul { list-style: none; }
+    h1, h2 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
 
     /* ── Nav ─────────────────────────────────── */
     .nav {
@@ -75,15 +82,32 @@
     }
     .nav-links a:hover, .nav-links a.active { color: #fff; }
 
-    /* ── Fullscreen hero with big number ─────── */
+    /* ── Fullscreen hero with real photo ─────── */
     .hero {
-      background: var(--brown);
       min-height: 100vh;
       display: grid;
       grid-template-rows: 1fr auto;
       padding: 0;
       position: relative;
       overflow: hidden;
+      background: var(--brown);
+    }
+    .hero-photo {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+    }
+    .hero-photo-overlay {
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(42,21,24,0.92) 0%, rgba(42,21,24,0.55) 42%, rgba(42,21,24,0.72) 100%);
     }
     .hero-bg-text {
       position: absolute;
@@ -91,11 +115,12 @@
       left: -20px;
       font-family: var(--font-gemola);
       font-size: clamp(160px, 22vw, 320px);
-      color: rgba(255,255,255,0.03);
+      color: rgba(255,255,255,0.05);
       line-height: 1;
       white-space: nowrap;
       user-select: none;
       pointer-events: none;
+      z-index: 1;
     }
     .hero-main {
       display: flex;
@@ -103,7 +128,7 @@
       justify-content: flex-end;
       padding: 60px 4em 0;
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
     .hero-tag {
       display: inline-flex;
@@ -130,18 +155,28 @@
       line-height: 1.0;
       font-weight: 400;
       max-width: 900px;
+      margin-bottom: 20px;
+    }
+    .hero-photo-caption {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
       margin-bottom: 48px;
     }
     .hero-bottom {
-      border-top: 1px solid rgba(255,255,255,0.1);
+      border-top: 1px solid rgba(255,255,255,0.14);
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       position: relative;
-      z-index: 1;
+      z-index: 2;
+      background: rgba(42,21,24,0.5);
+      backdrop-filter: blur(6px);
     }
     .hero-stat {
       padding: 28px 4em;
-      border-right: 1px solid rgba(255,255,255,0.1);
+      border-right: 1px solid rgba(255,255,255,0.14);
     }
     .hero-stat:last-child { border-right: none; }
     .hero-stat-num {
@@ -153,7 +188,7 @@
     }
     .hero-stat-label {
       font-size: 13px;
-      color: rgba(255,255,255,0.55);
+      color: rgba(255,255,255,0.6);
       line-height: 1.4;
     }
 
@@ -251,6 +286,32 @@
       font-style: italic;
     }
 
+    /* ── Photo figure (in-band) ──────────────── */
+    .band-photo {
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+    .band-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.7s ease;
+    }
+    .band-photo:hover img { transform: scale(1.04); }
+    .band-photo figcaption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(42,21,24,0.8), transparent);
+      color: rgba(255,255,255,0.9);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 30px 16px 12px;
+    }
+    .band-photo-square { aspect-ratio: 4 / 5; }
+    .band-photo-wide { aspect-ratio: 16 / 10; }
+
     /* ── Pillars (horizontal scroll feel) ───── */
     .pillars-row {
       display: grid;
@@ -304,7 +365,13 @@
     }
 
     /* ── Programs (tight list) ───────────────── */
-    .programs-list { margin-top: 36px; }
+    .programs-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 56px;
+      align-items: start;
+    }
+    .programs-list { margin-top: 0; }
     .program-item {
       display: grid;
       grid-template-columns: 1fr 3fr auto;
@@ -332,6 +399,8 @@
     }
     .badge-running { background: rgba(45,106,79,0.1); color: #2d6a4f; }
     .badge-planned { background: rgba(122,61,0,0.09); color: #7a3d00; }
+    .programs-gallery { display: flex; flex-direction: column; gap: 12px; }
+    .programs-gallery .band-photo { aspect-ratio: 1 / 1; }
 
     /* ── Ethics (dark band items) ────────────── */
     .ethics-grid {
@@ -463,8 +532,11 @@
       .hero-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
       .hero-stat:last-child { border-bottom: none; }
       .split-50, .split-40-60 { grid-template-columns: 1fr; gap: 36px; }
+      .band-photo-square, .band-photo-wide { aspect-ratio: 16/9; }
       .pillars-row { grid-template-columns: 1fr 1fr; }
       .ethics-grid { grid-template-columns: 1fr; }
+      .programs-layout { grid-template-columns: 1fr; }
+      .programs-gallery { flex-direction: row; }
       .programs-list .program-item { grid-template-columns: 1fr; gap: 10px; }
       .artisan-cols { grid-template-columns: 1fr; gap: 28px; }
       .band { padding: 56px 1.5em; }
@@ -485,8 +557,8 @@
   <!-- Navigation -->
   <nav class="nav" aria-label="Main navigation">
     <div class="nav-inner">
-      <a href="../index.html" class="nav-logo">
-        <img src="../assets/images/Logo varijacije white.png" alt="Pure Community Support">
+      <a href="../../index.html" class="nav-logo">
+        <img src="../images/Logo varijacije white.png" alt="Pure Community Support">
       </a>
       <ul class="nav-links" role="list">
         <li><a href="#">Shop</a></li>
@@ -498,12 +570,17 @@
     </div>
   </nav>
 
-  <!-- Full-height Hero -->
+  <!-- Full-height Hero, real photo -->
   <header class="hero">
+    <div class="hero-photo" aria-hidden="true">
+      <img src="../images/Silk_kimono.jpg" alt="" role="presentation" loading="eager">
+      <div class="hero-photo-overlay"></div>
+    </div>
     <div class="hero-bg-text" aria-hidden="true">PURE</div>
     <div class="hero-main">
       <p class="hero-tag">About</p>
       <h1 class="hero-headline">Hue handicrafts.<br>Community purpose.</h1>
+      <p class="hero-photo-caption">The Imperial City, Hue — the city Pure calls home</p>
     </div>
     <div class="hero-bottom" role="list">
       <div class="hero-stat" role="listitem">
@@ -561,15 +638,13 @@
     </blockquote>
   </div>
 
-  <!-- Why Hue — dark -->
+  <!-- Why Hue — dark, with photo -->
   <section class="band band-dark" aria-labelledby="hue-heading">
     <div class="band-inner">
       <div class="split-50">
         <div>
           <div class="eyebrow eyebrow-light">Geographic focus</div>
-          <h2 class="band-title band-title-light" id="hue-heading">A city of culture and resilience</h2>
-        </div>
-        <div>
+          <h2 class="band-title band-title-light" id="hue-heading" style="margin-bottom:20px;">A city of culture and resilience</h2>
           <p class="body-text body-text-light">
             Hue is the former imperial capital of Vietnam — a UNESCO World Heritage city, and one of the
             country's most distinctive centers of traditional craft, culinary culture, and architectural heritage.
@@ -586,11 +661,15 @@
             authorities that cannot be replicated from a distance. Geographic focus may expand as the initiative grows.
           </p>
         </div>
+        <figure class="band-photo band-photo-square">
+          <img src="../images/DSC07542.jpeg" alt="A hand striking a traditional Hue gong outdoors, one of the craft skills Pure's artisans keep alive" loading="lazy">
+          <figcaption>A living craft, still practiced today</figcaption>
+        </figure>
       </div>
     </div>
   </section>
 
-  <!-- How it works — light split with big number -->
+  <!-- How it works — tinted split with photo -->
   <section class="band band-tinted" aria-labelledby="model-heading">
     <div class="band-inner">
       <div class="split-40-60">
@@ -614,6 +693,10 @@
             tracked and published monthly or quarterly in the blog. A formal annual impact report is planned.
             Every family supported gives explicit written consent before appearing on this site.
           </p>
+          <figure class="band-photo band-photo-wide" style="margin-top:28px;">
+            <img src="../images/DSC07535.jpeg" alt="A handmade ceremonial gong and mallet, one of Pure's traditional Hue handicraft products" loading="lazy">
+            <figcaption>Ceremonial gong &amp; mallet, handcrafted in Hue</figcaption>
+          </figure>
         </div>
       </div>
     </div>
@@ -649,7 +732,7 @@
     </div>
   </section>
 
-  <!-- Programs — light -->
+  <!-- Programs — light, with product gallery -->
   <section class="band band-light" aria-labelledby="programs-heading">
     <div class="band-inner">
       <div class="eyebrow">Active programs</div>
@@ -660,26 +743,36 @@
           Three have been operating since before Pure became an official initiative.
         </p>
       </div>
-      <div class="programs-list" role="list">
-        <div class="program-item" role="listitem">
-          <h3>Food &amp; Essentials Kit</h3>
-          <p>Regular delivery of food and essential goods to disadvantaged families and individuals in Hue who need ongoing practical support.</p>
-          <span class="program-badge badge-running">Running</span>
+      <div class="programs-layout">
+        <div class="programs-list" role="list">
+          <div class="program-item" role="listitem">
+            <h3>Food &amp; Essentials Kit</h3>
+            <p>Regular delivery of food and essential goods to disadvantaged families and individuals in Hue who need ongoing practical support.</p>
+            <span class="program-badge badge-running">Running</span>
+          </div>
+          <div class="program-item" role="listitem">
+            <h3>Lotus Art for Healing</h3>
+            <p>Art therapy and creative workshops for people in vulnerable situations — using traditional craft as a medium for wellbeing and human connection.</p>
+            <span class="program-badge badge-running">Running</span>
+          </div>
+          <div class="program-item" role="listitem">
+            <h3>Youth Leadership Circle</h3>
+            <p>A structured program for young people in Hue focused on community engagement, civic responsibility, and skills that go beyond the classroom.</p>
+            <span class="program-badge badge-running">Running</span>
+          </div>
+          <div class="program-item" role="listitem">
+            <h3>Heritage Craft Class</h3>
+            <p>Hands-on instruction in traditional Hue craft techniques — connecting young people directly with artisan practitioners and the knowledge they carry.</p>
+            <span class="program-badge badge-planned">Planned</span>
+          </div>
         </div>
-        <div class="program-item" role="listitem">
-          <h3>Lotus Art for Healing</h3>
-          <p>Art therapy and creative workshops for people in vulnerable situations — using traditional craft as a medium for wellbeing and human connection.</p>
-          <span class="program-badge badge-running">Running</span>
-        </div>
-        <div class="program-item" role="listitem">
-          <h3>Youth Leadership Circle</h3>
-          <p>A structured program for young people in Hue focused on community engagement, civic responsibility, and skills that go beyond the classroom.</p>
-          <span class="program-badge badge-running">Running</span>
-        </div>
-        <div class="program-item" role="listitem">
-          <h3>Heritage Craft Class</h3>
-          <p>Hands-on instruction in traditional Hue craft techniques — connecting young people directly with artisan practitioners and the knowledge they carry.</p>
-          <span class="program-badge badge-planned">Planned</span>
+        <div class="programs-gallery" aria-hidden="true">
+          <figure class="band-photo">
+            <img src="../images/Handwoven_tote_bag.jpg" alt="" role="presentation" loading="lazy">
+          </figure>
+          <figure class="band-photo">
+            <img src="../images/1785487884721_3929329604013453076_g3424696855698798357_3b40e286e8acb1ac8598495f0a8777a5.jpg" alt="" role="presentation" loading="lazy">
+          </figure>
         </div>
       </div>
     </div>
@@ -728,7 +821,6 @@
   <!-- Artisans — light -->
   <section class="band band-light" aria-labelledby="artisans-heading">
     <div class="band-inner">
-      <div class="eyebrow">The makers</div>
       <h2 class="band-title" id="artisans-heading" style="margin-bottom:36px;">Hue artisans and collaborators</h2>
       <div class="artisan-cols" role="list">
         <div class="artisan-col" role="listitem">
@@ -767,7 +859,7 @@
 
   <!-- Footer -->
   <footer>
-    <img src="../assets/images/Logo varijacije white.png" alt="Pure Community Support" style="height:38px;width:auto;">
+    <img src="../images/Logo varijacije white.png" alt="Pure Community Support" style="height:38px;width:auto;">
     <ul class="footer-links" role="list">
       <li><a href="#">Shop</a></li>
       <li><a href="#">About</a></li>
