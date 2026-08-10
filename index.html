@@ -181,8 +181,7 @@
 
     /* ─── Navigation ────────────────────────────────────────── */
     .nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
+      position: relative;
       z-index: 100;
       background: #4A342A;
       backdrop-filter: blur(12px);
@@ -1041,6 +1040,28 @@
       .hero-actions     { flex-direction: column; }
       .btn              { text-align: center; }
     }
+    #scroll-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 200;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--brown);
+      border: 1.5px solid var(--tan);
+      color: var(--cream);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.2s ease;
+    }
+    #scroll-top:hover { transform: translateY(-3px); background: var(--tan); }
   </style>
 </head>
 <body>
@@ -1678,6 +1699,8 @@
   </footer>
 
 
+  <button id="scroll-top" aria-label="Scroll to top">↑</button>
+
   <!-- ═══ SCRIPTS ═══════════════════════════════════════════ -->
   <script>
     /* Counter animation for impact numbers */
@@ -1708,14 +1731,12 @@
 
     counters.forEach(c => observer.observe(c));
 
-    /* Sticky nav — already dark brown, subtle opacity shift on scroll */
-    const nav = document.querySelector('.nav');
+    const scrollBtn = document.getElementById('scroll-top');
     window.addEventListener('scroll', () => {
-      nav.style.background = window.scrollY > 60
-        ? 'rgba(74, 52, 42, 0.99)'
-        : '#4A342A';
+      scrollBtn.style.opacity = window.scrollY > 120 ? '1' : '0';
+      scrollBtn.style.pointerEvents = window.scrollY > 120 ? 'auto' : 'none';
     }, { passive: true });
+    scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   </script>
-
 </body>
 </html>
