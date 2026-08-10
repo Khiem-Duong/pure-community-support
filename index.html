@@ -347,6 +347,18 @@
       height: 100%;
       object-fit: cover;
     }
+    .hero-photos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      width: 100%;
+      height: 100%;
+    }
+    .hero-photos img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
     .hero-caption {
       position: absolute;
       bottom: 0; left: 0; right: 0;
@@ -1038,7 +1050,7 @@
     <div class="container nav-inner">
 
       <a href="/" class="nav-logo">
-        <img src="-temp/Logos &amp; fonts/Logo varijacije white.png" alt="Pure Community Support">
+        <img src="Logo varijacije white.png" alt="Pure Community Support">
       </a>
 
       <ul class="nav-links">
@@ -1085,7 +1097,10 @@
         </div>
       </div>
       <div class="hero-right">
-        <img src="https://picsum.photos/seed/hue-river/800/900" alt="Hue artisan at work" loading="lazy">
+        <div class="hero-photos">
+          <img src="DSC07535.jpeg" alt="Hue ceremonial singing bowl" loading="lazy">
+          <img src="DSC07542.jpeg" alt="Hue traditional gong" loading="lazy">
+        </div>
         <div class="hero-caption">Hue artisans · Handmade in Vietnam</div>
       </div>
     </div>
@@ -1211,7 +1226,7 @@
 
         <article class="product-card">
           <div class="product-img-wrap">
-            <img src="https://picsum.photos/seed/silk-kimono/400/500" alt="Kimono" loading="lazy">
+            <img src="Silk_kimono.jpg" alt="Silk Kimono" loading="lazy" style="object-position:center 40%;">
           </div>
           <div class="product-info">
             <span class="product-category-tag">Apparel</span>
@@ -1226,7 +1241,7 @@
 
         <article class="product-card">
           <div class="product-img-wrap">
-            <img src="https://picsum.photos/seed/tote-natural/400/500" alt="Tote Bag" loading="lazy">
+            <img src="Handwoven_tote_bag.jpg" alt="Handwoven Tote Bag" loading="lazy" style="object-position:center;">
           </div>
           <div class="product-info">
             <span class="product-category-tag">Bags</span>
@@ -1608,7 +1623,7 @@
 
         <div class="footer-brand">
           <div style="margin-bottom:12px;">
-            <img src="-temp/Logos &amp; fonts/Logo varijacije white.png" alt="Pure Community Support" style="height:52px;width:auto;">
+            <img src="Logo varijacije white.png" alt="Pure Community Support" style="height:52px;width:auto;">
           </div>
           <p>A community initiative selling Hue traditional handicrafts. Registered in Vietnam. 50% of net profit supports disadvantaged people in Hue.</p>
         </div>
