@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Hue Traditional Handicrafts — Pure Community Support</title>
+  <meta name="description" content="Shop handmade Hue traditional handicrafts — ceremonial gongs, silk kimonos, handwoven tote bags, and embroidered home textiles. 50% of net profit supports disadvantaged families in Hue, Vietnam.">
+  <meta name="keywords" content="Hue handicrafts shop, buy Vietnamese handicrafts, handmade Hue gong, silk kimono Vietnam, handwoven tote bag, Vietnamese home textiles">
+  <meta property="og:title" content="Shop — Pure Community Support">
+  <meta property="og:description" content="Handmade Hue traditional handicrafts. Half of every sale's net profit supports families in Hue.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://purecommunitysupport.com/en/shop">
+  <link rel="alternate" hreflang="vi" href="https://purecommunitysupport.com/vi/cua-hang">
+  <link rel="alternate" hreflang="en" href="https://purecommunitysupport.com/en/shop">
+  <link rel="icon" href="assets/images/Vector Logo Pure Community support 2-15.svg" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="assets/images/Vector Logo Pure Community support 2-13.svg" media="(prefers-color-scheme: dark)">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    @font-face {
+      font-family: 'Gemola';
+      src: url('-temp/Logos & fonts/Gemola.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    :root {
+      --cream:   #F5F1EA;
+      --greige:  #DAD1C4;
+      --tan:     #B2967D;
+      --purple:  #652E86;
+      --brown:   #4A342A;
+      --muted:   #6B4E3C;
+      --white:   #ffffff;
+      --border:  rgba(178,150,125,0.22);
+
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-gemola:  'Gemola', Georgia, serif;
+      --font-body:    'Be Vietnam Pro', sans-serif;
+
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--brown);
+      background: var(--cream);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    h1, h2 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+
+    :focus-visible {
+      outline: 2px solid var(--purple);
+      outline-offset: 3px;
+      border-radius: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    /* ── Nav ─────────────────────────────────── */
+    .nav {
+      background: var(--brown);
+      position: relative;
+      z-index: 100;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 4em;
+    }
+    .nav-logo img { height: 5vw; width: auto; display: block; margin-block: 1vw; }
+    .nav-links { display: flex; gap: 2em; }
+    .nav-links a {
+      color: rgba(255,255,255,0.7);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      position: relative;
+      padding-block: 4px;
+      transition: color 0.3s var(--ease-soft);
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      left: 0; bottom: 0;
+      width: 100%;
+      height: 1px;
+      background: var(--tan);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.4s var(--ease-out);
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a:hover::after,
+    .nav-links a.active::after { transform: scaleX(1); transform-origin: left; }
+    .nav-links a.active { color: #fff; }
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 5px;
+      width: 40px;
+      height: 40px;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+    .nav-toggle-bar {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: rgba(255,255,255,0.85);
+      border-radius: 1px;
+      transition: transform 0.25s ease, opacity 0.2s ease;
+    }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── Page header ─────────────────────────── */
+    .shop-header {
+      padding: 72px 4em 44px;
+      border-bottom: 1px solid var(--border);
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-bottom: 20px;
+    }
+    .eyebrow::before {
+      content: '';
+      width: 26px; height: 1px;
+      background: var(--tan);
+    }
+    .shop-header h1 {
+      font-family: var(--font-gemola);
+      font-size: clamp(38px, 5vw, 76px);
+      font-weight: 400;
+      line-height: 1.05;
+      margin-bottom: 22px;
+    }
+    .shop-intro {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 620px;
+      line-height: 1.75;
+    }
+    .shop-intro strong { color: var(--brown); font-weight: 600; }
+
+    /* ── Filter bar ──────────────────────────── */
+    .filter-bar {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      background: rgba(245,241,234,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 4em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2em;
+      flex-wrap: wrap;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-right: 6px;
+    }
+    .chip {
+      position: relative;
+      padding: 8px 18px;
+      border-radius: 40px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      background: transparent;
+      overflow: hidden;
+      transition: color 0.35s var(--ease-soft),
+                  border-color 0.35s var(--ease-soft),
+                  transform 0.35s var(--ease-out);
+    }
+    .chip::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--brown);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.45s var(--ease-out);
+      z-index: -1;
+    }
+    .chip span { position: relative; z-index: 1; }
+    .chip:hover {
+      color: var(--white);
+      border-color: var(--brown);
+      transform: translateY(-2px);
+    }
+    .chip:hover::before { transform: scaleX(1); }
+    .chip.active {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: var(--white);
+    }
+    .chip.active::before { display: none; }
+    .chip-count {
+      font-size: 11px;
+      opacity: 0.6;
+      margin-left: 6px;
+    }
+    .sort-select {
+      font-size: 13px;
+      color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 8px 14px;
+      cursor: pointer;
+      transition: border-color 0.3s var(--ease-soft);
+    }
+    .sort-select:hover { border-color: var(--tan); }
+
+    /* ── Product grid ────────────────────────── */
+    .products {
+      padding: 56px 4em 64px;
+    }
+    .result-count {
+      font-size: 13px;
+      color: var(--tan);
+      margin-bottom: 32px;
+      letter-spacing: 0.04em;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 44px 32px;
+    }
+
+    /* ── Product card ────────────────────────── */
+    .card { position: relative; }
+    .card-media {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      background: var(--greige);
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+    .card-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1.1s var(--ease-out);
+    }
+    .card:hover .card-media img { transform: scale(1.07); }
+
+    /* placeholder tile for products without a photo yet */
+    .card-placeholder {
+      width: 100%; height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(145deg, var(--greige) 0%, #C9BEAD 100%);
+      transition: transform 1.1s var(--ease-out);
+    }
+    .card:hover .card-placeholder { transform: scale(1.07); }
+    .card-placeholder svg {
+      width: 52px; height: 52px;
+      stroke: rgba(74,52,42,0.3);
+      fill: none;
+      stroke-width: 1.2;
+    }
+
+    /* dark veil + CTA reveal */
+    .card-veil {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(74,52,42,0.72) 0%, rgba(74,52,42,0.1) 55%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.55s var(--ease-soft);
+    }
+    .card:hover .card-veil { opacity: 1; }
+
+    .card-cta {
+      position: absolute;
+      left: 20px;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--white);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.5s var(--ease-soft) 0.06s,
+                  transform 0.6s var(--ease-out) 0.06s;
+    }
+    .card:hover .card-cta { opacity: 1; transform: translateY(0); }
+    .card-cta svg {
+      width: 16px; height: 16px;
+      stroke: currentColor; fill: none; stroke-width: 1.8;
+      transition: transform 0.45s var(--ease-out);
+    }
+    .card:hover .card-cta svg { transform: translateX(4px); }
+
+    /* stock badge */
+    .badge {
+      position: absolute;
+      top: 14px; left: 14px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 11px;
+      border-radius: 2px;
+      background: rgba(245,241,234,0.94);
+      color: var(--muted);
+      backdrop-filter: blur(6px);
+    }
+    .badge.out { color: #7a3d00; background: rgba(250,240,225,0.95); }
+    .badge.new { background: var(--purple); color: var(--white); }
+
+    .card-cat {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--tan);
+      margin-bottom: 7px;
+    }
+    .card h3 {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 400;
+      line-height: 1.25;
+      margin-bottom: 6px;
+      transition: color 0.35s var(--ease-soft);
+    }
+    .card:hover h3 { color: var(--purple); }
+    .card-desc {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+    .card-foot {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .card-price {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--brown);
+    }
+    .card-artisan {
+      font-size: 11.5px;
+      color: var(--tan);
+      font-style: italic;
+    }
+
+    /* ── Pagination ──────────────────────────── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 64px;
+    }
+    .page-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+      height: 40px;
+      padding: 0 8px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      background: transparent;
+      transition: color 0.3s var(--ease-soft),
+                  background 0.3s var(--ease-soft),
+                  border-color 0.3s var(--ease-soft),
+                  transform 0.3s var(--ease-out);
+    }
+    .page-btn:hover:not(.active):not(:disabled) {
+      color: var(--white);
+      background: var(--brown);
+      border-color: var(--brown);
+      transform: translateY(-2px);
+    }
+    .page-btn.active {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: var(--white);
+      cursor: default;
+    }
+    .page-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .page-btn svg {
+      width: 15px; height: 15px;
+      stroke: currentColor; fill: none; stroke-width: 2;
+    }
+    .page-ellipsis {
+      color: var(--tan);
+      font-size: 13px;
+      padding: 0 4px;
+    }
+
+    /* ── Purpose strip ───────────────────────── */
+    .purpose {
+      background: var(--brown);
+      color: var(--white);
+      padding: 56px 4em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2.5em;
+      flex-wrap: wrap;
+    }
+    .purpose-text { max-width: 620px; }
+    .purpose h2 {
+      font-family: var(--font-display);
+      font-size: 30px;
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+    .purpose p { font-size: 15px; color: rgba(255,255,255,0.66); line-height: 1.7; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 30px;
+      border-radius: 2px;
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      background: var(--tan);
+      color: var(--white);
+      transition: background 0.35s var(--ease-soft),
+                  transform 0.4s var(--ease-out),
+                  box-shadow 0.4s var(--ease-out);
+    }
+    .btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; transition: transform 0.4s var(--ease-out); }
+    .btn:hover {
+      background: var(--purple);
+      transform: translateY(-3px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+    }
+    .btn:hover svg { transform: translateX(4px); }
+
+    /* ── Footer ──────────────────────────────── */
+    footer {
+      background: #2E1A14;
+      color: rgba(255,255,255,0.42);
+      padding: 30px 4em;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    footer a { color: rgba(255,255,255,0.42); transition: color 0.3s var(--ease-soft); }
+    footer a:hover { color: rgba(255,255,255,0.9); }
+    .footer-links { display: flex; gap: 1.5em; }
+
+    /* ── Scroll to top ───────────────────────── */
+    #scroll-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 200;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--brown);
+      border: 1.5px solid var(--tan);
+      color: var(--cream);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.2s ease;
+    }
+    #scroll-top:hover { transform: translateY(-3px); background: var(--tan); }
+
+    @media (max-width: 900px) {
+      .nav-inner { padding: 0 1.5em; }
+      .nav-toggle { display: flex; }
+      .nav-links {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        gap: 0;
+        background: var(--brown);
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition: max-height 0.35s ease, opacity 0.25s ease;
+      }
+      .nav-links.open { max-height: 400px; opacity: 1; }
+      .nav-links a { display: block; padding: 14px 1.5em; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .nav-links li:last-child a { border-bottom: none; }
+      .shop-header { padding: 48px 1.5em 32px; }
+      .filter-bar { padding: 14px 1.5em; }
+      .products { padding: 36px 1.5em 48px; }
+      .purpose { padding: 44px 1.5em; }
+      footer { padding: 24px 1.5em; }
+      .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="assets/images/Logo varijacije white.png" alt="Pure Community Support">
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="/shop" class="active">Shop</a></li>
+        <li><a href="/about">About</a></li>
+        <li><a href="/cases">Cases &amp; Campaigns</a></li>
+        <li><a href="/impact">Impact</a></li>
+        <li><a href="/blog">Blog</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="shop-header">
+    <p class="eyebrow">The catalog</p>
+    <h1>Made in Hue,<br>by hand.</h1>
+    <p class="shop-intro">
+      Every object here is made by a Hue artisan using techniques passed down through generations.
+      <strong>Half of the net profit from every sale</strong> goes directly to supporting disadvantaged
+      families in Hue, their children's health, education, and living conditions.
+    </p>
+  </header>
+
+  <!-- Filters -->
+  <div class="filter-bar" role="region" aria-label="Product filters">
+    <div class="filter-group" role="group" aria-label="Filter by category">
+      <span class="filter-label">Category</span>
+      <button class="chip active" aria-pressed="true"><span>All<span class="chip-count">15</span></span></button>
+      <button class="chip" aria-pressed="false"><span>Traditional Objects<span class="chip-count">4</span></span></button>
+      <button class="chip" aria-pressed="false"><span>Apparel<span class="chip-count">4</span></span></button>
+      <button class="chip" aria-pressed="false"><span>Bags<span class="chip-count">3</span></span></button>
+      <button class="chip" aria-pressed="false"><span>Home &amp; Living<span class="chip-count">4</span></span></button>
+    </div>
+    <select class="sort-select" aria-label="Sort products">
+      <option>Sort: Featured</option>
+      <option>Newest first</option>
+      <option>Price: low to high</option>
+      <option>Price: high to low</option>
+    </select>
+  </div>
+
+  <!-- Products -->
+  <main class="products">
+    <p class="result-count" id="result-count">Showing 1–10 of 15 products</p>
+
+    <div class="grid" id="product-grid" role="list">
+
+      <!-- 1: Gong -->
+      <article class="card" data-page="1" role="listitem">
+        <a href="#" aria-label="View Ceremonial Gong">
+          <div class="card-media">
+            <img src="assets/images/DSC07542.jpeg" alt="Hue traditional ceremonial gong" loading="lazy" style="object-position:center top;">
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge">In stock</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Traditional Objects</p>
+          <h3>Ceremonial Gong</h3>
+          <p class="card-desc">Hand-forged bronze gong used in Hue ceremonial and meditative practice.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 2: Singing Bowl -->
+      <article class="card" data-page="1" role="listitem">
+        <a href="#" aria-label="View Singing Bowl">
+          <div class="card-media">
+            <img src="assets/images/DSC07535.jpeg" alt="Hue ceremonial singing bowl" loading="lazy" style="object-position:center top;">
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge">In stock</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Traditional Objects</p>
+          <h3>Singing Bowl</h3>
+          <p class="card-desc">A resonant hand-shaped bowl, finished and tuned by ear in Hue.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 3: Silk Kimono -->
+      <article class="card" data-page="1" role="listitem">
+        <a href="#" aria-label="View Silk Kimono">
+          <div class="card-media">
+            <img src="assets/images/Silk_kimono.jpg" alt="Handmade Vietnamese silk kimono" loading="lazy" style="object-position:center 40%;">
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge new">New</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Apparel</p>
+          <h3>Silk Kimono</h3>
+          <p class="card-desc">Lightweight silk, cut and finished by hand. Made for everyday wear.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 4: Handwoven Tote -->
+      <article class="card" data-page="1" role="listitem">
+        <a href="#" aria-label="View Handwoven Tote Bag">
+          <div class="card-media">
+            <img src="assets/images/Handwoven_tote_bag.jpg" alt="Handwoven tote bag made in Hue" loading="lazy">
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge">In stock</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Bags</p>
+          <h3>Handwoven Tote Bag</h3>
+          <p class="card-desc">Woven on a traditional loom. Sturdy, natural fibre, built to last years.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 5: Pillowcase -->
+      <article class="card" data-page="1" role="listitem">
+        <a href="#" aria-label="View Embroidered Pillowcase">
+          <div class="card-media">
+            <img src="assets/images/1785487884721_3929329604013453076_g3424696855698798357_3b40e286e8acb1ac8598495f0a8777a5.jpg" alt="Hand-embroidered pillowcase from Hue" loading="lazy">
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge">In stock</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Home &amp; Living</p>
+          <h3>Embroidered Pillowcase</h3>
+          <p class="card-desc">Hand-embroidered detailing on soft cotton. Each one is slightly different.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 6: T-shirt -->
+      <article class="card" data-page="1" role="listitem">
+        <a href="#" aria-label="View Cotton T-Shirt">
+          <div class="card-media">
+            <div class="card-placeholder" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
+            </div>
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge">In stock</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Apparel</p>
+          <h3>Cotton T-Shirt</h3>
+          <p class="card-desc">Simple cotton tee with a Hue-inspired print. Unisex fit.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 7: Handkerchief -->
+      <article class="card" data-page="1" role="listitem">
+        <a href="#" aria-label="View Silk Handkerchief">
+          <div class="card-media">
+            <div class="card-placeholder" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+            </div>
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge out">Made to order</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>Inquire</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Apparel</p>
+          <h3>Silk Handkerchief</h3>
+          <p class="card-desc">Hand-rolled silk edges. A small object made with disproportionate care.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 8: Eco Bag -->
+      <article class="card" data-page="1" role="listitem">
+        <a href="#" aria-label="View Eco Bag">
+          <div class="card-media">
+            <div class="card-placeholder" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge">In stock</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Bags</p>
+          <h3>Eco Bag</h3>
+          <p class="card-desc">Foldable everyday bag in natural fibre. Made to replace the plastic one.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 9: Eye Mask -->
+      <article class="card" data-page="1" role="listitem">
+        <a href="#" aria-label="View Sleep Eye Mask">
+          <div class="card-media">
+            <div class="card-placeholder" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge">In stock</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Home &amp; Living</p>
+          <h3>Sleep Eye Mask</h3>
+          <p class="card-desc">Silk-lined, weighted lightly. Sewn and finished entirely by hand.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 10: Tablecloth -->
+      <article class="card" data-page="1" role="listitem">
+        <a href="#" aria-label="View Woven Tablecloth">
+          <div class="card-media">
+            <div class="card-placeholder" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M2 8h20l-2 12H4L2 8z"/><path d="M2 8l4-5h12l4 5"/><path d="M8 8v12M16 8v12"/></svg>
+            </div>
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge out">Made to order</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>Inquire</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Home &amp; Living</p>
+          <h3>Woven Tablecloth</h3>
+          <p class="card-desc">Loom-woven cotton with a subtle traditional Hue pattern along the border.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 11: Ceremonial Bell (placeholder photo) -->
+      <article class="card" data-page="2" role="listitem" hidden>
+        <a href="#" aria-label="View Ceremonial Bell">
+          <div class="card-media">
+            <img src="https://picsum.photos/seed/pure-hue-bell/640/800" alt="Hand-cast ceremonial bell, placeholder photo" loading="lazy">
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge">In stock</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Traditional Objects</p>
+          <h3>Ceremonial Bell</h3>
+          <p class="card-desc">Hand-cast bronze bell with a clear, sustained tone. Companion piece to the gong.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 12: Incense Holder (placeholder photo) -->
+      <article class="card" data-page="2" role="listitem" hidden>
+        <a href="#" aria-label="View Carved Incense Holder">
+          <div class="card-media">
+            <img src="https://picsum.photos/seed/pure-hue-incense/640/800" alt="Carved wooden incense holder, placeholder photo" loading="lazy">
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge">In stock</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Traditional Objects</p>
+          <h3>Carved Incense Holder</h3>
+          <p class="card-desc">Hand-carved from local hardwood, used in household and ceremonial altars.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 13: Silk Scarf (placeholder photo) -->
+      <article class="card" data-page="2" role="listitem" hidden>
+        <a href="#" aria-label="View Silk Scarf">
+          <div class="card-media">
+            <img src="https://picsum.photos/seed/pure-hue-scarf/640/800" alt="Hand-dyed silk scarf, placeholder photo" loading="lazy">
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge new">New</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Apparel</p>
+          <h3>Silk Scarf</h3>
+          <p class="card-desc">Hand-dyed silk in a single continuous length. Light enough for year-round wear.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 14: Market Basket Bag (placeholder photo) -->
+      <article class="card" data-page="2" role="listitem" hidden>
+        <a href="#" aria-label="View Market Basket Bag">
+          <div class="card-media">
+            <img src="https://picsum.photos/seed/pure-hue-basket/640/800" alt="Handwoven market basket bag, placeholder photo" loading="lazy">
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge">In stock</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>View product</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Bags</p>
+          <h3>Market Basket Bag</h3>
+          <p class="card-desc">A rigid woven basket bag built for daily errands, finished with leather handles.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+      <!-- 15: Woven Placemat Set (placeholder photo) -->
+      <article class="card" data-page="2" role="listitem" hidden>
+        <a href="#" aria-label="View Woven Placemat Set">
+          <div class="card-media">
+            <img src="https://picsum.photos/seed/pure-hue-placemat/640/800" alt="Woven placemat set, placeholder photo" loading="lazy">
+            <div class="card-veil" aria-hidden="true"></div>
+            <span class="badge out">Made to order</span>
+            <div class="card-cta" aria-hidden="true">
+              <span>Inquire</span>
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </div>
+          </div>
+          <p class="card-cat">Home &amp; Living</p>
+          <h3>Woven Placemat Set</h3>
+          <p class="card-desc">Set of four loom-woven placemats, made to match the tablecloth pattern.</p>
+          <div class="card-foot">
+            <span class="card-price">On request</span>
+            <span class="card-artisan">Hue artisan</span>
+          </div>
+        </a>
+      </article>
+
+    </div>
+
+    <!-- Pagination -->
+    <nav class="pagination" aria-label="Product pagination">
+      <button class="page-btn" id="page-prev" aria-label="Previous page" disabled>
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="page-btn active" data-page="1" aria-current="page">1</button>
+      <button class="page-btn" data-page="2">2</button>
+      <button class="page-btn" id="page-next" aria-label="Next page">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </nav>
+  </main>
+
+  <!-- Purpose strip -->
+  <section class="purpose" aria-labelledby="purpose-heading">
+    <div class="purpose-text">
+      <h2 id="purpose-heading">Where the money goes</h2>
+      <p>
+        After operating costs, 50% of net profit from every product sold goes directly to community
+        support in Hue. The other half is reinvested into the artisans and the catalog.
+        We publish the numbers every quarter.
+      </p>
+    </div>
+    <a href="/impact" class="btn">
+      See our impact
+      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <img src="assets/images/Logo varijacije white.png" alt="Pure Community Support" style="height:38px;width:auto;">
+    <ul class="footer-links" role="list">
+      <li><a href="/shop">Shop</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/impact">Impact</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="mailto:hello@purecommunitysupport.vn">Contact</a></li>
+    </ul>
+    <span>© 2026 Pure Community Support · Hue, Vietnam</span>
+  </footer>
+
+  <button id="scroll-top" aria-label="Scroll to top">↑</button>
+
+  <script>
+    /* Mobile nav toggle */
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', isOpen);
+    });
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    /* Pagination — 10 products per page */
+    const PAGE_SIZE = 10;
+    const TOTAL_ITEMS = 15;
+    const cards = Array.from(document.querySelectorAll('#product-grid .card'));
+    const pageButtons = Array.from(document.querySelectorAll('.page-btn[data-page]'));
+    const prevBtn = document.getElementById('page-prev');
+    const nextBtn = document.getElementById('page-next');
+    const resultCount = document.getElementById('result-count');
+    const totalPages = pageButtons.length;
+    let currentPage = 1;
+
+    function goToPage(page) {
+      currentPage = page;
+      cards.forEach(card => {
+        card.hidden = Number(card.dataset.page) !== page;
+      });
+      pageButtons.forEach(btn => {
+        const isActive = Number(btn.dataset.page) === page;
+        btn.classList.toggle('active', isActive);
+        if (isActive) btn.setAttribute('aria-current', 'page');
+        else btn.removeAttribute('aria-current');
+      });
+      prevBtn.disabled = page === 1;
+      nextBtn.disabled = page === totalPages;
+
+      const start = (page - 1) * PAGE_SIZE + 1;
+      const end = Math.min(page * PAGE_SIZE, TOTAL_ITEMS);
+      resultCount.textContent = `Showing ${start}–${end} of ${TOTAL_ITEMS} products`;
+
+      document.querySelector('.shop-header').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    pageButtons.forEach(btn => {
+      btn.addEventListener('click', () => goToPage(Number(btn.dataset.page)));
+    });
+    prevBtn.addEventListener('click', () => { if (currentPage > 1) goToPage(currentPage - 1); });
+    nextBtn.addEventListener('click', () => { if (currentPage < totalPages) goToPage(currentPage + 1); });
+
+    /* Category chips — presentation only, no filtering logic */
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => {
+          c.classList.remove('active');
+          c.setAttribute('aria-pressed', 'false');
+        });
+        chip.classList.add('active');
+        chip.setAttribute('aria-pressed', 'true');
+      });
+    });
+
+    /* Scroll to top */
+    const scrollBtn = document.getElementById('scroll-top');
+    window.addEventListener('scroll', () => {
+      scrollBtn.style.opacity = window.scrollY > 120 ? '1' : '0';
+      scrollBtn.style.pointerEvents = window.scrollY > 120 ? 'auto' : 'none';
+    }, { passive: true });
+    scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  </script>
+
+</body>
+</html>

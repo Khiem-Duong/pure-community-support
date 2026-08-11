@@ -107,6 +107,30 @@
     .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) { opacity: 0; }
     .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
+    /* ── Scroll to top ────────────────────────── */
+    #scroll-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 200;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--brown);
+      border: 1.5px solid var(--tan);
+      color: var(--cream);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.2s ease;
+    }
+    #scroll-top:hover { transform: translateY(-3px); background: var(--tan); }
+
     /* ── Fullscreen hero with real photo ─────── */
     .hero {
       min-height: 100vh;
@@ -942,6 +966,8 @@
     <span>© 2026 Pure Community Support · Hue, Vietnam</span>
   </footer>
 
+  <button id="scroll-top" aria-label="Scroll to top">↑</button>
+
   <script>
     const navToggle = document.querySelector('.nav-toggle');
     const navLinks = document.getElementById('nav-links');
@@ -955,6 +981,13 @@
         navToggle.setAttribute('aria-expanded', 'false');
       });
     });
+
+    const scrollBtn = document.getElementById('scroll-top');
+    window.addEventListener('scroll', () => {
+      scrollBtn.style.opacity = window.scrollY > 120 ? '1' : '0';
+      scrollBtn.style.pointerEvents = window.scrollY > 120 ? 'auto' : 'none';
+    }, { passive: true });
+    scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   </script>
 
 </body>
