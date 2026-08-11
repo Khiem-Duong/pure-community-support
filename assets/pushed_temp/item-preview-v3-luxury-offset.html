@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ceremonial Gong — Hue Traditional Handicrafts | Pure Community Support</title>
+  <meta name="description" content="Hand-forged bronze ceremonial gong made by Hue artisans, hammered to shape and tuned by ear. 50% of net profit supports disadvantaged families in Hue, Vietnam.">
+  <meta name="keywords" content="Hue ceremonial gong, Vietnamese bronze gong, handmade gong Vietnam, traditional Hue handicrafts, meditation gong">
+  <meta property="og:title" content="Ceremonial Gong — Pure Community Support">
+  <meta property="og:description" content="Hand-forged bronze gong from Hue. Half of every sale's net profit supports families in Hue.">
+  <meta property="og:type" content="product">
+  <link rel="canonical" href="https://purecommunitysupport.com/en/shop/ceremonial-gong">
+  <link rel="icon" href="../images/Vector Logo Pure Community support 2-15.svg" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="../images/Vector Logo Pure Community support 2-13.svg" media="(prefers-color-scheme: dark)">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    @font-face {
+      font-family: 'Gemola';
+      src: url('../../-temp/Logos & fonts/Gemola.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    :root {
+      --cream:   #F5F1EA;
+      --greige:  #DAD1C4;
+      --tan:     #B2967D;
+      --purple:  #652E86;
+      --brown:   #4A342A;
+      --deep:    #2E1A14;
+      --muted:   #6B4E3C;
+      --white:   #ffffff;
+      --border:  rgba(178,150,125,0.22);
+
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-gemola:  'Gemola', Georgia, serif;
+      --font-body:    'Be Vietnam Pro', sans-serif;
+
+      --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--brown);
+      background: var(--cream);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    h1, h2 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    :focus-visible { outline: 2px solid var(--tan); outline-offset: 3px; border-radius: 2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    /* ── Nav ─────────────────────────────────── */
+    .nav { background: var(--deep); position: relative; z-index: 100; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 0 5em; }
+    .nav-logo { display: flex; align-items: center; }
+    .nav-logo img { height: 5vw; width: auto; display: block; margin-block: 1vw; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(245,241,234,0.7);
+      position: relative; padding-bottom: 2px;
+      transition: color 0.3s var(--ease-soft), letter-spacing 0.45s var(--ease-out);
+    }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--tan);
+      transition: width 0.35s var(--ease-soft);
+    }
+    .nav-link:hover { color: var(--cream); letter-spacing: 0.14em; }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link.active { color: var(--cream); }
+    .nav-link.active::after { width: 100%; }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .lang-switcher { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: rgba(245,241,234,0.45); }
+    .lang-switcher span { cursor: pointer; padding: 4px 6px; border-radius: 2px; transition: color 0.3s, background 0.3s; }
+    .lang-switcher span.active { color: var(--cream); background: rgba(255,255,255,0.1); }
+    .lang-switcher .sep { color: rgba(255,255,255,0.2); }
+    .nav-cta {
+      background: var(--tan); color: var(--cream);
+      font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 10px 22px; border-radius: 2px;
+      transition: background 0.3s var(--ease-soft);
+    }
+    .nav-cta:hover { background: #8B6E5A; }
+    .nav-toggle { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 40px; height: 40px; }
+    .nav-toggle-bar { display: block; width: 22px; height: 2px; background: rgba(255,255,255,0.85); border-radius: 1px; transition: transform 0.25s ease, opacity 0.2s ease; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── Dark stage ──────────────────────────── */
+    .stage-wrap {
+      background: var(--deep);
+      padding: 0 5em 140px;
+      position: relative;
+      overflow: hidden;
+    }
+    .stage-mark {
+      position: absolute; right: 2%; top: 8%;
+      font-family: var(--font-gemola);
+      font-size: clamp(130px, 17vw, 260px);
+      color: rgba(255,255,255,0.028);
+      line-height: 1; user-select: none; pointer-events: none;
+    }
+
+    .crumb {
+      padding: 24px 0 34px;
+      font-size: 12px; color: rgba(245,241,234,0.4);
+      letter-spacing: 0.05em;
+      display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+      position: relative; z-index: 2;
+    }
+    .crumb a { transition: color 0.3s var(--ease-soft); }
+    .crumb a:hover { color: var(--tan); }
+    .crumb .current { color: rgba(245,241,234,0.85); }
+
+    .stage {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 0;
+      align-items: start;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Big offset image */
+    .shot {
+      position: relative;
+      aspect-ratio: 4/5;
+      overflow: hidden;
+      background: #241410;
+    }
+    .shot img {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: center top;
+      filter: saturate(0.94);
+      transform: scale(1.02);
+      transition: transform 1.6s var(--ease-expo), filter 0.9s var(--ease-soft);
+    }
+    .shot:hover img { transform: scale(1.08); filter: saturate(1.06); }
+    .shot-rule {
+      position: absolute; inset: 20px;
+      border: 1px solid rgba(245,241,234,0.28);
+      opacity: 0; transform: scale(1.03);
+      pointer-events: none;
+      transition: opacity 0.6s var(--ease-soft), transform 0.8s var(--ease-expo);
+    }
+    .shot:hover .shot-rule { opacity: 1; transform: scale(1); }
+    .shot-badge {
+      position: absolute; top: 22px; left: 22px;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
+      text-transform: uppercase; padding: 7px 13px;
+      background: rgba(245,241,234,0.93); color: var(--muted);
+      backdrop-filter: blur(6px);
+    }
+
+    /* thumbs under the shot */
+    .thumbs { display: flex; gap: 10px; margin-top: 14px; }
+    .thumb {
+      width: 74px; aspect-ratio: 1;
+      overflow: hidden; background: #241410;
+      border: 1px solid transparent;
+      transition: border-color 0.35s var(--ease-soft), transform 0.45s var(--ease-out);
+    }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease-out); }
+    .thumb:hover { border-color: var(--tan); transform: translateY(-4px); }
+    .thumb:hover img { transform: scale(1.13); }
+    .thumb.active { border-color: var(--cream); }
+    .thumb-ph {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.05);
+    }
+    .thumb-ph svg { width: 20px; height: 20px; stroke: rgba(245,241,234,0.3); fill: none; stroke-width: 1.3; }
+
+    /* Floating purchase card, overlaps the image */
+    .card-buy {
+      background: var(--cream);
+      margin-left: -70px;
+      margin-top: 74px;
+      padding: 42px 40px;
+      position: relative;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.42);
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 11px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 16px;
+    }
+    .eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--tan); }
+    .card-buy h1 {
+      font-family: var(--font-gemola);
+      font-size: clamp(32px, 3.2vw, 50px);
+      font-weight: 400; line-height: 1.03; margin-bottom: 18px;
+    }
+    .price-row {
+      display: flex; align-items: baseline; gap: 13px;
+      padding-bottom: 20px; margin-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+    .price { font-family: var(--font-display); font-size: 29px; }
+    .price-note { font-size: 12px; color: var(--tan); }
+    .lede { font-size: 14.5px; color: var(--muted); line-height: 1.8; margin-bottom: 24px; }
+    .lede strong { color: var(--brown); font-weight: 600; }
+
+    .stock {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12.5px; font-weight: 600; color: #2d6a4f;
+      margin-bottom: 24px;
+    }
+    .stock-dot { width: 7px; height: 7px; border-radius: 50%; background: #2d6a4f; animation: pulse 2.4s infinite; }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(45,106,79,0.45); }
+      70%  { box-shadow: 0 0 0 7px rgba(45,106,79,0); }
+      100% { box-shadow: 0 0 0 0 rgba(45,106,79,0); }
+    }
+
+    /* Minimal underline quantity */
+    .qty-block { margin-bottom: 22px; }
+    .qty-label {
+      display: block;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 12px;
+    }
+    .qty {
+      display: inline-flex; align-items: center; gap: 22px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 9px;
+      transition: border-color 0.4s var(--ease-soft);
+    }
+    .qty:hover { border-color: var(--tan); }
+    .qty-btn {
+      width: 26px; height: 26px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--tan);
+      transition: color 0.3s var(--ease-soft), transform 0.35s var(--ease-out);
+    }
+    .qty-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.2; }
+    .qty-btn:hover { color: var(--purple); transform: scale(1.22); }
+    .qty-value {
+      font-family: var(--font-display); font-size: 24px;
+      min-width: 34px; text-align: center;
+    }
+
+    /* Buttons — outline sweeps to fill */
+    .actions { display: flex; flex-direction: column; gap: 10px; }
+    .btn {
+      position: relative;
+      display: inline-flex; align-items: center; justify-content: center; gap: 11px;
+      padding: 16px 30px;
+      font-size: 12.5px; font-weight: 600; letter-spacing: 0.11em;
+      text-transform: uppercase;
+      overflow: hidden; z-index: 1;
+      transition: color 0.45s var(--ease-soft), transform 0.45s var(--ease-out);
+    }
+    .btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.9; transition: transform 0.45s var(--ease-out); }
+    .btn-primary {
+      border: 1.5px solid var(--brown);
+      color: var(--brown);
+      background: transparent;
+    }
+    .btn-primary::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--brown);
+      transform: translateX(-101%);
+      transition: transform 0.55s var(--ease-expo);
+      z-index: -1;
+    }
+    .btn-primary:hover { color: var(--cream); transform: translateY(-2px); }
+    .btn-primary:hover::before { transform: translateX(0); }
+    .btn-primary:hover svg { transform: scale(1.14) rotate(-8deg); }
+    .btn-ghost { color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { color: var(--brown); border-color: var(--brown); transform: translateY(-2px); }
+    .btn-ghost:hover svg { transform: translateX(3px); }
+
+    .purpose-note {
+      display: flex; gap: 12px; align-items: flex-start;
+      margin-top: 24px; padding-top: 22px;
+      border-top: 1px solid var(--border);
+      font-size: 13px; color: var(--muted); line-height: 1.65;
+    }
+    .purpose-note strong { color: var(--brown); font-weight: 600; }
+    .purpose-note svg { width: 17px; height: 17px; stroke: var(--purple); fill: none; stroke-width: 1.7; flex-shrink: 0; margin-top: 2px; }
+
+    /* ── Numbered spec list ──────────────────── */
+    .details {
+      padding: 88px 5em;
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    .details-head { margin-bottom: 38px; }
+    .details-head p {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 12px;
+    }
+    .details-head h2 { font-family: var(--font-display); font-size: clamp(26px, 3vw, 40px); font-weight: 400; }
+
+    .spec {
+      display: grid;
+      grid-template-columns: 58px 190px 1fr;
+      gap: 22px;
+      align-items: baseline;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      transition: padding-left 0.45s var(--ease-out);
+    }
+    .spec:hover { padding-left: 12px; }
+    .spec-num {
+      font-family: var(--font-display); font-size: 15px;
+      color: var(--greige);
+      transition: color 0.4s var(--ease-soft);
+    }
+    .spec:hover .spec-num { color: var(--purple); }
+    .spec dt {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--tan);
+    }
+    .spec dd { font-size: 15px; color: var(--muted); }
+
+    /* ── Related, dark ───────────────────────── */
+    .related {
+      background: var(--deep);
+      padding: 88px 5em 96px;
+    }
+    .related-head {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 2em; flex-wrap: wrap; margin-bottom: 42px;
+    }
+    .related-head p {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 12px;
+    }
+    .related-head h2 {
+      font-family: var(--font-display); font-size: clamp(26px, 3vw, 40px);
+      font-weight: 400; color: var(--cream);
+    }
+    .related-link {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.11em;
+      text-transform: uppercase; color: var(--tan);
+      border-bottom: 1px solid rgba(178,150,125,0.4);
+      padding-bottom: 4px;
+      transition: color 0.35s var(--ease-soft), border-color 0.35s, gap 0.45s var(--ease-out);
+    }
+    .related-link:hover { color: var(--cream); border-color: var(--cream); gap: 15px; }
+    .related-link svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    .related-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(238px, 1fr));
+      gap: 20px;
+    }
+    .rcard {
+      position: relative;
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      background: #241410;
+      transition: transform 0.55s var(--ease-out), box-shadow 0.55s var(--ease-out);
+    }
+    .rcard:hover { transform: translateY(-6px); box-shadow: 0 24px 48px rgba(0,0,0,0.5); }
+    .rcard a { display: block; width: 100%; height: 100%; }
+    .rcard img {
+      width: 100%; height: 100%; object-fit: cover;
+      filter: saturate(0.9);
+      transition: transform 1.3s var(--ease-expo), filter 0.7s var(--ease-soft);
+    }
+    .rcard:hover img { transform: scale(1.09); filter: saturate(1.04); }
+    .rcard-ph {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.045);
+      transition: transform 1.3s var(--ease-expo);
+    }
+    .rcard:hover .rcard-ph { transform: scale(1.06); }
+    .rcard-ph svg { width: 44px; height: 44px; stroke: rgba(245,241,234,0.3); fill: none; stroke-width: 1.1; }
+    .rcard-scrim {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(20,10,8,0.9) 0%, rgba(20,10,8,0.32) 48%, transparent 78%);
+      transition: opacity 0.5s var(--ease-soft);
+    }
+    .rcard-body {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: 20px 22px; color: var(--cream);
+      transform: translateY(0);
+      transition: transform 0.55s var(--ease-out);
+    }
+    .rcard:hover .rcard-body { transform: translateY(-5px); }
+    .rcard-cat { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tan); margin-bottom: 6px; }
+    .rcard h3 { font-family: var(--font-display); font-size: 20px; font-weight: 400; line-height: 1.2; margin-bottom: 4px; }
+    .rcard-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+    .rcard-price { font-size: 13px; color: rgba(245,241,234,0.72); }
+    .rcard-arrow {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid rgba(245,241,234,0.3);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      transition: background 0.4s var(--ease-soft), border-color 0.4s, transform 0.5s var(--ease-out);
+    }
+    .rcard-arrow svg { width: 13px; height: 13px; stroke: var(--cream); fill: none; stroke-width: 2; }
+    .rcard:hover .rcard-arrow { background: var(--purple); border-color: var(--purple); transform: rotate(-45deg); }
+    .rcard-badge {
+      position: absolute; top: 16px; left: 16px; z-index: 2;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; padding: 5px 11px;
+      background: rgba(245,241,234,0.92); color: var(--muted);
+      transition: transform 0.5s var(--ease-out);
+    }
+    .rcard:hover .rcard-badge { transform: translateY(-3px); }
+    .rcard-badge.order { background: rgba(250,240,225,0.94); color: #7a3d00; }
+
+    footer {
+      background: #1F110D; color: rgba(255,255,255,0.4);
+      padding: 34px 5em;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; gap: 1rem; flex-wrap: wrap;
+    }
+    footer a { color: rgba(255,255,255,0.4); transition: color 0.35s var(--ease-soft), letter-spacing 0.4s var(--ease-out); }
+    footer a:hover { color: rgba(255,255,255,0.92); letter-spacing: 0.05em; }
+    .footer-links { display: flex; gap: 1.6em; }
+
+    #scroll-top {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 200;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--brown); border: 1.5px solid var(--tan);
+      color: var(--cream); font-size: 20px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.2s ease;
+    }
+    #scroll-top:hover { transform: translateY(-3px); background: var(--tan); }
+
+    @media (max-width: 1000px) {
+      .stage { grid-template-columns: 1fr; }
+      .card-buy { margin-left: 0; margin-top: -50px; padding: 32px 26px; }
+      .stage-wrap { padding: 0 1.5em 70px; }
+      .details { padding: 60px 1.5em; }
+      .spec { grid-template-columns: 40px 1fr; }
+      .spec dd { grid-column: 2; }
+      .related { padding: 60px 1.5em 68px; }
+      footer { padding: 26px 1.5em; }
+      .nav-inner { padding: 0 1.5em; }
+      .nav-toggle { display: flex; }
+      .nav-right { display: none; }
+      .nav-links {
+        position: absolute; top: 100%; left: 0; right: 0;
+        flex-direction: column; align-items: stretch; gap: 0;
+        background: var(--deep);
+        max-height: 0; opacity: 0; overflow: hidden;
+        transition: max-height 0.35s ease, opacity 0.25s ease;
+      }
+      .nav-links.open { max-height: 400px; opacity: 1; }
+      .nav-link { display: block; padding: 14px 1.5em; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .nav-links li:last-child .nav-link { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="../../index.html" class="nav-logo">
+        <img src="../images/Logo varijacije white.png" alt="Pure Community Support">
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="/"       class="nav-link">Home</a></li>
+        <li><a href="/shop"   class="nav-link active">Shop</a></li>
+        <li><a href="/about"  class="nav-link">About</a></li>
+        <li><a href="/cases"  class="nav-link">Campaigns</a></li>
+        <li><a href="/impact" class="nav-link">Impact</a></li>
+        <li><a href="/blog"   class="nav-link">Blog</a></li>
+      </ul>
+      <div class="nav-right">
+        <div class="lang-switcher">
+          <span class="active">EN</span>
+          <span class="sep">/</span>
+          <span><a href="/vi/">VI</a></span>
+        </div>
+        <a href="/shop" class="nav-cta">Shop Now</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Dark stage -->
+  <div class="stage-wrap">
+    <div class="stage-mark" aria-hidden="true">Gong</div>
+
+    <nav class="crumb" aria-label="Breadcrumb">
+      <a href="/">Home</a>
+      <span aria-hidden="true">/</span>
+      <a href="/shop">Shop</a>
+      <span aria-hidden="true">/</span>
+      <a href="/shop?category=traditional-objects">Traditional Objects</a>
+      <span aria-hidden="true">/</span>
+      <span class="current">Ceremonial Gong</span>
+    </nav>
+
+    <main class="stage">
+      <!-- Image -->
+      <div>
+        <div class="shot">
+          <img src="../images/DSC07542.jpeg" alt="Hue traditional ceremonial gong, hand-forged bronze" loading="eager">
+          <span class="shot-rule" aria-hidden="true"></span>
+          <span class="shot-badge">In stock</span>
+        </div>
+        <div class="thumbs" role="list" aria-label="Product images">
+          <button class="thumb active" role="listitem" aria-label="View image 1">
+            <img src="../images/DSC07542.jpeg" alt="Ceremonial gong, front view" loading="lazy">
+          </button>
+          <button class="thumb" role="listitem" aria-label="View image 2">
+            <img src="../images/DSC07535.jpeg" alt="Ceremonial gong, rim detail" loading="lazy">
+          </button>
+          <button class="thumb" role="listitem" aria-label="View image 3">
+            <div class="thumb-ph" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></div>
+          </button>
+          <button class="thumb" role="listitem" aria-label="View image 4">
+            <div class="thumb-ph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h18M12 3v18"/></svg></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Floating purchase card -->
+      <div class="card-buy">
+        <p class="eyebrow">Traditional Objects</p>
+        <h1>Ceremonial Gong</h1>
+
+        <div class="price-row">
+          <span class="price">On request</span>
+          <span class="price-note">Confirmed at inquiry</span>
+        </div>
+
+        <p class="lede">
+          Hand-forged bronze, hammered to shape and tuned entirely by ear.
+          <strong>A single strike holds its note for close to a minute.</strong>
+          No two pieces share exactly the same tone.
+        </p>
+
+        <span class="stock"><span class="stock-dot" aria-hidden="true"></span>In stock — ready to ship</span>
+
+        <div class="qty-block">
+          <span class="qty-label" id="qty-label">Quantity</span>
+          <div class="qty" role="group" aria-labelledby="qty-label">
+            <button class="qty-btn" aria-label="Decrease quantity">
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+            <span class="qty-value" aria-live="polite">1</span>
+            <button class="qty-btn" aria-label="Increase quantity">
+              <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary">
+            <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            Add to cart
+          </button>
+          <button class="btn btn-ghost">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16v12H5.17L4 17.17V4z"/></svg>
+            Ask about this piece
+          </button>
+        </div>
+
+        <div class="purpose-note">
+          <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <span><strong>50% of net profit</strong> from this sale goes directly to community support in Hue.</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Numbered details -->
+  <section class="details" aria-labelledby="details-heading">
+    <div class="details-head">
+      <p>Specification</p>
+      <h2 id="details-heading">How it is made</h2>
+    </div>
+
+    <dl>
+      <div class="spec">
+        <span class="spec-num" aria-hidden="true">01</span>
+        <dt>Material</dt>
+        <dd>Cast bronze with a hand-hammered finish. The patina deepens with age and handling.</dd>
+      </div>
+      <div class="spec">
+        <span class="spec-num" aria-hidden="true">02</span>
+        <dt>Craft type</dt>
+        <dd>Metal forging. The final tuning is done by ear, not by instrument.</dd>
+      </div>
+      <div class="spec">
+        <span class="spec-num" aria-hidden="true">03</span>
+        <dt>Origin</dt>
+        <dd>Made in Hue, Vietnam, by a studio practising the technique across three generations.</dd>
+      </div>
+      <div class="spec">
+        <span class="spec-num" aria-hidden="true">04</span>
+        <dt>Dimensions</dt>
+        <dd>Approximately 30 cm in diameter. Small variation is expected between pieces.</dd>
+      </div>
+      <div class="spec">
+        <span class="spec-num" aria-hidden="true">05</span>
+        <dt>Includes</dt>
+        <dd>Padded mallet and a braided hanging cord, both made in the same studio.</dd>
+      </div>
+      <div class="spec">
+        <span class="spec-num" aria-hidden="true">06</span>
+        <dt>Lead time</dt>
+        <dd>Ships within 5–7 business days. Made-to-order pieces take approximately four weeks.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <!-- Related -->
+  <section class="related" aria-labelledby="related-heading">
+    <div class="related-head">
+      <div>
+        <p>Same category</p>
+        <h2 id="related-heading">More in Traditional Objects</h2>
+      </div>
+      <a href="/shop?category=traditional-objects" class="related-link">
+        View all 4
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+
+    <div class="related-grid" role="list">
+
+      <article class="rcard" role="listitem">
+        <a href="#" aria-label="View Singing Bowl">
+          <img src="../images/DSC07535.jpeg" alt="Hue ceremonial singing bowl" loading="lazy" style="object-position:center top;">
+          <span class="rcard-scrim" aria-hidden="true"></span>
+          <span class="rcard-badge">In stock</span>
+          <div class="rcard-body">
+            <p class="rcard-cat">Traditional Objects</p>
+            <h3>Singing Bowl</h3>
+            <div class="rcard-foot">
+              <span class="rcard-price">On request</span>
+              <span class="rcard-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="rcard" role="listitem">
+        <a href="#" aria-label="View Ceremonial Bell">
+          <img src="https://picsum.photos/seed/pure-hue-bell/640/860" alt="Hand-cast ceremonial bell, placeholder photo" loading="lazy">
+          <span class="rcard-scrim" aria-hidden="true"></span>
+          <span class="rcard-badge">In stock</span>
+          <div class="rcard-body">
+            <p class="rcard-cat">Traditional Objects</p>
+            <h3>Ceremonial Bell</h3>
+            <div class="rcard-foot">
+              <span class="rcard-price">On request</span>
+              <span class="rcard-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="rcard" role="listitem">
+        <a href="#" aria-label="View Carved Incense Holder">
+          <img src="https://picsum.photos/seed/pure-hue-incense/640/860" alt="Carved wooden incense holder, placeholder photo" loading="lazy">
+          <span class="rcard-scrim" aria-hidden="true"></span>
+          <span class="rcard-badge">In stock</span>
+          <div class="rcard-body">
+            <p class="rcard-cat">Traditional Objects</p>
+            <h3>Carved Incense Holder</h3>
+            <div class="rcard-foot">
+              <span class="rcard-price">On request</span>
+              <span class="rcard-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="rcard" role="listitem">
+        <a href="#" aria-label="View Bronze Wind Chime">
+          <div class="rcard-ph" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 2v8M8 10h8l-1 12H9L8 10z"/><circle cx="12" cy="2" r="1"/></svg>
+          </div>
+          <span class="rcard-scrim" aria-hidden="true"></span>
+          <span class="rcard-badge order">Made to order</span>
+          <div class="rcard-body">
+            <p class="rcard-cat">Traditional Objects</p>
+            <h3>Bronze Wind Chime</h3>
+            <div class="rcard-foot">
+              <span class="rcard-price">On request</span>
+              <span class="rcard-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <img src="../images/Logo varijacije white.png" alt="Pure Community Support" style="height:38px;width:auto;">
+    <ul class="footer-links" role="list">
+      <li><a href="/shop">Shop</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/impact">Impact</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="mailto:hello@purecommunitysupport.vn">Contact</a></li>
+    </ul>
+    <span>© 2026 Pure Community Support · Hue, Vietnam</span>
+  </footer>
+
+  <button id="scroll-top" aria-label="Scroll to top">↑</button>
+
+  <script>
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    const scrollBtn = document.getElementById('scroll-top');
+    window.addEventListener('scroll', () => {
+      scrollBtn.style.opacity = window.scrollY > 120 ? '1' : '0';
+      scrollBtn.style.pointerEvents = window.scrollY > 120 ? 'auto' : 'none';
+    }, { passive: true });
+    scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  </script>
+
+</body>
+</html>

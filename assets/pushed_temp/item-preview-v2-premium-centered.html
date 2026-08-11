@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ceremonial Gong — Hue Traditional Handicrafts | Pure Community Support</title>
+  <meta name="description" content="Hand-forged bronze ceremonial gong made by Hue artisans, hammered to shape and tuned by ear. 50% of net profit supports disadvantaged families in Hue, Vietnam.">
+  <meta name="keywords" content="Hue ceremonial gong, Vietnamese bronze gong, handmade gong Vietnam, traditional Hue handicrafts, meditation gong">
+  <meta property="og:title" content="Ceremonial Gong — Pure Community Support">
+  <meta property="og:description" content="Hand-forged bronze gong from Hue. Half of every sale's net profit supports families in Hue.">
+  <meta property="og:type" content="product">
+  <link rel="canonical" href="https://purecommunitysupport.com/en/shop/ceremonial-gong">
+  <link rel="icon" href="../images/Vector Logo Pure Community support 2-15.svg" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="../images/Vector Logo Pure Community support 2-13.svg" media="(prefers-color-scheme: dark)">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    @font-face {
+      font-family: 'Gemola';
+      src: url('../../-temp/Logos & fonts/Gemola.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    :root {
+      --cream:   #F5F1EA;
+      --greige:  #DAD1C4;
+      --tan:     #B2967D;
+      --purple:  #652E86;
+      --brown:   #4A342A;
+      --deep:    #2E1A14;
+      --muted:   #6B4E3C;
+      --white:   #ffffff;
+      --border:  rgba(178,150,125,0.22);
+
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-gemola:  'Gemola', Georgia, serif;
+      --font-body:    'Be Vietnam Pro', sans-serif;
+
+      --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--brown);
+      background: var(--cream);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 84px; /* room for the sticky bar */
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    h1, h2 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    :focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; border-radius: 2px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    /* ── Nav ─────────────────────────────────── */
+    .nav { background: var(--brown); position: relative; z-index: 100; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; padding: 0 4em; }
+    .nav-logo { display: flex; align-items: center; }
+    .nav-logo img { height: 5vw; width: auto; display: block; margin-block: 1vw; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(245,241,234,0.7);
+      position: relative; padding-bottom: 2px;
+      transition: color 0.3s var(--ease-soft);
+    }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--tan);
+      transition: width 0.3s var(--ease-soft);
+    }
+    .nav-link:hover { color: var(--cream); }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link.active { color: var(--cream); }
+    .nav-link.active::after { width: 100%; }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .lang-switcher { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; color: rgba(245,241,234,0.45); }
+    .lang-switcher span { cursor: pointer; padding: 4px 6px; border-radius: 2px; transition: color 0.3s, background 0.3s; }
+    .lang-switcher span.active { color: var(--cream); background: rgba(255,255,255,0.1); }
+    .lang-switcher .sep { color: rgba(255,255,255,0.2); }
+    .nav-cta {
+      background: var(--tan); color: var(--cream);
+      font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 10px 22px; border-radius: 2px;
+      transition: background 0.3s var(--ease-soft);
+    }
+    .nav-cta:hover { background: #8B6E5A; }
+    .nav-toggle { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 40px; height: 40px; }
+    .nav-toggle-bar { display: block; width: 22px; height: 2px; background: rgba(255,255,255,0.85); border-radius: 1px; transition: transform 0.25s ease, opacity 0.2s ease; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── Hero ────────────────────────────────── */
+    .hero {
+      position: relative;
+      height: 74vh;
+      min-height: 460px;
+      overflow: hidden;
+      background: var(--deep);
+    }
+    .hero img {
+      width: 100%; height: 100%; object-fit: cover;
+      object-position: center 32%;
+      transform: scale(1.03);
+      transition: transform 1.6s var(--ease-expo);
+    }
+    .hero:hover img { transform: scale(1.07); }
+    .hero-scrim {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(46,26,20,0.55) 0%,
+        rgba(46,26,20,0.15) 38%,
+        rgba(46,26,20,0.82) 100%);
+    }
+    .hero-body {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: 0 4em 52px;
+      text-align: center;
+      color: var(--white);
+    }
+    .hero-eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.26em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 18px;
+    }
+    .hero-body h1 {
+      font-family: var(--font-gemola);
+      font-size: clamp(40px, 6vw, 88px);
+      font-weight: 400; line-height: 1.0; margin-bottom: 16px;
+    }
+    .hero-sub { font-size: 15px; color: rgba(255,255,255,0.66); max-width: 480px; margin: 0 auto; }
+
+    /* ── Thumb rail ──────────────────────────── */
+    .rail {
+      display: flex; justify-content: center; gap: 12px;
+      padding: 26px 4em;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .rail-thumb {
+      width: 78px; aspect-ratio: 1;
+      overflow: hidden; border-radius: 4px;
+      background: var(--greige);
+      border: 1.5px solid transparent;
+      transition: border-color 0.35s var(--ease-soft),
+                  transform 0.45s var(--ease-out),
+                  box-shadow 0.45s var(--ease-out);
+    }
+    .rail-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s var(--ease-out); }
+    .rail-thumb:hover {
+      transform: translateY(-4px);
+      border-color: var(--tan);
+      box-shadow: 0 10px 22px rgba(74,52,42,0.16);
+    }
+    .rail-thumb:hover img { transform: scale(1.12); }
+    .rail-thumb.active { border-color: var(--purple); }
+    .rail-ph {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(145deg, var(--greige), #C9BEAD);
+    }
+    .rail-ph svg { width: 24px; height: 24px; stroke: rgba(74,52,42,0.32); fill: none; stroke-width: 1.3; }
+
+    /* ── Centered content ────────────────────── */
+    .wrap { max-width: 720px; margin: 0 auto; padding: 0 1.5em; }
+
+    .intro { padding: 72px 0 0; text-align: center; }
+    .price-line {
+      display: inline-flex; align-items: baseline; gap: 12px;
+      margin-bottom: 22px;
+    }
+    .price { font-family: var(--font-display); font-size: 32px; }
+    .price-note { font-size: 12.5px; color: var(--tan); }
+    .stock {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12.5px; font-weight: 600; color: #2d6a4f;
+      margin-bottom: 26px;
+    }
+    .stock-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #2d6a4f;
+      animation: pulse 2.4s infinite;
+    }
+    @keyframes pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(45,106,79,0.45); }
+      70%  { box-shadow: 0 0 0 7px rgba(45,106,79,0); }
+      100% { box-shadow: 0 0 0 0 rgba(45,106,79,0); }
+    }
+    .lede {
+      font-size: 17px; color: var(--muted); line-height: 1.85;
+      margin-bottom: 20px;
+    }
+    .lede strong { color: var(--brown); font-weight: 600; }
+
+    /* rule with a centered diamond */
+    .rule {
+      display: flex; align-items: center; gap: 16px;
+      margin: 56px 0 40px;
+      color: var(--greige);
+    }
+    .rule::before, .rule::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .rule span {
+      width: 7px; height: 7px; background: var(--tan);
+      transform: rotate(45deg); flex-shrink: 0;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 26px; font-weight: 400;
+      text-align: center; margin-bottom: 26px;
+    }
+
+    /* Spec cards */
+    .spec-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 2px; background: var(--border);
+      border: 1px solid var(--border); border-radius: 5px;
+      overflow: hidden;
+    }
+    .spec {
+      background: var(--cream); padding: 20px 22px;
+      transition: background 0.35s var(--ease-soft);
+    }
+    .spec:hover { background: var(--white); }
+    .spec dt {
+      font-size: 9.5px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 6px;
+    }
+    .spec dd { font-size: 14.5px; color: var(--brown); }
+
+    /* Purpose banner */
+    .purpose {
+      margin: 52px 0 0;
+      background: var(--purple); color: var(--white);
+      border-radius: 5px; padding: 32px 34px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .purpose::before {
+      content: ''; position: absolute;
+      left: -60px; bottom: -60px; width: 220px; height: 220px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .purpose h3 {
+      font-family: var(--font-display); font-size: 23px;
+      font-weight: 400; margin-bottom: 9px; position: relative;
+    }
+    .purpose p { font-size: 14.5px; color: rgba(255,255,255,0.75); line-height: 1.7; position: relative; }
+
+    /* Artisan */
+    .artisan {
+      display: flex; align-items: center; justify-content: center;
+      gap: 15px; margin-top: 48px;
+      padding: 22px; border: 1px solid var(--border); border-radius: 5px;
+      transition: border-color 0.4s var(--ease-soft), transform 0.45s var(--ease-out);
+    }
+    .artisan:hover { border-color: var(--tan); transform: translateY(-2px); }
+    .artisan-avatar {
+      width: 50px; height: 50px; border-radius: 50%;
+      background: linear-gradient(140deg, var(--tan), var(--brown));
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-size: 19px; color: var(--cream);
+      flex-shrink: 0;
+      transition: transform 0.5s var(--ease-out);
+    }
+    .artisan:hover .artisan-avatar { transform: rotate(-6deg) scale(1.06); }
+    .artisan-meta p:first-child { font-size: 9.5px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--tan); }
+    .artisan-meta p:last-child { font-family: var(--font-display); font-size: 18px; }
+
+    /* ── Related ─────────────────────────────── */
+    .related { padding: 88px 4em 96px; margin-top: 76px; background: #FAF7F3; border-top: 1px solid var(--border); }
+    .related-head { text-align: center; margin-bottom: 42px; }
+    .related-head p {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 12px;
+    }
+    .related-head h2 { font-family: var(--font-display); font-size: clamp(24px, 2.6vw, 36px); font-weight: 400; }
+    .related-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 32px 24px; max-width: 1180px; margin: 0 auto;
+    }
+    .card {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+      transition: transform 0.5s var(--ease-out),
+                  box-shadow 0.5s var(--ease-out),
+                  border-color 0.4s var(--ease-soft);
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(74,52,42,0.14);
+      border-color: var(--tan);
+    }
+    .card-media { position: relative; aspect-ratio: 1; overflow: hidden; background: var(--greige); }
+    .card-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s var(--ease-out); }
+    .card:hover .card-media img { transform: scale(1.08); }
+    .card-ph {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(145deg, var(--greige), #C9BEAD);
+      transition: transform 1.1s var(--ease-out);
+    }
+    .card:hover .card-ph { transform: scale(1.06); }
+    .card-ph svg { width: 42px; height: 42px; stroke: rgba(74,52,42,0.3); fill: none; stroke-width: 1.2; }
+    .card-badge {
+      position: absolute; top: 12px; left: 12px;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; padding: 5px 10px; border-radius: 2px;
+      background: rgba(245,241,234,0.94); color: var(--muted); backdrop-filter: blur(6px);
+    }
+    .card-badge.order { background: rgba(250,240,225,0.95); color: #7a3d00; }
+    .card-body { padding: 16px 18px 18px; }
+    .card-cat { font-size: 9.5px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--tan); margin-bottom: 6px; }
+    .card h3 { font-family: var(--font-display); font-size: 18px; font-weight: 400; line-height: 1.25; margin-bottom: 10px; transition: color 0.35s var(--ease-soft); }
+    .card:hover h3 { color: var(--purple); }
+    .card-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 11px; border-top: 1px solid var(--border); }
+    .card-price { font-family: var(--font-display); font-size: 15.5px; }
+    .card-arrow {
+      width: 27px; height: 27px; border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.4s var(--ease-soft), border-color 0.4s, transform 0.5s var(--ease-out);
+    }
+    .card-arrow svg { width: 12px; height: 12px; stroke: var(--muted); fill: none; stroke-width: 2; transition: stroke 0.4s; }
+    .card:hover .card-arrow { background: var(--purple); border-color: var(--purple); transform: rotate(-45deg); }
+    .card:hover .card-arrow svg { stroke: var(--white); }
+
+    /* ── Sticky purchase bar ─────────────────── */
+    .buy-bar {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
+      background: rgba(245,241,234,0.93);
+      backdrop-filter: blur(18px);
+      border-top: 1px solid var(--border);
+      padding: 14px 4em;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.5em; flex-wrap: wrap;
+      box-shadow: 0 -8px 28px rgba(74,52,42,0.07);
+    }
+    .buy-info { display: flex; align-items: center; gap: 14px; min-width: 0; }
+    .buy-thumb {
+      width: 46px; height: 46px; border-radius: 4px; overflow: hidden;
+      background: var(--greige); flex-shrink: 0;
+    }
+    .buy-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .buy-name { font-family: var(--font-display); font-size: 17px; line-height: 1.2; }
+    .buy-price { font-size: 12.5px; color: var(--tan); }
+    .buy-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    /* Quantity — segmented pill */
+    .qty {
+      display: inline-flex; align-items: center;
+      background: rgba(178,150,125,0.12);
+      border-radius: 40px; padding: 3px;
+    }
+    .qty-btn {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      transition: background 0.32s var(--ease-soft), color 0.32s var(--ease-soft), transform 0.3s var(--ease-out);
+    }
+    .qty-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.3; }
+    .qty-btn:hover { background: var(--brown); color: var(--white); transform: scale(1.08); }
+    .qty-value {
+      min-width: 38px; text-align: center;
+      font-family: var(--font-display); font-size: 17px;
+    }
+
+    .btn {
+      position: relative;
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 14px 30px; border-radius: 40px;
+      font-size: 12.5px; font-weight: 600; letter-spacing: 0.09em;
+      text-transform: uppercase;
+      overflow: hidden; z-index: 1;
+      transition: color 0.4s var(--ease-soft), transform 0.45s var(--ease-out), box-shadow 0.45s var(--ease-out);
+    }
+    .btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.9; transition: transform 0.45s var(--ease-out); }
+    .btn-primary { background: var(--brown); color: var(--cream); }
+    .btn-primary::before {
+      content: ''; position: absolute; inset: 0; background: var(--purple);
+      transform: scale(0); border-radius: 40px;
+      transition: transform 0.55s var(--ease-out);
+      z-index: -1;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(74,52,42,0.26); }
+    .btn-primary:hover::before { transform: scale(1); }
+    .btn-primary:hover svg { transform: scale(1.14) rotate(-8deg); }
+    .btn-ghost { border: 1.5px solid var(--border); color: var(--brown); }
+    .btn-ghost:hover { border-color: var(--brown); background: rgba(74,52,42,0.05); transform: translateY(-2px); }
+
+    footer {
+      background: var(--deep); color: rgba(255,255,255,0.42);
+      padding: 30px 4em;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; gap: 1rem; flex-wrap: wrap;
+    }
+    footer a { color: rgba(255,255,255,0.42); transition: color 0.3s var(--ease-soft); }
+    footer a:hover { color: rgba(255,255,255,0.9); }
+    .footer-links { display: flex; gap: 1.5em; }
+
+    #scroll-top {
+      position: fixed; bottom: 6.5rem; right: 2rem; z-index: 200;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--brown); border: 1.5px solid var(--tan);
+      color: var(--cream); font-size: 20px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.2s ease;
+    }
+    #scroll-top:hover { transform: translateY(-3px); background: var(--tan); }
+
+    @media (max-width: 900px) {
+      .nav-inner { padding: 0 1.5em; }
+      .nav-toggle { display: flex; }
+      .nav-right { display: none; }
+      .nav-links {
+        position: absolute; top: 100%; left: 0; right: 0;
+        flex-direction: column; align-items: stretch; gap: 0;
+        background: var(--brown);
+        max-height: 0; opacity: 0; overflow: hidden;
+        transition: max-height 0.35s ease, opacity 0.25s ease;
+      }
+      .nav-links.open { max-height: 400px; opacity: 1; }
+      .nav-link { display: block; padding: 14px 1.5em; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .nav-links li:last-child .nav-link { border-bottom: none; }
+      .hero-body { padding: 0 1.5em 40px; }
+      .rail { padding: 20px 1.5em; }
+      .spec-grid { grid-template-columns: 1fr; }
+      .related { padding: 60px 1.5em 68px; }
+      .buy-bar { padding: 12px 1.5em; justify-content: center; }
+      .buy-info { display: none; }
+      footer { padding: 24px 1.5em; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="../../index.html" class="nav-logo">
+        <img src="../images/Logo varijacije white.png" alt="Pure Community Support">
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="/"       class="nav-link">Home</a></li>
+        <li><a href="/shop"   class="nav-link active">Shop</a></li>
+        <li><a href="/about"  class="nav-link">About</a></li>
+        <li><a href="/cases"  class="nav-link">Campaigns</a></li>
+        <li><a href="/impact" class="nav-link">Impact</a></li>
+        <li><a href="/blog"   class="nav-link">Blog</a></li>
+      </ul>
+      <div class="nav-right">
+        <div class="lang-switcher">
+          <span class="active">EN</span>
+          <span class="sep">/</span>
+          <span><a href="/vi/">VI</a></span>
+        </div>
+        <a href="/shop" class="nav-cta">Shop Now</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <img src="../images/DSC07542.jpeg" alt="Hue traditional ceremonial gong, hand-forged bronze" loading="eager">
+    <div class="hero-scrim" aria-hidden="true"></div>
+    <div class="hero-body">
+      <p class="hero-eyebrow">Traditional Objects</p>
+      <h1>Ceremonial Gong</h1>
+      <p class="hero-sub">Hand-forged bronze, hammered to shape and tuned entirely by ear in Hue.</p>
+    </div>
+  </header>
+
+  <!-- Thumb rail -->
+  <div class="rail" role="list" aria-label="Product images">
+    <button class="rail-thumb active" role="listitem" aria-label="View image 1">
+      <img src="../images/DSC07542.jpeg" alt="Ceremonial gong, front view" loading="lazy">
+    </button>
+    <button class="rail-thumb" role="listitem" aria-label="View image 2">
+      <img src="../images/DSC07535.jpeg" alt="Ceremonial gong, rim detail" loading="lazy">
+    </button>
+    <button class="rail-thumb" role="listitem" aria-label="View image 3">
+      <div class="rail-ph" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg></div>
+    </button>
+    <button class="rail-thumb" role="listitem" aria-label="View image 4">
+      <div class="rail-ph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 12h18M12 3v18"/></svg></div>
+    </button>
+    <button class="rail-thumb" role="listitem" aria-label="View image 5">
+      <div class="rail-ph" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/></svg></div>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <main class="wrap">
+    <div class="intro">
+      <div class="price-line">
+        <span class="price">On request</span>
+        <span class="price-note">Pricing confirmed at inquiry</span>
+      </div>
+      <br>
+      <span class="stock"><span class="stock-dot" aria-hidden="true"></span>In stock — ready to ship</span>
+
+      <p class="lede">
+        This gong follows a form used in Hue ceremonial and meditative practice for generations.
+        <strong>A single strike holds its note for close to a minute</strong>, settling a room
+        the way nothing else quite does.
+      </p>
+      <p class="lede">
+        Because each piece is worked by hand, no two share exactly the same tone. Small variations
+        in the hammer marks and patina are inherent to the process, not defects in it.
+      </p>
+    </div>
+
+    <div class="rule" aria-hidden="true"><span></span></div>
+
+    <h2 class="section-title">Details</h2>
+    <dl class="spec-grid">
+      <div class="spec"><dt>Material</dt><dd>Cast bronze, hand-hammered finish</dd></div>
+      <div class="spec"><dt>Craft type</dt><dd>Metal forging, tuned by ear</dd></div>
+      <div class="spec"><dt>Origin</dt><dd>Hue, Vietnam</dd></div>
+      <div class="spec"><dt>Dimensions</dt><dd>Approx. 30 cm diameter</dd></div>
+      <div class="spec"><dt>Includes</dt><dd>Padded mallet and hanging cord</dd></div>
+      <div class="spec"><dt>Lead time</dt><dd>Ships within 5–7 business days</dd></div>
+    </dl>
+
+    <div class="purpose">
+      <h3>Half of this sale returns to Hue</h3>
+      <p>
+        After operating costs, 50% of net profit from every product sold goes directly to community
+        support in Hue — children's health, education, and living conditions. We publish the numbers
+        every quarter.
+      </p>
+    </div>
+
+    <div class="artisan">
+      <div class="artisan-avatar" aria-hidden="true">H</div>
+      <div class="artisan-meta">
+        <p>Made by</p>
+        <p>Hue metalwork studio</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Related -->
+  <section class="related" aria-labelledby="related-heading">
+    <div class="related-head">
+      <p>Same category</p>
+      <h2 id="related-heading">More in Traditional Objects</h2>
+    </div>
+
+    <div class="related-grid" role="list">
+
+      <article class="card" role="listitem">
+        <a href="#" aria-label="View Singing Bowl">
+          <div class="card-media">
+            <img src="../images/DSC07535.jpeg" alt="Hue ceremonial singing bowl" loading="lazy" style="object-position:center top;">
+            <span class="card-badge">In stock</span>
+          </div>
+          <div class="card-body">
+            <p class="card-cat">Traditional Objects</p>
+            <h3>Singing Bowl</h3>
+            <div class="card-foot">
+              <span class="card-price">On request</span>
+              <span class="card-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="card" role="listitem">
+        <a href="#" aria-label="View Ceremonial Bell">
+          <div class="card-media">
+            <img src="https://picsum.photos/seed/pure-hue-bell/640/640" alt="Hand-cast ceremonial bell, placeholder photo" loading="lazy">
+            <span class="card-badge">In stock</span>
+          </div>
+          <div class="card-body">
+            <p class="card-cat">Traditional Objects</p>
+            <h3>Ceremonial Bell</h3>
+            <div class="card-foot">
+              <span class="card-price">On request</span>
+              <span class="card-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="card" role="listitem">
+        <a href="#" aria-label="View Carved Incense Holder">
+          <div class="card-media">
+            <img src="https://picsum.photos/seed/pure-hue-incense/640/640" alt="Carved wooden incense holder, placeholder photo" loading="lazy">
+            <span class="card-badge">In stock</span>
+          </div>
+          <div class="card-body">
+            <p class="card-cat">Traditional Objects</p>
+            <h3>Carved Incense Holder</h3>
+            <div class="card-foot">
+              <span class="card-price">On request</span>
+              <span class="card-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+      <article class="card" role="listitem">
+        <a href="#" aria-label="View Bronze Wind Chime">
+          <div class="card-media">
+            <div class="card-ph" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 2v8M8 10h8l-1 12H9L8 10z"/><circle cx="12" cy="2" r="1"/></svg>
+            </div>
+            <span class="card-badge order">Made to order</span>
+          </div>
+          <div class="card-body">
+            <p class="card-cat">Traditional Objects</p>
+            <h3>Bronze Wind Chime</h3>
+            <div class="card-foot">
+              <span class="card-price">On request</span>
+              <span class="card-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      </article>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <img src="../images/Logo varijacije white.png" alt="Pure Community Support" style="height:38px;width:auto;">
+    <ul class="footer-links" role="list">
+      <li><a href="/shop">Shop</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/impact">Impact</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="mailto:hello@purecommunitysupport.vn">Contact</a></li>
+    </ul>
+    <span>© 2026 Pure Community Support · Hue, Vietnam</span>
+  </footer>
+
+  <!-- Sticky purchase bar -->
+  <div class="buy-bar" role="region" aria-label="Purchase">
+    <div class="buy-info">
+      <div class="buy-thumb">
+        <img src="../images/DSC07542.jpeg" alt="" role="presentation">
+      </div>
+      <div>
+        <p class="buy-name">Ceremonial Gong</p>
+        <p class="buy-price">On request · In stock</p>
+      </div>
+    </div>
+    <div class="buy-actions">
+      <div class="qty" role="group" aria-label="Quantity">
+        <button class="qty-btn" aria-label="Decrease quantity">
+          <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <span class="qty-value" aria-live="polite">1</span>
+        <button class="qty-btn" aria-label="Increase quantity">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+      </div>
+      <button class="btn btn-ghost">Ask about this</button>
+      <button class="btn btn-primary">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        Add to cart
+      </button>
+    </div>
+  </div>
+
+  <button id="scroll-top" aria-label="Scroll to top">↑</button>
+
+  <script>
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    const scrollBtn = document.getElementById('scroll-top');
+    window.addEventListener('scroll', () => {
+      scrollBtn.style.opacity = window.scrollY > 120 ? '1' : '0';
+      scrollBtn.style.pointerEvents = window.scrollY > 120 ? 'auto' : 'none';
+    }, { passive: true });
+    scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  </script>
+
+</body>
+</html>
