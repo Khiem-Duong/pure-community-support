@@ -1049,7 +1049,7 @@
       const end = Math.min(page * PAGE_SIZE, TOTAL_ITEMS);
       resultCount.textContent = `Showing ${start}–${end} of ${TOTAL_ITEMS} products`;
 
-      document.querySelector('.shop-header').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.querySelector('.filter-bar').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     pageButtons.forEach(btn => {
