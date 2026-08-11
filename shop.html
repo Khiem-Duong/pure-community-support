@@ -84,32 +84,76 @@
       justify-content: space-between;
       padding: 0 4em;
     }
+    .nav-logo { display: flex; align-items: center; }
     .nav-logo img { height: 5vw; width: auto; display: block; margin-block: 1vw; }
-    .nav-links { display: flex; gap: 2em; }
-    .nav-links a {
-      color: rgba(255,255,255,0.7);
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 0.04em;
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+    }
+    .nav-link {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(245,241,234,0.7);
       position: relative;
-      padding-block: 4px;
+      padding-bottom: 2px;
       transition: color 0.3s var(--ease-soft);
     }
-    .nav-links a::after {
+    .nav-link::after {
       content: '';
       position: absolute;
-      left: 0; bottom: 0;
-      width: 100%;
-      height: 1px;
+      bottom: -2px; left: 0;
+      width: 0; height: 1px;
       background: var(--tan);
-      transform: scaleX(0);
-      transform-origin: right;
-      transition: transform 0.4s var(--ease-out);
+      transition: width 0.3s var(--ease-soft);
     }
-    .nav-links a:hover { color: #fff; }
-    .nav-links a:hover::after,
-    .nav-links a.active::after { transform: scaleX(1); transform-origin: left; }
-    .nav-links a.active { color: #fff; }
+    .nav-link:hover { color: var(--cream); }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link.active { color: var(--cream); }
+    .nav-link.active::after { width: 100%; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: rgba(245,241,234,0.45);
+    }
+    .lang-switcher span {
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 2px;
+      transition: color 0.3s var(--ease-soft), background 0.3s var(--ease-soft);
+    }
+    .lang-switcher span.active { color: var(--cream); background: rgba(255,255,255,0.1); }
+    .lang-switcher span:hover  { color: var(--cream); }
+    .lang-switcher .sep { color: rgba(255,255,255,0.2); }
+    .nav-cta {
+      background: var(--tan);
+      color: var(--cream);
+      border: none;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 10px 22px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.3s var(--ease-soft);
+    }
+    .nav-cta:hover { background: #8B6E5A; }
     .nav-toggle {
       display: none;
       flex-direction: column;
@@ -536,12 +580,14 @@
     @media (max-width: 900px) {
       .nav-inner { padding: 0 1.5em; }
       .nav-toggle { display: flex; }
+      .nav-right { display: none; }
       .nav-links {
         position: absolute;
         top: 100%;
         left: 0;
         right: 0;
         flex-direction: column;
+        align-items: stretch;
         gap: 0;
         background: var(--brown);
         max-height: 0;
@@ -550,8 +596,8 @@
         transition: max-height 0.35s ease, opacity 0.25s ease;
       }
       .nav-links.open { max-height: 400px; opacity: 1; }
-      .nav-links a { display: block; padding: 14px 1.5em; border-bottom: 1px solid rgba(255,255,255,0.06); }
-      .nav-links li:last-child a { border-bottom: none; }
+      .nav-link { display: block; padding: 14px 1.5em; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .nav-links li:last-child .nav-link { border-bottom: none; }
       .shop-header { padding: 48px 1.5em 32px; }
       .filter-bar { padding: 14px 1.5em; }
       .products { padding: 36px 1.5em 48px; }
@@ -570,12 +616,21 @@
         <img src="assets/images/Logo varijacije white.png" alt="Pure Community Support">
       </a>
       <ul class="nav-links" id="nav-links" role="list">
-        <li><a href="/shop" class="active">Shop</a></li>
-        <li><a href="/about">About</a></li>
-        <li><a href="/cases">Cases &amp; Campaigns</a></li>
-        <li><a href="/impact">Impact</a></li>
-        <li><a href="/blog">Blog</a></li>
+        <li><a href="/"      class="nav-link">Home</a></li>
+        <li><a href="/shop"  class="nav-link active">Shop</a></li>
+        <li><a href="/about" class="nav-link">About</a></li>
+        <li><a href="/cases" class="nav-link">Campaigns</a></li>
+        <li><a href="/impact" class="nav-link">Impact</a></li>
+        <li><a href="/blog"  class="nav-link">Blog</a></li>
       </ul>
+      <div class="nav-right">
+        <div class="lang-switcher">
+          <span class="active">EN</span>
+          <span class="sep">/</span>
+          <span><a href="/vi/">VI</a></span>
+        </div>
+        <a href="/shop" class="nav-cta">Shop Now</a>
+      </div>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
         <span class="nav-toggle-bar"></span>
         <span class="nav-toggle-bar"></span>

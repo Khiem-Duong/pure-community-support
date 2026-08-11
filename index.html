@@ -221,6 +221,8 @@
     }
     .nav-link:hover { color: var(--cream); }
     .nav-link:hover::after { width: 100%; }
+    .nav-link.active { color: var(--cream); }
+    .nav-link.active::after { width: 100%; }
 
     .nav-right {
       display: flex;
@@ -1075,6 +1077,7 @@
       </a>
 
       <ul class="nav-links">
+        <li><a href="/"         class="nav-link active">Home</a></li>
         <li><a href="/shop"     class="nav-link">Shop</a></li>
         <li><a href="/about"    class="nav-link">About</a></li>
         <li><a href="/cases"    class="nav-link">Campaigns</a></li>
