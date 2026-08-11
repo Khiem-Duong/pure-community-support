@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop Hue Traditional Handicrafts — Pure Community Support</title>
+  <meta name="description" content="Browse handmade Hue traditional handicrafts by category — ceremonial objects, silk apparel, handwoven bags, and home textiles. 50% of net profit supports disadvantaged families in Hue, Vietnam.">
+  <meta name="keywords" content="Hue handicrafts shop, buy Vietnamese handicrafts, handmade Hue gong, silk kimono Vietnam, handwoven tote bag, Vietnamese home textiles">
+  <meta property="og:title" content="Shop — Pure Community Support">
+  <meta property="og:description" content="Handmade Hue traditional handicrafts. Half of every sale's net profit supports families in Hue.">
+  <meta property="og:type" content="website">
+  <link rel="canonical" href="https://purecommunitysupport.com/en/shop">
+  <link rel="alternate" hreflang="vi" href="https://purecommunitysupport.com/vi/cua-hang">
+  <link rel="alternate" hreflang="en" href="https://purecommunitysupport.com/en/shop">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    @font-face {
+      font-family: 'Gemola';
+      src: url('../../-temp/Logos & fonts/Gemola.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    :root {
+      --cream:   #F5F1EA;
+      --greige:  #DAD1C4;
+      --tan:     #B2967D;
+      --purple:  #652E86;
+      --brown:   #4A342A;
+      --muted:   #6B4E3C;
+      --white:   #ffffff;
+      --border:  rgba(178,150,125,0.22);
+
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-gemola:  'Gemola', Georgia, serif;
+      --font-body:    'Be Vietnam Pro', sans-serif;
+
+      --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+      --radius: 6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--brown);
+      background: var(--cream);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    :focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; border-radius: 2px; }
+
+    /* ── Nav ─────────────────────────────────── */
+    .nav { background: var(--brown); position: relative; z-index: 100; }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 3em;
+    }
+    .nav-logo img { height: 5vw; width: auto; display: block; margin-block: 1vw; }
+    .nav-links { display: flex; gap: 2em; }
+    .nav-links a {
+      color: rgba(255,255,255,0.7);
+      font-size: 13px; font-weight: 500; letter-spacing: 0.04em;
+      position: relative; padding-block: 4px;
+      transition: color 0.3s var(--ease-soft);
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; left: 0; bottom: 0;
+      width: 100%; height: 1px; background: var(--tan);
+      transform: scaleX(0); transform-origin: right;
+      transition: transform 0.4s var(--ease-out);
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); transform-origin: left; }
+    .nav-links a.active { color: #fff; }
+
+    /* ── Compact header ──────────────────────── */
+    .shop-head {
+      padding: 40px 3em 28px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2em;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+    .shop-head h1 {
+      font-family: var(--font-gemola);
+      font-size: clamp(30px, 3.6vw, 52px);
+      font-weight: 400;
+      line-height: 1.05;
+    }
+    .eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 12px;
+    }
+    .shop-head p { font-size: 14px; color: var(--muted); max-width: 420px; line-height: 1.7; }
+
+    /* ── Shell: sidebar + bento ──────────────── */
+    .shell {
+      display: grid;
+      grid-template-columns: 248px 1fr;
+      align-items: start;
+    }
+
+    /* ── Sidebar filters ─────────────────────── */
+    .sidebar {
+      position: sticky;
+      top: 0;
+      padding: 32px 24px 40px;
+      border-right: 1px solid var(--border);
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+    .filter-block { margin-bottom: 30px; }
+    .filter-title {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--tan);
+      padding-bottom: 10px; margin-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
+      padding: 9px 12px;
+      margin-bottom: 2px;
+      border-radius: 4px;
+      font-size: 13.5px;
+      color: var(--muted);
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.3s var(--ease-soft),
+                  padding-left 0.4s var(--ease-out);
+    }
+    .filter-item::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: var(--purple);
+      transform: scaleY(0);
+      transform-origin: center;
+      transition: transform 0.4s var(--ease-out);
+    }
+    .filter-item:hover {
+      color: var(--brown);
+      background: rgba(178,150,125,0.09);
+      padding-left: 18px;
+    }
+    .filter-item:hover::before { transform: scaleY(1); }
+    .filter-item.active {
+      color: var(--purple);
+      background: rgba(101,46,134,0.07);
+      font-weight: 600;
+      padding-left: 18px;
+    }
+    .filter-item.active::before { transform: scaleY(1); }
+    .filter-count {
+      font-size: 11px;
+      color: var(--tan);
+      background: rgba(178,150,125,0.14);
+      padding: 2px 8px;
+      border-radius: 20px;
+      flex-shrink: 0;
+      transition: background 0.3s var(--ease-soft), color 0.3s var(--ease-soft);
+    }
+    .filter-item:hover .filter-count,
+    .filter-item.active .filter-count {
+      background: var(--purple);
+      color: var(--white);
+    }
+
+    /* checkbox-style filters */
+    .check-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 4px;
+      font-size: 13px; color: var(--muted);
+      cursor: pointer;
+      transition: color 0.3s var(--ease-soft);
+    }
+    .check-item:hover { color: var(--brown); }
+    .check-box {
+      width: 15px; height: 15px;
+      border: 1.5px solid var(--greige);
+      border-radius: 3px;
+      flex-shrink: 0;
+      position: relative;
+      transition: border-color 0.3s var(--ease-soft),
+                  background 0.3s var(--ease-soft),
+                  transform 0.3s var(--ease-out);
+    }
+    .check-item:hover .check-box { border-color: var(--tan); transform: scale(1.12); }
+    .check-item.checked .check-box { background: var(--purple); border-color: var(--purple); }
+    .check-box::after {
+      content: '';
+      position: absolute;
+      left: 4px; top: 1px;
+      width: 4px; height: 8px;
+      border: solid var(--white);
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg) scale(0);
+      transition: transform 0.3s var(--ease-out);
+    }
+    .check-item.checked .check-box::after { transform: rotate(45deg) scale(1); }
+
+    .clear-btn {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      transition: all 0.35s var(--ease-soft);
+    }
+    .clear-btn:hover {
+      background: var(--brown);
+      border-color: var(--brown);
+      color: var(--white);
+    }
+
+    /* ── Bento grid ──────────────────────────── */
+    .bento-wrap { padding: 32px 3em 80px; }
+    .bento-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1em; flex-wrap: wrap; margin-bottom: 24px;
+    }
+    .result-count { font-size: 13px; color: var(--tan); letter-spacing: 0.04em; }
+    .sort-select {
+      font-size: 13px; color: var(--muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 8px 14px; cursor: pointer;
+      transition: border-color 0.3s var(--ease-soft);
+    }
+    .sort-select:hover { border-color: var(--tan); }
+
+    .bento {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-auto-rows: 232px;
+      gap: 14px;
+    }
+
+    /* ── Bento tile ──────────────────────────── */
+    .tile {
+      position: relative;
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: var(--greige);
+      transition: transform 0.55s var(--ease-out),
+                  box-shadow 0.55s var(--ease-out);
+    }
+    .tile:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 18px 40px rgba(74,52,42,0.18);
+    }
+    .tile a { display: block; width: 100%; height: 100%; }
+
+    /* size variants */
+    .tile.wide  { grid-column: span 2; }
+    .tile.tall  { grid-row: span 2; }
+    .tile.big   { grid-column: span 2; grid-row: span 2; }
+
+    .tile-media { position: absolute; inset: 0; }
+    .tile-media img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 1.2s var(--ease-out), filter 0.6s var(--ease-soft);
+    }
+    .tile:hover .tile-media img { transform: scale(1.08); }
+
+    .tile-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(150deg, var(--greige) 0%, #C6BAA8 100%);
+      transition: transform 1.2s var(--ease-out);
+    }
+    .tile:hover .tile-placeholder { transform: scale(1.06); }
+    .tile-placeholder svg {
+      width: 48px; height: 48px;
+      stroke: rgba(74,52,42,0.28); fill: none; stroke-width: 1.2;
+    }
+
+    .tile-scrim {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top,
+        rgba(46,26,20,0.86) 0%,
+        rgba(46,26,20,0.42) 42%,
+        rgba(46,26,20,0.02) 78%);
+      transition: opacity 0.55s var(--ease-soft);
+    }
+    .tile:hover .tile-scrim { opacity: 0.94; }
+
+    .tile-body {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      padding: 18px 20px;
+      color: var(--white);
+      transform: translateY(0);
+      transition: transform 0.55s var(--ease-out);
+    }
+    .tile:hover .tile-body { transform: translateY(-6px); }
+
+    .tile-cat {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--tan);
+      margin-bottom: 5px;
+    }
+    .tile-body h3 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 19px;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .tile.big .tile-body h3 { font-size: 30px; }
+    .tile.wide .tile-body h3 { font-size: 23px; }
+
+    /* description slides in on hover */
+    .tile-desc {
+      font-size: 13px;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.5;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.55s var(--ease-out),
+                  opacity 0.45s var(--ease-soft),
+                  margin-top 0.55s var(--ease-out);
+    }
+    .tile:hover .tile-desc {
+      max-height: 70px;
+      opacity: 1;
+      margin-top: 6px;
+    }
+
+    .tile-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; margin-top: 10px;
+    }
+    .tile-price {
+      font-family: var(--font-display);
+      font-size: 15px;
+      color: rgba(255,255,255,0.92);
+    }
+    .tile-arrow {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.32);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.4s var(--ease-soft),
+                  border-color 0.4s var(--ease-soft),
+                  transform 0.5s var(--ease-out);
+    }
+    .tile-arrow svg {
+      width: 13px; height: 13px;
+      stroke: var(--white); fill: none; stroke-width: 2;
+      transition: transform 0.45s var(--ease-out);
+    }
+    .tile:hover .tile-arrow {
+      background: var(--purple);
+      border-color: var(--purple);
+      transform: rotate(-45deg);
+    }
+
+    .tile-badge {
+      position: absolute; top: 14px; left: 14px;
+      font-size: 9px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 5px 10px; border-radius: 3px;
+      background: rgba(245,241,234,0.92);
+      color: var(--muted);
+      backdrop-filter: blur(6px);
+      transition: transform 0.45s var(--ease-out);
+    }
+    .tile:hover .tile-badge { transform: translateY(-3px); }
+    .tile-badge.new { background: var(--purple); color: var(--white); }
+    .tile-badge.order { background: rgba(250,240,225,0.94); color: #7a3d00; }
+
+    /* ── Purpose tile inside bento ───────────── */
+    .tile.purpose {
+      background: var(--purple);
+      display: flex;
+      align-items: center;
+    }
+    .tile.purpose:hover { transform: translateY(-5px); }
+    .purpose-inner { padding: 26px 24px; }
+    .purpose-inner .tile-cat { color: rgba(255,255,255,0.55); }
+    .purpose-inner h3 {
+      font-family: var(--font-display);
+      font-size: 24px; font-weight: 400;
+      color: var(--white);
+      line-height: 1.2; margin-bottom: 8px;
+    }
+    .purpose-inner p {
+      font-size: 13px;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.6;
+    }
+    .purpose-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      margin-top: 14px;
+      font-size: 12.5px; font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      border-bottom: 1px solid rgba(255,255,255,0.35);
+      padding-bottom: 3px;
+      transition: border-color 0.35s var(--ease-soft), gap 0.4s var(--ease-out);
+    }
+    .tile.purpose:hover .purpose-link { border-color: var(--white); gap: 13px; }
+    .purpose-link svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    /* ── Footer ──────────────────────────────── */
+    footer {
+      background: #2E1A14;
+      color: rgba(255,255,255,0.42);
+      padding: 30px 3em;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; gap: 1rem; flex-wrap: wrap;
+    }
+    footer a { color: rgba(255,255,255,0.42); transition: color 0.3s var(--ease-soft); }
+    footer a:hover { color: rgba(255,255,255,0.9); }
+    .footer-links { display: flex; gap: 1.5em; }
+
+    @media (max-width: 1100px) {
+      .bento { grid-template-columns: repeat(2, 1fr); }
+      .tile.big { grid-column: span 2; grid-row: span 2; }
+      .tile.wide { grid-column: span 2; }
+    }
+    @media (max-width: 860px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar {
+        position: static; max-height: none;
+        border-right: none; border-bottom: 1px solid var(--border);
+        padding: 20px 1.5em;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 0 24px;
+      }
+      .shop-head { padding: 32px 1.5em 24px; }
+      .bento-wrap { padding: 24px 1.5em 56px; }
+      .nav-inner { padding: 0 1.5em; }
+      footer { padding: 24px 1.5em; }
+    }
+    @media (max-width: 560px) {
+      .bento { grid-template-columns: 1fr; grid-auto-rows: 220px; }
+      .tile.big, .tile.wide, .tile.tall { grid-column: span 1; grid-row: span 1; }
+      .tile.big .tile-body h3 { font-size: 22px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="../../index.html" class="nav-logo">
+        <img src="../images/Logo varijacije white.png" alt="Pure Community Support">
+      </a>
+      <ul class="nav-links" role="list">
+        <li><a href="#" class="active">Shop</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Cases &amp; Campaigns</a></li>
+        <li><a href="#">Impact</a></li>
+        <li><a href="#">Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="shop-head">
+    <div>
+      <p class="eyebrow">The catalog</p>
+      <h1>Hue handicrafts,<br>made by hand</h1>
+    </div>
+    <p>
+      Ten products across four categories, each made by a Hue artisan.
+      Half of the net profit from every sale supports families in Hue.
+    </p>
+  </header>
+
+  <!-- Shell -->
+  <div class="shell">
+
+    <!-- Sidebar filters -->
+    <aside class="sidebar" aria-label="Product filters">
+
+      <div class="filter-block">
+        <p class="filter-title">Category</p>
+        <button class="filter-item active" aria-pressed="true">
+          <span>All products</span><span class="filter-count">10</span>
+        </button>
+        <button class="filter-item" aria-pressed="false">
+          <span>Traditional Objects</span><span class="filter-count">2</span>
+        </button>
+        <button class="filter-item" aria-pressed="false">
+          <span>Apparel</span><span class="filter-count">3</span>
+        </button>
+        <button class="filter-item" aria-pressed="false">
+          <span>Bags</span><span class="filter-count">2</span>
+        </button>
+        <button class="filter-item" aria-pressed="false">
+          <span>Home &amp; Living</span><span class="filter-count">3</span>
+        </button>
+      </div>
+
+      <div class="filter-block">
+        <p class="filter-title">Craft type</p>
+        <label class="check-item checked">
+          <span class="check-box" aria-hidden="true"></span>
+          <span>Hand-woven</span>
+        </label>
+        <label class="check-item">
+          <span class="check-box" aria-hidden="true"></span>
+          <span>Hand-embroidered</span>
+        </label>
+        <label class="check-item">
+          <span class="check-box" aria-hidden="true"></span>
+          <span>Metal forging</span>
+        </label>
+        <label class="check-item">
+          <span class="check-box" aria-hidden="true"></span>
+          <span>Hand-sewn</span>
+        </label>
+      </div>
+
+      <div class="filter-block">
+        <p class="filter-title">Availability</p>
+        <label class="check-item">
+          <span class="check-box" aria-hidden="true"></span>
+          <span>In stock</span>
+        </label>
+        <label class="check-item">
+          <span class="check-box" aria-hidden="true"></span>
+          <span>Made to order</span>
+        </label>
+      </div>
+
+      <div class="filter-block">
+        <p class="filter-title">Artisan</p>
+        <label class="check-item">
+          <span class="check-box" aria-hidden="true"></span>
+          <span>Hue metalwork studio</span>
+        </label>
+        <label class="check-item">
+          <span class="check-box" aria-hidden="true"></span>
+          <span>Hue textile collective</span>
+        </label>
+      </div>
+
+      <button class="clear-btn">Clear all filters</button>
+    </aside>
+
+    <!-- Bento grid -->
+    <main class="bento-wrap">
+      <div class="bento-bar">
+        <p class="result-count">Showing 10 products · All categories</p>
+        <select class="sort-select" aria-label="Sort products">
+          <option>Sort: Featured</option>
+          <option>Newest first</option>
+          <option>Price: low to high</option>
+          <option>Price: high to low</option>
+        </select>
+      </div>
+
+      <div class="bento" role="list">
+
+        <!-- BIG: Gong -->
+        <article class="tile big" role="listitem">
+          <a href="#" aria-label="View Ceremonial Gong">
+            <div class="tile-media">
+              <img src="../images/DSC07542.jpeg" alt="Hue traditional ceremonial gong" loading="lazy" style="object-position:center top;">
+            </div>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <span class="tile-badge">In stock</span>
+            <div class="tile-body">
+              <p class="tile-cat">Traditional Objects</p>
+              <h3>Ceremonial Gong</h3>
+              <p class="tile-desc">Hand-forged bronze gong used in Hue ceremonial and meditative practice. Each one is tuned by ear.</p>
+              <div class="tile-foot">
+                <span class="tile-price">On request</span>
+                <span class="tile-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- TALL: Singing bowl -->
+        <article class="tile tall" role="listitem">
+          <a href="#" aria-label="View Singing Bowl">
+            <div class="tile-media">
+              <img src="../images/DSC07535.jpeg" alt="Hue ceremonial singing bowl" loading="lazy" style="object-position:center top;">
+            </div>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <span class="tile-badge">In stock</span>
+            <div class="tile-body">
+              <p class="tile-cat">Traditional Objects</p>
+              <h3>Singing Bowl</h3>
+              <p class="tile-desc">A resonant hand-shaped bowl, finished and tuned by ear in Hue.</p>
+              <div class="tile-foot">
+                <span class="tile-price">On request</span>
+                <span class="tile-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- TALL: Kimono -->
+        <article class="tile tall" role="listitem">
+          <a href="#" aria-label="View Silk Kimono">
+            <div class="tile-media">
+              <img src="../images/Silk_kimono.jpg" alt="Handmade Vietnamese silk kimono" loading="lazy" style="object-position:center 40%;">
+            </div>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <span class="tile-badge new">New</span>
+            <div class="tile-body">
+              <p class="tile-cat">Apparel</p>
+              <h3>Silk Kimono</h3>
+              <p class="tile-desc">Lightweight silk, cut and finished by hand. Made for everyday wear.</p>
+              <div class="tile-foot">
+                <span class="tile-price">On request</span>
+                <span class="tile-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- WIDE: Tote -->
+        <article class="tile wide" role="listitem">
+          <a href="#" aria-label="View Handwoven Tote Bag">
+            <div class="tile-media">
+              <img src="../images/Handwoven_tote_bag.jpg" alt="Handwoven tote bag made in Hue" loading="lazy">
+            </div>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <span class="tile-badge">In stock</span>
+            <div class="tile-body">
+              <p class="tile-cat">Bags</p>
+              <h3>Handwoven Tote Bag</h3>
+              <p class="tile-desc">Woven on a traditional loom in natural fibre. Sturdy and built to last years.</p>
+              <div class="tile-foot">
+                <span class="tile-price">On request</span>
+                <span class="tile-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Purpose tile -->
+        <article class="tile purpose wide" role="listitem">
+          <div class="purpose-inner">
+            <p class="tile-cat">Why this shop exists</p>
+            <h3>50% of net profit goes to Hue</h3>
+            <p>After operating costs, half of the profit from every sale supports families in Hue. We publish the numbers every quarter.</p>
+            <a href="#" class="purpose-link">
+              See our impact
+              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- Pillowcase -->
+        <article class="tile" role="listitem">
+          <a href="#" aria-label="View Embroidered Pillowcase">
+            <div class="tile-media">
+              <img src="../images/1785487884721_3929329604013453076_g3424696855698798357_3b40e286e8acb1ac8598495f0a8777a5.jpg" alt="Hand-embroidered pillowcase from Hue" loading="lazy">
+            </div>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <span class="tile-badge">In stock</span>
+            <div class="tile-body">
+              <p class="tile-cat">Home &amp; Living</p>
+              <h3>Embroidered Pillowcase</h3>
+              <p class="tile-desc">Hand-embroidered detailing on soft cotton.</p>
+              <div class="tile-foot">
+                <span class="tile-price">On request</span>
+                <span class="tile-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- T-shirt -->
+        <article class="tile" role="listitem">
+          <a href="#" aria-label="View Cotton T-Shirt">
+            <div class="tile-media">
+              <div class="tile-placeholder" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
+              </div>
+            </div>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <span class="tile-badge">In stock</span>
+            <div class="tile-body">
+              <p class="tile-cat">Apparel</p>
+              <h3>Cotton T-Shirt</h3>
+              <p class="tile-desc">Simple cotton tee with a Hue-inspired print. Unisex fit.</p>
+              <div class="tile-foot">
+                <span class="tile-price">On request</span>
+                <span class="tile-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Eco bag -->
+        <article class="tile" role="listitem">
+          <a href="#" aria-label="View Eco Bag">
+            <div class="tile-media">
+              <div class="tile-placeholder" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              </div>
+            </div>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <span class="tile-badge">In stock</span>
+            <div class="tile-body">
+              <p class="tile-cat">Bags</p>
+              <h3>Eco Bag</h3>
+              <p class="tile-desc">Foldable everyday bag in natural fibre.</p>
+              <div class="tile-foot">
+                <span class="tile-price">On request</span>
+                <span class="tile-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Handkerchief -->
+        <article class="tile" role="listitem">
+          <a href="#" aria-label="View Silk Handkerchief">
+            <div class="tile-media">
+              <div class="tile-placeholder" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+              </div>
+            </div>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <span class="tile-badge order">Made to order</span>
+            <div class="tile-body">
+              <p class="tile-cat">Apparel</p>
+              <h3>Silk Handkerchief</h3>
+              <p class="tile-desc">Hand-rolled silk edges, finished individually.</p>
+              <div class="tile-foot">
+                <span class="tile-price">On request</span>
+                <span class="tile-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- Eye mask -->
+        <article class="tile" role="listitem">
+          <a href="#" aria-label="View Sleep Eye Mask">
+            <div class="tile-media">
+              <div class="tile-placeholder" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </div>
+            </div>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <span class="tile-badge">In stock</span>
+            <div class="tile-body">
+              <p class="tile-cat">Home &amp; Living</p>
+              <h3>Sleep Eye Mask</h3>
+              <p class="tile-desc">Silk-lined, sewn and finished entirely by hand.</p>
+              <div class="tile-foot">
+                <span class="tile-price">On request</span>
+                <span class="tile-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+        <!-- WIDE: Tablecloth -->
+        <article class="tile wide" role="listitem">
+          <a href="#" aria-label="View Woven Tablecloth">
+            <div class="tile-media">
+              <div class="tile-placeholder" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="M2 8h20l-2 12H4L2 8z"/><path d="M2 8l4-5h12l4 5"/><path d="M8 8v12M16 8v12"/></svg>
+              </div>
+            </div>
+            <div class="tile-scrim" aria-hidden="true"></div>
+            <span class="tile-badge order">Made to order</span>
+            <div class="tile-body">
+              <p class="tile-cat">Home &amp; Living</p>
+              <h3>Woven Tablecloth</h3>
+              <p class="tile-desc">Loom-woven cotton with a subtle traditional Hue pattern along the border.</p>
+              <div class="tile-foot">
+                <span class="tile-price">On request</span>
+                <span class="tile-arrow" aria-hidden="true">
+                  <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        </article>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <img src="../images/Logo varijacije white.png" alt="Pure Community Support" style="height:38px;width:auto;">
+    <ul class="footer-links" role="list">
+      <li><a href="#">Shop</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="#">Impact</a></li>
+      <li><a href="#">Blog</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+    <span>© 2026 Pure Community Support · Hue, Vietnam</span>
+  </footer>
+
+</body>
+</html>
