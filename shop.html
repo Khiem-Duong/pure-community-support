@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shop Hue Traditional Handicrafts — Pure Community Support</title>
-  <meta name="description" content="Shop handmade Hue traditional handicrafts — ceremonial gongs, silk kimonos, handwoven tote bags, and embroidered home textiles. 50% of net profit supports disadvantaged families in Hue, Vietnam.">
+  <meta name="description" content="Shop handmade Hue traditional handicrafts — resort wear, silk and linen accessories, bells and gongs, and everyday essentials. 50% of net profit supports disadvantaged families in Hue, Vietnam.">
   <meta name="keywords" content="Hue handicrafts shop, buy Vietnamese handicrafts, handmade Hue gong, silk kimono Vietnam, handwoven tote bag, Vietnamese home textiles">
   <meta property="og:title" content="Shop — Pure Community Support">
   <meta property="og:description" content="Handmade Hue traditional handicrafts. Half of every sale's net profit supports families in Hue.">
@@ -605,6 +605,254 @@
       footer { padding: 24px 1.5em; }
       .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 32px 20px; }
     }
+
+    /* ── Catalog + quick view ────────────────── */
+    .draft-note {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 22px;
+      padding: 7px 14px;
+      border: 1px dashed var(--tan);
+      border-radius: 40px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .draft-note::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--purple);
+    }
+
+    .card-link {
+      display: block;
+      width: 100%;
+      text-align: left;
+    }
+    .card-link:focus-visible { outline: none; }
+    .card-link:focus-visible .card-media { outline: 2px solid var(--purple); outline-offset: 4px; }
+    .card-link:focus-visible .card-veil,
+    .card-link:focus-visible .card-cta { opacity: 1; transform: none; }
+    .card-media.no-img img { display: none; }
+    .card-price.tbd, .qv-price.tbd { color: var(--tan); font-style: italic; }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      padding: 64px 0;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    /* ── Quick view: shared parts ─────────────── */
+    html.qv-lock { overflow: hidden; }
+    dialog.qv {
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: var(--brown);
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      max-height: none;
+      margin: 0;
+      inset: 0;
+      overflow: hidden;
+    }
+    dialog.qv::backdrop {
+      background: rgba(74,52,42,0.62);
+      backdrop-filter: blur(4px);
+      opacity: 0;
+      transition: opacity 0.4s var(--ease-soft);
+    }
+    dialog.qv.is-open::backdrop { opacity: 1; }
+    .qv-panel {
+      position: relative;
+      background: var(--cream);
+      opacity: 0;
+      transition: opacity 0.4s var(--ease-soft), transform 0.55s var(--ease-out);
+    }
+    dialog.qv.is-open .qv-panel { opacity: 1; transform: none; }
+
+    .qv-media {
+      position: relative;
+      background: var(--greige);
+      overflow: hidden;
+    }
+    .qv-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .qv-credit {
+      position: absolute;
+      left: 12px;
+      bottom: 12px;
+      max-width: calc(100% - 24px);
+      padding: 4px 9px;
+      border-radius: 2px;
+      background: rgba(245,241,234,0.9);
+      font-size: 10px;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .qv-credit a { text-decoration: underline; text-underline-offset: 2px; }
+    .qv-credit:empty { display: none; }
+
+    .qv-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 3;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--cream);
+      border: 1px solid var(--border);
+      color: var(--brown);
+      transition: background 0.3s var(--ease-soft), color 0.3s var(--ease-soft), transform 0.4s var(--ease-out);
+    }
+    .qv-close:hover { background: var(--brown); color: var(--cream); transform: rotate(90deg); }
+    .qv-close svg, .qv-arrow svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+    .qv-eyebrow { margin-bottom: 14px; }
+    .qv-title {
+      font-family: var(--font-gemola);
+      font-weight: 400;
+      font-size: clamp(30px, 3.2vw, 44px);
+      line-height: 1.08;
+      margin-bottom: 10px;
+    }
+    .qv-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--purple);
+      background: rgba(101,46,134,0.08);
+      padding: 5px 10px;
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+    .qv-price {
+      font-family: var(--font-display);
+      font-size: 24px;
+      margin-bottom: 26px;
+    }
+    .qv-specs {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 10px 24px;
+      padding: 20px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 24px;
+      font-size: 13.5px;
+    }
+    .qv-specs dt {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--tan);
+      padding-top: 3px;
+    }
+    .qv-specs dd { color: var(--muted); }
+    .qv-desc {
+      font-size: 15px;
+      line-height: 1.75;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .qv-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .qv-cta { background: var(--purple); }
+    .qv-cta:hover { background: var(--brown); }
+    .qv-secondary {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+      padding: 14px 6px;
+      border-bottom: 1px solid transparent;
+      transition: color 0.3s var(--ease-soft), border-color 0.3s var(--ease-soft);
+    }
+    .qv-secondary:hover { color: var(--brown); border-color: var(--tan); }
+    .qv-purpose {
+      margin-top: 26px;
+      font-size: 12.5px;
+      color: var(--tan);
+      line-height: 1.6;
+    }
+    .qv-purpose strong { color: var(--brown); font-weight: 600; }
+
+    .qv-nav {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--tan);
+    }
+    .qv-arrow {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      color: var(--brown);
+      background: var(--cream);
+      transition: background 0.3s var(--ease-soft), color 0.3s var(--ease-soft), border-color 0.3s var(--ease-soft);
+    }
+    .qv-arrow:hover { background: var(--brown); border-color: var(--brown); color: var(--cream); }
+
+    /* ── Quick view layout (editorial split) ─── */
+    dialog.qv--split[open] {
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+    .qv--split .qv-panel {
+      width: min(1080px, 100%);
+      height: min(640px, calc(100dvh - 48px));
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(46,26,20,0.35);
+      transform: translateY(28px) scale(0.98);
+    }
+    .qv--split .qv-body {
+      overflow-y: auto;
+      padding: 64px 52px 36px;
+      display: flex;
+      flex-direction: column;
+    }
+    .qv--split .qv-nav {
+      margin-top: auto;
+      padding-top: 28px;
+      justify-content: flex-end;
+    }
+    @media (max-width: 800px) {
+      dialog.qv--split[open] { padding: 12px; }
+      .qv--split .qv-panel {
+        height: auto;
+        max-height: calc(100dvh - 24px);
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+      }
+      .qv--split .qv-media { height: 46vh; }
+      .qv--split .qv-body { overflow: visible; padding: 32px 24px 28px; }
+    }
   </style>
 </head>
 <body>
@@ -648,385 +896,26 @@
       <strong>Half of the net profit from every sale</strong> goes directly to supporting disadvantaged
       families in Hue, their children's health, education, and living conditions.
     </p>
+    <p class="draft-note">Catalog preview · product names, prices and details are placeholders</p>
   </header>
 
   <!-- Filters -->
   <div class="filter-bar" role="region" aria-label="Product filters">
-    <div class="filter-group" role="group" aria-label="Filter by category">
-      <span class="filter-label">Category</span>
-      <button class="chip active" aria-pressed="true"><span>All<span class="chip-count">15</span></span></button>
-      <button class="chip" aria-pressed="false"><span>Traditional Objects<span class="chip-count">4</span></span></button>
-      <button class="chip" aria-pressed="false"><span>Apparel<span class="chip-count">4</span></span></button>
-      <button class="chip" aria-pressed="false"><span>Bags<span class="chip-count">3</span></span></button>
-      <button class="chip" aria-pressed="false"><span>Home &amp; Living<span class="chip-count">4</span></span></button>
+    <div class="filter-group" id="collection-filters" role="group" aria-label="Filter by collection">
+      <span class="filter-label">Collection</span>
     </div>
-    <select class="sort-select" aria-label="Sort products">
-      <option>Sort: Featured</option>
-      <option>Newest first</option>
-      <option>Price: low to high</option>
-      <option>Price: high to low</option>
+    <select class="sort-select" id="sort-select" aria-label="Sort products">
+      <option value="featured">Sort: Featured</option>
+      <option value="az">Name: A to Z</option>
+      <option value="za">Name: Z to A</option>
     </select>
   </div>
 
   <!-- Products -->
   <main class="products">
-    <p class="result-count" id="result-count">Showing 1–10 of 15 products</p>
-
-    <div class="grid" id="product-grid" role="list">
-
-      <!-- 1: Gong -->
-      <article class="card" data-page="1" role="listitem">
-        <a href="#" aria-label="View Ceremonial Gong">
-          <div class="card-media">
-            <img src="assets/images/DSC07542.jpeg" alt="Hue traditional ceremonial gong" loading="lazy" style="object-position:center top;">
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge">In stock</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Traditional Objects</p>
-          <h3>Ceremonial Gong</h3>
-          <p class="card-desc">Hand-forged bronze gong used in Hue ceremonial and meditative practice.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 2: Singing Bowl -->
-      <article class="card" data-page="1" role="listitem">
-        <a href="#" aria-label="View Singing Bowl">
-          <div class="card-media">
-            <img src="assets/images/DSC07535.jpeg" alt="Hue ceremonial singing bowl" loading="lazy" style="object-position:center top;">
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge">In stock</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Traditional Objects</p>
-          <h3>Singing Bowl</h3>
-          <p class="card-desc">A resonant hand-shaped bowl, finished and tuned by ear in Hue.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 3: Silk Kimono -->
-      <article class="card" data-page="1" role="listitem">
-        <a href="#" aria-label="View Silk Kimono">
-          <div class="card-media">
-            <img src="assets/images/Silk_kimono.jpg" alt="Handmade Vietnamese silk kimono" loading="lazy" style="object-position:center 40%;">
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge new">New</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Apparel</p>
-          <h3>Silk Kimono</h3>
-          <p class="card-desc">Lightweight silk, cut and finished by hand. Made for everyday wear.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 4: Handwoven Tote -->
-      <article class="card" data-page="1" role="listitem">
-        <a href="#" aria-label="View Handwoven Tote Bag">
-          <div class="card-media">
-            <img src="assets/images/Handwoven_tote_bag.jpg" alt="Handwoven tote bag made in Hue" loading="lazy">
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge">In stock</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Bags</p>
-          <h3>Handwoven Tote Bag</h3>
-          <p class="card-desc">Woven on a traditional loom. Sturdy, natural fibre, built to last years.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 5: Pillowcase -->
-      <article class="card" data-page="1" role="listitem">
-        <a href="#" aria-label="View Embroidered Pillowcase">
-          <div class="card-media">
-            <img src="assets/images/1785487884721_3929329604013453076_g3424696855698798357_3b40e286e8acb1ac8598495f0a8777a5.jpg" alt="Hand-embroidered pillowcase from Hue" loading="lazy">
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge">In stock</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Home &amp; Living</p>
-          <h3>Embroidered Pillowcase</h3>
-          <p class="card-desc">Hand-embroidered detailing on soft cotton. Each one is slightly different.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 6: T-shirt -->
-      <article class="card" data-page="1" role="listitem">
-        <a href="#" aria-label="View Cotton T-Shirt">
-          <div class="card-media">
-            <div class="card-placeholder" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/></svg>
-            </div>
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge">In stock</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Apparel</p>
-          <h3>Cotton T-Shirt</h3>
-          <p class="card-desc">Simple cotton tee with a Hue-inspired print. Unisex fit.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 7: Handkerchief -->
-      <article class="card" data-page="1" role="listitem">
-        <a href="#" aria-label="View Silk Handkerchief">
-          <div class="card-media">
-            <div class="card-placeholder" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
-            </div>
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge out">Made to order</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>Inquire</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Apparel</p>
-          <h3>Silk Handkerchief</h3>
-          <p class="card-desc">Hand-rolled silk edges. A small object made with disproportionate care.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 8: Eco Bag -->
-      <article class="card" data-page="1" role="listitem">
-        <a href="#" aria-label="View Eco Bag">
-          <div class="card-media">
-            <div class="card-placeholder" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-            </div>
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge">In stock</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Bags</p>
-          <h3>Eco Bag</h3>
-          <p class="card-desc">Foldable everyday bag in natural fibre. Made to replace the plastic one.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 9: Eye Mask -->
-      <article class="card" data-page="1" role="listitem">
-        <a href="#" aria-label="View Sleep Eye Mask">
-          <div class="card-media">
-            <div class="card-placeholder" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>
-            </div>
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge">In stock</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Home &amp; Living</p>
-          <h3>Sleep Eye Mask</h3>
-          <p class="card-desc">Silk-lined, weighted lightly. Sewn and finished entirely by hand.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 10: Tablecloth -->
-      <article class="card" data-page="1" role="listitem">
-        <a href="#" aria-label="View Woven Tablecloth">
-          <div class="card-media">
-            <div class="card-placeholder" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M2 8h20l-2 12H4L2 8z"/><path d="M2 8l4-5h12l4 5"/><path d="M8 8v12M16 8v12"/></svg>
-            </div>
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge out">Made to order</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>Inquire</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Home &amp; Living</p>
-          <h3>Woven Tablecloth</h3>
-          <p class="card-desc">Loom-woven cotton with a subtle traditional Hue pattern along the border.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 11: Ceremonial Bell (placeholder photo) -->
-      <article class="card" data-page="2" role="listitem" hidden>
-        <a href="#" aria-label="View Ceremonial Bell">
-          <div class="card-media">
-            <img src="https://picsum.photos/seed/pure-hue-bell/640/800" alt="Hand-cast ceremonial bell, placeholder photo" loading="lazy">
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge">In stock</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Traditional Objects</p>
-          <h3>Ceremonial Bell</h3>
-          <p class="card-desc">Hand-cast bronze bell with a clear, sustained tone. Companion piece to the gong.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 12: Incense Holder (placeholder photo) -->
-      <article class="card" data-page="2" role="listitem" hidden>
-        <a href="#" aria-label="View Carved Incense Holder">
-          <div class="card-media">
-            <img src="https://picsum.photos/seed/pure-hue-incense/640/800" alt="Carved wooden incense holder, placeholder photo" loading="lazy">
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge">In stock</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Traditional Objects</p>
-          <h3>Carved Incense Holder</h3>
-          <p class="card-desc">Hand-carved from local hardwood, used in household and ceremonial altars.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 13: Silk Scarf (placeholder photo) -->
-      <article class="card" data-page="2" role="listitem" hidden>
-        <a href="#" aria-label="View Silk Scarf">
-          <div class="card-media">
-            <img src="https://picsum.photos/seed/pure-hue-scarf/640/800" alt="Hand-dyed silk scarf, placeholder photo" loading="lazy">
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge new">New</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Apparel</p>
-          <h3>Silk Scarf</h3>
-          <p class="card-desc">Hand-dyed silk in a single continuous length. Light enough for year-round wear.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 14: Market Basket Bag (placeholder photo) -->
-      <article class="card" data-page="2" role="listitem" hidden>
-        <a href="#" aria-label="View Market Basket Bag">
-          <div class="card-media">
-            <img src="https://picsum.photos/seed/pure-hue-basket/640/800" alt="Handwoven market basket bag, placeholder photo" loading="lazy">
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge">In stock</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>View product</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Bags</p>
-          <h3>Market Basket Bag</h3>
-          <p class="card-desc">A rigid woven basket bag built for daily errands, finished with leather handles.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-      <!-- 15: Woven Placemat Set (placeholder photo) -->
-      <article class="card" data-page="2" role="listitem" hidden>
-        <a href="#" aria-label="View Woven Placemat Set">
-          <div class="card-media">
-            <img src="https://picsum.photos/seed/pure-hue-placemat/640/800" alt="Woven placemat set, placeholder photo" loading="lazy">
-            <div class="card-veil" aria-hidden="true"></div>
-            <span class="badge out">Made to order</span>
-            <div class="card-cta" aria-hidden="true">
-              <span>Inquire</span>
-              <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-            </div>
-          </div>
-          <p class="card-cat">Home &amp; Living</p>
-          <h3>Woven Placemat Set</h3>
-          <p class="card-desc">Set of four loom-woven placemats, made to match the tablecloth pattern.</p>
-          <div class="card-foot">
-            <span class="card-price">On request</span>
-            <span class="card-artisan">Hue artisan</span>
-          </div>
-        </a>
-      </article>
-
-    </div>
-
-    <!-- Pagination -->
-    <nav class="pagination" aria-label="Product pagination">
-      <button class="page-btn" id="page-prev" aria-label="Previous page" disabled>
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <button class="page-btn active" data-page="1" aria-current="page">1</button>
-      <button class="page-btn" data-page="2">2</button>
-      <button class="page-btn" id="page-next" aria-label="Next page">
-        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </nav>
+    <p class="result-count" id="result-count" aria-live="polite"></p>
+    <div class="grid" id="product-grid" role="list"></div>
+    <nav class="pagination" id="pagination" aria-label="Product pagination"></nav>
   </main>
 
   <!-- Purpose strip -->
@@ -1058,8 +947,30 @@
     <span>© 2026 Pure Community Support · Hue, Vietnam</span>
   </footer>
 
+  <!-- Quick view -->
+  <dialog class="qv qv--split" id="quick-view" aria-labelledby="qv-title">
+    <div class="qv-panel">
+      <button class="qv-close" type="button" data-qv-close aria-label="Close product details"><svg viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
+      <div class="qv-media"><img id="qv-img" alt=""><span class="qv-credit" id="qv-credit"></span></div>
+      <div class="qv-body">
+        <p class="eyebrow qv-eyebrow" id="qv-collection"></p>
+          <h2 class="qv-title" id="qv-title"></h2>
+          <p class="qv-tag">Placeholder · details to be confirmed</p>
+        <p class="qv-price tbd" id="qv-price">Price TBD</p>
+        <dl class="qv-specs"><dt>Material</dt><dd id="qv-material">TBD</dd><dt>Colour</dt><dd id="qv-colour">TBD</dd><dt>Made by</dt><dd id="qv-maker">TBD</dd></dl>
+        <p class="qv-desc" id="qv-desc"></p>
+        <div class="qv-actions">
+          <a class="btn qv-cta" id="qv-cta" href="/shop">View full details <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          <button class="qv-secondary" type="button" data-qv-close>Continue browsing</button>
+        </div>
+        <div class="qv-nav"><button class="qv-arrow qv-prev" type="button" data-qv-step="-1" aria-label="Previous product"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></button><span class="qv-counter" id="qv-counter"></span><button class="qv-arrow qv-next" type="button" data-qv-step="1" aria-label="Next product"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></button></div>
+      </div>
+    </div>
+  </dialog>
+
   <button id="scroll-top" aria-label="Scroll to top">↑</button>
 
+  <script src="assets/js/products.js"></script>
   <script>
     /* Mobile nav toggle */
     const navToggle = document.querySelector('.nav-toggle');
@@ -1075,56 +986,229 @@
       });
     });
 
-    /* Pagination — 10 products per page */
-    const PAGE_SIZE = 10;
-    const TOTAL_ITEMS = 15;
-    const cards = Array.from(document.querySelectorAll('#product-grid .card'));
-    const pageButtons = Array.from(document.querySelectorAll('.page-btn[data-page]'));
-    const prevBtn = document.getElementById('page-prev');
-    const nextBtn = document.getElementById('page-next');
+    /* ── Catalog data ───────────────────────────
+       Products live in assets/js/products.js (shared with item.html). */
+    const COLLECTIONS = window.PURE_COLLECTIONS;
+    const PRODUCTS = window.PURE_PRODUCTS;
+
+    const PAGE_SIZE = 12;
+    const itemUrl = id => `/shop/${id}`;
+    const priceLabel = p => p.price || 'Price TBD';
+    const collectionName = id => (COLLECTIONS.find(c => c.id === id) || {}).name || '';
+    const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+
+    const state = { collection: 'all', sort: 'featured', page: 1 };
+    const grid = document.getElementById('product-grid');
+    const pager = document.getElementById('pagination');
     const resultCount = document.getElementById('result-count');
-    const totalPages = pageButtons.length;
-    let currentPage = 1;
+    const chipGroup = document.getElementById('collection-filters');
+    const sortSelect = document.getElementById('sort-select');
 
-    function goToPage(page) {
-      currentPage = page;
-      cards.forEach(card => {
-        card.hidden = Number(card.dataset.page) !== page;
-      });
-      pageButtons.forEach(btn => {
-        const isActive = Number(btn.dataset.page) === page;
-        btn.classList.toggle('active', isActive);
-        if (isActive) btn.setAttribute('aria-current', 'page');
-        else btn.removeAttribute('aria-current');
-      });
-      prevBtn.disabled = page === 1;
-      nextBtn.disabled = page === totalPages;
+    function currentList() {
+      let list = PRODUCTS.filter(p => state.collection === 'all' || p.collection === state.collection);
+      if (state.sort === 'az') list = [...list].sort((a, b) => a.name.localeCompare(b.name));
+      if (state.sort === 'za') list = [...list].sort((a, b) => b.name.localeCompare(a.name));
+      return list;
+    }
 
-      const start = (page - 1) * PAGE_SIZE + 1;
-      const end = Math.min(page * PAGE_SIZE, TOTAL_ITEMS);
-      resultCount.textContent = `Showing ${start}–${end} of ${TOTAL_ITEMS} products`;
+    function renderChips() {
+      const chips = [{ id: 'all', name: 'All' }, ...COLLECTIONS].map(c => {
+        const count = c.id === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.collection === c.id).length;
+        const active = state.collection === c.id;
+        return `<button class="chip${active ? ' active' : ''}" type="button" data-collection="${c.id}" aria-pressed="${active}"><span>${esc(c.name)}<span class="chip-count">${count}</span></span></button>`;
+      }).join('');
+      chipGroup.querySelectorAll('.chip').forEach(el => el.remove());
+      chipGroup.insertAdjacentHTML('beforeend', chips);
+    }
 
+    function cardHTML(p) {
+      const desc = p.desc || 'Details coming soon.';
+      const pos = p.pos ? ` style="object-position:${p.pos};"` : '';
+      return `
+        <article class="card" role="listitem">
+          <a class="card-link" href="${itemUrl(p.id)}" data-id="${p.id}" aria-haspopup="dialog" aria-label="View details: ${esc(p.name)}">
+            <div class="card-media">
+              <img src="${p.img}" alt="${esc(p.name)}${p.credit ? ' (placeholder photo)' : ''}" loading="lazy"${pos} onerror="this.parentNode.classList.add('no-img')">
+              <div class="card-veil" aria-hidden="true"></div>
+              ${p.isNew ? '<span class="badge new">New</span>' : ''}
+              <div class="card-cta" aria-hidden="true">
+                <span>Quick view</span>
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </div>
+            </div>
+            <p class="card-cat">${esc(collectionName(p.collection))}</p>
+            <h3>${esc(p.name)}</h3>
+            <p class="card-desc">${esc(desc)}</p>
+            <div class="card-foot">
+              <span class="card-price${p.price ? '' : ' tbd'}">${esc(priceLabel(p))}</span>
+              <span class="card-artisan">${esc(p.maker || 'Hue artisan')}</span>
+            </div>
+          </a>
+        </article>`;
+    }
+
+    function renderPager(totalPages) {
+      if (totalPages <= 1) { pager.innerHTML = ''; return; }
+      let html = `<button class="page-btn" type="button" data-step="-1" aria-label="Previous page"${state.page === 1 ? ' disabled' : ''}><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></button>`;
+      for (let n = 1; n <= totalPages; n++) {
+        html += `<button class="page-btn${n === state.page ? ' active' : ''}" type="button" data-page="${n}"${n === state.page ? ' aria-current="page"' : ''}>${n}</button>`;
+      }
+      html += `<button class="page-btn" type="button" data-step="1" aria-label="Next page"${state.page === totalPages ? ' disabled' : ''}><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></button>`;
+      pager.innerHTML = html;
+    }
+
+    function render() {
+      const list = currentList();
+      const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+      state.page = Math.min(state.page, totalPages);
+      const start = (state.page - 1) * PAGE_SIZE;
+      const pageItems = list.slice(start, start + PAGE_SIZE);
+      grid.innerHTML = pageItems.length
+        ? pageItems.map(cardHTML).join('')
+        : '<p class="empty-state">No products in this collection yet.</p>';
+      resultCount.textContent = list.length
+        ? `Showing ${start + 1}–${start + pageItems.length} of ${list.length} products`
+        : 'Showing 0 products';
+      renderPager(totalPages);
+    }
+
+    function scrollToGrid() {
       const introEl = document.querySelector('.shop-intro');
       window.scrollTo({ top: window.scrollY + introEl.getBoundingClientRect().bottom, behavior: 'smooth' });
     }
 
-    pageButtons.forEach(btn => {
-      btn.addEventListener('click', () => goToPage(Number(btn.dataset.page)));
+    chipGroup.addEventListener('click', e => {
+      const chip = e.target.closest('.chip');
+      if (!chip) return;
+      state.collection = chip.dataset.collection;
+      state.page = 1;
+      renderChips();
+      render();
     });
-    prevBtn.addEventListener('click', () => { if (currentPage > 1) goToPage(currentPage - 1); });
-    nextBtn.addEventListener('click', () => { if (currentPage < totalPages) goToPage(currentPage + 1); });
+    sortSelect.addEventListener('change', () => { state.sort = sortSelect.value; state.page = 1; render(); });
+    pager.addEventListener('click', e => {
+      const btn = e.target.closest('.page-btn');
+      if (!btn || btn.disabled) return;
+      state.page = btn.dataset.page ? Number(btn.dataset.page) : state.page + Number(btn.dataset.step);
+      render();
+      scrollToGrid();
+    });
 
-    /* Category chips — presentation only, no filtering logic */
-    document.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        document.querySelectorAll('.chip').forEach(c => {
-          c.classList.remove('active');
-          c.setAttribute('aria-pressed', 'false');
-        });
-        chip.classList.add('active');
-        chip.setAttribute('aria-pressed', 'true');
-      });
+    /* ── Quick view popup ───────────────────── */
+    const qv = document.getElementById('quick-view');
+    const panel = qv.querySelector('.qv-panel');
+    const $ = id => document.getElementById(id);
+    let qvList = [];
+    let qvIndex = 0;
+    let lastTrigger = null;
+    let closeTimer = null;
+    let pendingClose = null;
+
+    /* Hash updates can fail on some file:// previews; never let that block the popup. */
+    function setHash(hash) {
+      try { history.replaceState(null, '', hash || location.pathname + location.search); } catch (err) {}
+    }
+
+    function cancelPendingClose() {
+      clearTimeout(closeTimer);
+      if (pendingClose) panel.removeEventListener('transitionend', pendingClose);
+      pendingClose = null;
+    }
+
+    function fillQuickView(p) {
+      const img = $('qv-img');
+      img.src = p.img;
+      img.alt = p.credit ? `${p.name} (placeholder photo)` : p.name;
+      img.style.objectPosition = p.pos || '';
+      $('qv-credit').innerHTML = p.credit
+        ? `Placeholder photo: <a href="${p.credit.url}" target="_blank" rel="noopener">${esc(p.credit.author)}</a>, ${esc(p.credit.license)}`
+        : '';
+      $('qv-collection').textContent = collectionName(p.collection);
+      $('qv-title').textContent = p.name;
+      $('qv-material').textContent = p.material || 'TBD';
+      $('qv-colour').textContent = p.colour || 'TBD';
+      $('qv-maker').textContent = p.maker || 'Hue artisan (TBD)';
+      $('qv-desc').textContent = p.desc || 'Details coming soon.';
+      const price = $('qv-price');
+      price.textContent = priceLabel(p);
+      price.classList.toggle('tbd', !p.price);
+      $('qv-cta').href = itemUrl(p.id);
+      $('qv-cta').setAttribute('aria-label', `View full details: ${p.name}`);
+      const counter = $('qv-counter');
+      if (counter) counter.textContent = `${qvIndex + 1} / ${qvList.length}`;
+      const barName = $('qv-bar-name');
+      if (barName) barName.textContent = p.name;
+      panel.scrollTop = 0;
+      const body = qv.querySelector('.qv-body');
+      if (body) body.scrollTop = 0;
+      setHash(`#item-${p.id}`);
+    }
+
+    function openQuickView(id, trigger) {
+      qvList = currentList();
+      qvIndex = Math.max(0, qvList.findIndex(p => p.id === id));
+      if (!qvList.length || qvList[qvIndex].id !== id) {
+        qvList = PRODUCTS;
+        qvIndex = Math.max(0, PRODUCTS.findIndex(p => p.id === id));
+      }
+      lastTrigger = trigger || null;
+      fillQuickView(qvList[qvIndex]);
+      cancelPendingClose();
+      if (!qv.open) qv.showModal();
+      document.documentElement.classList.add('qv-lock');
+      requestAnimationFrame(() => requestAnimationFrame(() => qv.classList.add('is-open')));
+      qv.querySelector('[data-qv-close]').focus();
+    }
+
+    function closeQuickView() {
+      if (!qv.open) return;
+      cancelPendingClose();
+      qv.classList.remove('is-open');
+      const finish = () => {
+        cancelPendingClose();
+        qv.close();
+        document.documentElement.classList.remove('qv-lock');
+        setHash('');
+        if (lastTrigger && document.contains(lastTrigger)) lastTrigger.focus();
+      };
+      pendingClose = e => { if (e.target === panel && e.propertyName === 'transform') finish(); };
+      panel.addEventListener('transitionend', pendingClose);
+      closeTimer = setTimeout(finish, 600);
+    }
+
+    function step(delta) {
+      if (!qvList.length) return;
+      qvIndex = (qvIndex + delta + qvList.length) % qvList.length;
+      fillQuickView(qvList[qvIndex]);
+    }
+
+    grid.addEventListener('click', e => {
+      const link = e.target.closest('.card-link');
+      if (!link) return;
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return; // new tab → item page
+      e.preventDefault();
+      openQuickView(link.dataset.id, link);
     });
+    qv.addEventListener('click', e => {
+      if (e.target === qv) { closeQuickView(); return; }
+      if (e.target.closest('[data-qv-close]')) closeQuickView();
+      const stepBtn = e.target.closest('[data-qv-step]');
+      if (stepBtn) step(Number(stepBtn.dataset.qvStep));
+    });
+    qv.addEventListener('cancel', e => { e.preventDefault(); closeQuickView(); });
+    qv.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') step(1);
+      if (e.key === 'ArrowLeft') step(-1);
+    });
+
+    const requested = new URLSearchParams(location.search).get('collection');
+    if (COLLECTIONS.some(c => c.id === requested)) state.collection = requested;
+
+    renderChips();
+    render();
+
+    const hashMatch = location.hash.match(/^#item-(.+)$/);
+    if (hashMatch && PRODUCTS.some(p => p.id === hashMatch[1])) openQuickView(hashMatch[1]);
 
     /* Scroll to top */
     const scrollBtn = document.getElementById('scroll-top');

@@ -1,0 +1,2 @@
+# Individual item pages: /shop/<item-id> is served by item.html (Cloudflare Pages rewrite)
+/shop/*  /item  200
