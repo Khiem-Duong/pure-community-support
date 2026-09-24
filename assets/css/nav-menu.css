@@ -76,6 +76,13 @@
   margin-bottom: 4px;
 }
 .nav-sub a.nav-sub-all:hover { color: var(--cream, #F5F1EA); }
+/* Current page, marked the same way in every dropdown */
+.nav-sub a[aria-current="page"],
+.nav-sub a.nav-sub-all[aria-current="page"] {
+  color: var(--cream, #F5F1EA);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 2px 0 0 var(--tan, #B2967D);
+}
 .nav-sub-dot {
   width: 6px; height: 6px;
   border-radius: 50%;
