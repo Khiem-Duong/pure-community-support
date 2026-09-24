@@ -1,2 +1,5 @@
 # Individual item pages: /shop/<item-id> is served by item.html (Cloudflare Pages rewrite)
 /shop/*  /item  200
+
+# Campaign pages: /cases/<campaign-id> is served by campaign.html
+/cases/*  /campaign  200

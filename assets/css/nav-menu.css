@@ -1,0 +1,108 @@
+/* Campaigns dropdown in the main nav — shared by every page.
+   Relies on each page's :root colour tokens (--brown, --tan, --cream). */
+
+.nav-item-sub { position: relative; }
+
+.nav-caret {
+  display: inline-block;
+  width: 6px; height: 6px;
+  margin-left: 8px;
+  vertical-align: 3px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-item-sub:hover .nav-caret,
+.nav-item-sub:focus-within .nav-caret { transform: translateY(3px) rotate(225deg); }
+
+/* padding-top bridges the gap between the link and the bottom of the nav bar,
+   so the pointer can travel into the panel without closing it */
+.nav-sub {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 300px;
+  padding-top: max(18px, calc(3.5vw - 10px));
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 10px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 0.4s;
+  z-index: 120;
+}
+.nav-item-sub:hover .nav-sub,
+.nav-item-sub:focus-within .nav-sub {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition-delay: 0s;
+}
+.nav-sub-inner {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0;
+  background: var(--brown, #4A342A);
+  border-top: 2px solid var(--tan, #B2967D);
+  border-radius: 0 0 3px 3px;
+  box-shadow: 0 18px 40px rgba(46, 26, 20, 0.35);
+}
+.nav-sub a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 22px;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: rgba(245, 241, 234, 0.72);
+  transition: color 0.25s ease, background 0.25s ease, padding-left 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-sub a:hover,
+.nav-sub a:focus-visible { color: var(--cream, #F5F1EA); background: rgba(255, 255, 255, 0.05); padding-left: 28px; }
+.nav-sub a[aria-current="page"] { color: var(--cream, #F5F1EA); }
+.nav-sub a.nav-sub-all {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tan, #B2967D);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 4px;
+}
+.nav-sub a.nav-sub-all:hover { color: var(--cream, #F5F1EA); }
+.nav-sub-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--tan, #B2967D);
+  flex-shrink: 0;
+}
+.nav-sub-dot.planned { background: transparent; border: 1px solid var(--tan, #B2967D); }
+
+/* Mobile menu (pages with the hamburger toggle): show the campaign links inline */
+@media (max-width: 1000px) {
+  .nav .nav-links.open { max-height: 820px; }
+  .nav-links.open .nav-caret { display: none; }
+  .nav-links.open .nav-sub {
+    position: static;
+    width: auto;
+    padding: 0;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+  .nav-links.open .nav-sub-inner {
+    padding: 0 0 6px;
+    border-top: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: rgba(0, 0, 0, 0.12);
+  }
+  .nav-links.open .nav-sub a { padding: 11px 1.5em 11px 2.6em; }
+  .nav-links.open .nav-sub a.nav-sub-all { display: none; }
+}

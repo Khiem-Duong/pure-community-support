@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Served at /cases/<campaign-id> (see _redirects); all relative URLs resolve from the site root. -->
+  <base href="/">
+  <title>Campaign — Pure Community Support</title>
+  <meta name="description" content="A community programme in Hue funded by 50% of Pure Community Support's net profit.">
+  <meta property="og:title" content="Campaign — Pure Community Support">
+  <meta property="og:description" content="A community programme in Hue funded by half of Pure's net profit.">
+  <meta property="og:type" content="article">
+  <link rel="icon" href="assets/images/Vector Logo Pure Community support 2-15.svg" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="assets/images/Vector Logo Pure Community support 2-13.svg" media="(prefers-color-scheme: dark)">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/nav-menu.css">
+  <script>document.documentElement.classList.add('js');</script>
+
+  <style>
+    @font-face {
+      font-family: 'Gemola';
+      src: url('-temp/Logos & fonts/Gemola.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    :root {
+      --cream:   #F5F1EA;
+      --greige:  #DAD1C4;
+      --tan:     #B2967D;
+      --purple:  #652E86;
+      --brown:   #4A342A;
+      --deep:    #2E1A14;
+      --muted:   #6B4E3C;
+      --white:   #ffffff;
+      --border:  rgba(178,150,125,0.22);
+
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-gemola:  'Gemola', Georgia, serif;
+      --font-body:    'Be Vietnam Pro', sans-serif;
+
+      --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--brown);
+      background: var(--cream);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul, ol { list-style: none; }
+    h1, h2, h3 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    :focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; border-radius: 2px; }
+    [hidden] { display: none !important; }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+    }
+
+    /* ── Scroll reveal (only when JS runs) ───── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.9s var(--ease-out) var(--d, 0s), transform 1s var(--ease-out) var(--d, 0s);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+    .js [data-reveal="mask"] {
+      opacity: 1;
+      transform: none;
+      clip-path: inset(100% 0 0 0);
+      transition: clip-path 1.25s var(--ease-out) var(--d, 0s);
+    }
+    .js [data-reveal="mask"].in { clip-path: inset(0 0 0 0); }
+    .js [data-reveal="mask"] img {
+      scale: 1.14;
+      transition: scale 1.7s var(--ease-out) var(--d, 0s), transform 1.1s var(--ease-out), filter 0.6s var(--ease-soft);
+    }
+    .js [data-reveal="mask"].in img { scale: 1; }
+
+    /* ── Nav (site standard) ─────────────────── */
+    .nav { background: var(--brown); position: relative; z-index: 100; }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4em;
+    }
+    .nav-logo { display: flex; align-items: center; }
+    .nav-logo img { height: 5vw; width: auto; display: block; margin-block: 1vw; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(245,241,234,0.7);
+      position: relative; padding-bottom: 2px;
+      transition: color 0.3s var(--ease-soft);
+    }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--tan);
+      transition: width 0.3s var(--ease-soft);
+    }
+    .nav-link:hover { color: var(--cream); }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link.active { color: var(--cream); }
+    .nav-link.active::after { width: 100%; }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .lang-switcher {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      color: rgba(245,241,234,0.45);
+    }
+    .lang-switcher span { cursor: pointer; padding: 4px 6px; border-radius: 2px; transition: color 0.3s, background 0.3s; }
+    .lang-switcher span.active { color: var(--cream); background: rgba(255,255,255,0.1); }
+    .lang-switcher .sep { color: rgba(255,255,255,0.2); }
+    .nav-cta {
+      background: var(--tan); color: var(--cream);
+      font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 10px 22px; border-radius: 2px;
+      transition: background 0.3s var(--ease-soft);
+    }
+    .nav-cta:hover { background: #8B6E5A; }
+    .nav-toggle { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 40px; height: 40px; }
+    .nav-toggle-bar { display: block; width: 22px; height: 2px; background: rgba(255,255,255,0.85); border-radius: 1px; transition: transform 0.25s ease, opacity 0.2s ease; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── Breadcrumb ──────────────────────────── */
+    .breadcrumb {
+      padding: 22px 4em;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px; color: var(--tan); letter-spacing: 0.04em;
+      display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+    }
+    .breadcrumb a { transition: color 0.3s var(--ease-soft); }
+    .breadcrumb a:hover { color: var(--brown); }
+    .breadcrumb .sep { opacity: 0.5; }
+    .breadcrumb .current { color: var(--brown); font-weight: 500; }
+
+    /* ── Shared type & controls ──────────────── */
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 20px;
+    }
+    .eyebrow::before { content: ''; width: 26px; height: 1px; background: var(--tan); }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 3.2vw, 42px);
+      font-weight: 400; line-height: 1.1;
+    }
+    .section-title em { font-style: italic; color: var(--purple); }
+    .tag {
+      display: inline-block;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--purple);
+      background: rgba(101,46,134,0.08);
+      padding: 5px 10px; border-radius: 2px;
+    }
+    .status {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; padding: 5px 11px; border-radius: 40px;
+    }
+    .status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .status.running { color: var(--purple); background: rgba(101,46,134,0.08); }
+    .status.planned { color: var(--muted); background: rgba(178,150,125,0.18); }
+    .status.planned::before { background: transparent; border: 1px solid currentColor; }
+    .status.on-photo { color: var(--cream); background: rgba(245,241,234,0.16); backdrop-filter: blur(6px); }
+
+    .text-link {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-size: 12.5px; font-weight: 600; letter-spacing: 0.07em;
+      color: var(--purple);
+      border-bottom: 1px solid rgba(101,46,134,0.3);
+      padding-bottom: 3px;
+      transition: border-color 0.35s var(--ease-soft), gap 0.4s var(--ease-out);
+    }
+    .text-link:hover { border-color: var(--purple); gap: 15px; }
+    .text-link svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+    .btn {
+      position: relative;
+      display: inline-flex; align-items: center; justify-content: center; gap: 11px;
+      padding: 15px 28px; border-radius: 3px;
+      font-size: 13px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase;
+      overflow: hidden; z-index: 1;
+      transition: color 0.4s var(--ease-soft), transform 0.45s var(--ease-out), box-shadow 0.45s var(--ease-out), border-color 0.4s var(--ease-soft);
+    }
+    .btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.9; transition: transform 0.45s var(--ease-out); }
+    .btn:hover svg { transform: translateX(4px); }
+    .btn-primary::before, .btn-light::before {
+      content: ''; position: absolute; inset: 0;
+      transform: translateY(101%);
+      transition: transform 0.5s var(--ease-out);
+      z-index: -1;
+    }
+    .btn-primary:hover::before, .btn-light:hover::before { transform: translateY(0); }
+    .btn-primary { background: var(--brown); color: var(--cream); }
+    .btn-primary::before { background: var(--purple); }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 26px rgba(74,52,42,0.24); }
+    .btn-light { background: var(--tan); color: var(--white); }
+    .btn-light::before { background: var(--cream); }
+    .btn-light:hover { color: var(--brown); transform: translateY(-2px); box-shadow: 0 12px 26px rgba(0,0,0,0.25); }
+    .btn-outline { border: 1.5px solid rgba(245,241,234,0.4); color: rgba(245,241,234,0.85); }
+    .btn-outline:hover { border-color: var(--cream); color: var(--cream); transform: translateY(-2px); }
+
+    /* ── Hero ────────────────────────────────── */
+    .c-hero {
+      position: relative;
+      height: min(84vh, 820px);
+      min-height: 460px;
+      overflow: hidden;
+      background: var(--brown);
+      color: var(--cream);
+    }
+    .c-hero-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+    }
+    .js .c-hero-img {
+      opacity: 0; transform: scale(1.1);
+      transition: opacity 1.1s var(--ease-soft), transform 2.6s var(--ease-out);
+    }
+    .js .c-hero.loaded .c-hero-img { opacity: 1; transform: scale(1); }
+    .c-hero-veil {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to top, rgba(46,26,20,0.88) 0%, rgba(46,26,20,0.35) 42%, rgba(46,26,20,0) 70%),
+        linear-gradient(to right, rgba(46,26,20,0.35), transparent 60%);
+    }
+    .c-hero-text {
+      position: absolute; left: 4em; right: 4em; bottom: 64px;
+      max-width: 880px;
+    }
+    .c-hero-meta { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; }
+    .c-hero-count { font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,241,234,0.72); }
+    .c-hero h1 {
+      font-family: var(--font-gemola);
+      font-size: clamp(38px, 5.2vw, 80px);
+      font-weight: 400; line-height: 1.04;
+      margin-bottom: 14px;
+    }
+    .c-hero-vi { font-size: 16px; font-style: italic; font-weight: 300; color: rgba(245,241,234,0.75); }
+    .c-hero-credit {
+      position: absolute; right: 4em; bottom: 20px;
+      font-size: 11px; color: rgba(245,241,234,0.55);
+    }
+    .c-hero-credit a { text-decoration: underline; text-underline-offset: 2px; transition: color 0.3s; }
+    .c-hero-credit a:hover { color: var(--cream); }
+    .c-hero-scroll {
+      position: absolute; left: 50%; bottom: 18px;
+      width: 1px; height: 38px; background: rgba(245,241,234,0.25); overflow: hidden;
+    }
+    .c-hero-scroll::after {
+      content: ''; position: absolute; left: 0; top: -100%;
+      width: 1px; height: 100%; background: var(--cream);
+      animation: scrollCue 2.2s var(--ease-soft) infinite;
+    }
+    @keyframes scrollCue { to { top: 100%; } }
+
+    /* ── Overview ────────────────────────────── */
+    .overview {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 5em;
+      padding: 96px 4em;
+      align-items: start;
+    }
+    .lede {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 2vw, 28px);
+      line-height: 1.4; color: var(--brown);
+      margin-bottom: 26px;
+    }
+    .body-text p { font-size: 15.5px; color: var(--muted); line-height: 1.85; margin-bottom: 18px; max-width: 620px; }
+    .covers-title {
+      margin: 36px 0 14px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--tan);
+    }
+    .covers { display: grid; gap: 10px; max-width: 620px; }
+    .covers li {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 18px;
+      background: var(--white);
+      border: 1px solid var(--border); border-radius: 3px;
+      font-size: 14.5px; color: var(--brown);
+      transition: transform 0.45s var(--ease-out), border-color 0.4s var(--ease-soft), box-shadow 0.45s var(--ease-out);
+    }
+    .covers li:hover { transform: translateX(6px); border-color: rgba(101,46,134,0.3); box-shadow: 0 10px 24px rgba(74,52,42,0.08); }
+    .covers svg { width: 18px; height: 18px; stroke: var(--purple); fill: none; stroke-width: 1.8; flex-shrink: 0; }
+    .overview .tag { margin-top: 28px; }
+
+    .facts {
+      position: sticky; top: 28px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--purple);
+      border-radius: 4px;
+      padding: 30px 30px 28px;
+      transition: box-shadow 0.5s var(--ease-out);
+    }
+    .facts:hover { box-shadow: 0 18px 44px rgba(74,52,42,0.1); }
+    .facts h2 { font-family: var(--font-display); font-weight: 400; font-size: 24px; margin-bottom: 18px; }
+    .facts dl div {
+      display: grid; grid-template-columns: 130px 1fr; gap: 14px;
+      padding: 11px 0; border-bottom: 1px solid var(--border); font-size: 14px;
+    }
+    .facts dt { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tan); padding-top: 3px; }
+    .facts dd { color: var(--muted); }
+    .facts dd.tbd { font-style: italic; }
+    .funds {
+      margin: 22px 0 22px;
+      padding: 18px 20px;
+      background: rgba(101,46,134,0.05);
+      border-left: 2px solid var(--purple);
+      border-radius: 0 3px 3px 0;
+    }
+    .funds-label { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple); }
+    .funds-value { font-family: var(--font-display); font-size: 26px; color: var(--brown); margin: 4px 0 2px; }
+    .funds-value.tbd { color: var(--tan); font-style: italic; }
+    .funds-note { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+    .facts .btn { width: 100%; }
+
+    /* ── Gallery ─────────────────────────────── */
+    .gallery { padding: 96px 4em 104px; background: var(--brown); color: var(--cream); scroll-margin-top: 20px; }
+    .gallery-head {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 2em; flex-wrap: wrap; margin-bottom: 40px;
+    }
+    .gallery .section-title { color: var(--cream); }
+    .gallery .section-title em { color: var(--tan); }
+    .gallery-head p { color: rgba(245,241,234,0.6); font-size: 14px; }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-auto-rows: clamp(150px, 17vw, 260px);
+      gap: 12px;
+    }
+    .g-item {
+      position: relative; display: block; width: 100%; height: 100%;
+      overflow: hidden; border-radius: 2px;
+      background: rgba(255,255,255,0.05);
+      grid-column: span 2;
+      cursor: zoom-in;
+    }
+    .g-item.hero-a { grid-column: span 4; grid-row: span 2; }
+    .g-item.hero-b { grid-column: span 2; grid-row: span 2; }
+    .g-item.half { grid-column: span 3; }
+    .g-item.full { grid-column: span 6; }
+    .g-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s var(--ease-out), filter 0.6s var(--ease-soft); }
+    .g-item:hover img { transform: scale(1.05); filter: brightness(0.82); }
+    .g-zoom {
+      position: absolute; top: 14px; right: 14px;
+      width: 38px; height: 38px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(245,241,234,0.92); color: var(--brown);
+      opacity: 0; transform: scale(0.7);
+      transition: opacity 0.4s var(--ease-soft), transform 0.5s var(--ease-out);
+    }
+    .g-item:hover .g-zoom, .g-item:focus-visible .g-zoom { opacity: 1; transform: none; }
+    .g-zoom svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .g-cap {
+      position: absolute; left: 0; right: 0; bottom: 0;
+      padding: 36px 16px 12px;
+      background: linear-gradient(to top, rgba(46,26,20,0.8), transparent);
+      font-size: 12.5px; color: var(--cream); text-align: left;
+      opacity: 0; transform: translateY(10px);
+      transition: opacity 0.45s var(--ease-soft), transform 0.55s var(--ease-out);
+    }
+    .g-item:hover .g-cap, .g-item:focus-visible .g-cap { opacity: 1; transform: none; }
+
+    /* Lightbox */
+    .lb {
+      border: none; padding: 0; margin: 0;
+      width: 100vw; height: 100dvh; max-width: none; max-height: none;
+      background: rgba(30,17,12,0.94);
+      color: var(--cream);
+    }
+    .lb::backdrop { background: transparent; }
+    .lb[open] { display: grid; grid-template-rows: 1fr auto; animation: lbIn 0.35s var(--ease-soft); }
+    @keyframes lbIn { from { opacity: 0; } to { opacity: 1; } }
+    .lb-stage { position: relative; display: flex; align-items: center; justify-content: center; padding: 64px 88px 12px; min-height: 0; }
+    .lb-stage img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 2px; animation: lbImg 0.5s var(--ease-out); }
+    @keyframes lbImg { from { opacity: 0; transform: scale(0.97); } to { opacity: 1; transform: none; } }
+    .lb-bar {
+      display: flex; align-items: center; justify-content: space-between; gap: 1.5em;
+      padding: 16px 32px 24px; font-size: 13px; color: rgba(245,241,234,0.75);
+    }
+    .lb-bar a { text-decoration: underline; text-underline-offset: 2px; }
+    .lb-count { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; color: var(--tan); white-space: nowrap; }
+    .lb-btn {
+      position: absolute;
+      width: 48px; height: 48px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(245,241,234,0.1); color: var(--cream);
+      transition: background 0.3s var(--ease-soft), transform 0.4s var(--ease-out);
+    }
+    .lb-btn:hover { background: rgba(245,241,234,0.22); transform: scale(1.06); }
+    .lb-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .lb-close { top: 16px; right: 20px; }
+    .lb-prev { left: 20px; top: 50%; margin-top: -24px; }
+    .lb-next { right: 20px; top: 50%; margin-top: -24px; }
+
+    /* ── Documents ───────────────────────────── */
+    .docs { padding: 96px 4em 40px; display: grid; grid-template-columns: 1fr 1.35fr; gap: 5em; }
+    .docs-intro p { color: var(--muted); font-size: 15px; line-height: 1.8; margin-top: 16px; max-width: 420px; }
+    .doc-list { display: grid; gap: 10px; align-content: start; }
+    .doc {
+      display: grid; grid-template-columns: 44px 1fr auto; gap: 18px; align-items: center;
+      padding: 18px 22px;
+      background: var(--white); border: 1px solid var(--border); border-radius: 3px;
+      transition: transform 0.45s var(--ease-out), border-color 0.4s var(--ease-soft), box-shadow 0.45s var(--ease-out);
+    }
+    .doc:hover { transform: translateY(-3px); border-color: rgba(101,46,134,0.25); box-shadow: 0 12px 26px rgba(74,52,42,0.08); }
+    .doc-icon {
+      width: 44px; height: 44px; border-radius: 3px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(178,150,125,0.14); color: var(--muted);
+      transition: background 0.4s var(--ease-soft), color 0.4s var(--ease-soft);
+    }
+    .doc:hover .doc-icon { background: var(--purple); color: var(--cream); }
+    .doc-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+    .doc h3 { font-size: 14.5px; font-weight: 600; }
+    .doc p { font-size: 12.5px; color: var(--tan); }
+    .doc-state { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tan); white-space: nowrap; }
+
+    /* ── Cases in this campaign ──────────────── */
+    .c-cases { padding: 96px 4em 40px; }
+    .c-cases-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 26px; margin-top: 40px; }
+    .case-card { background: var(--white); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; transition: transform 0.45s var(--ease-out), box-shadow 0.45s var(--ease-out); }
+    .case-card:hover { transform: translateY(-4px); box-shadow: 0 16px 34px rgba(74,52,42,0.12); }
+    .case-card img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+    .case-body { padding: 22px 24px 24px; }
+    .case-body h3 { font-family: var(--font-display); font-weight: 400; font-size: 21px; margin-bottom: 8px; }
+    .case-body p { font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 14px; }
+    .case-support { font-size: 12px; font-weight: 600; color: var(--purple); }
+
+    /* ── Other campaigns ─────────────────────── */
+    .others { padding: 96px 4em 104px; border-top: 1px solid var(--border); margin-top: 64px; background: #FAF7F3; }
+    .others-head {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 2em; flex-wrap: wrap; margin-bottom: 40px;
+    }
+    .others-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .o-card { display: block; }
+    .o-media {
+      position: relative; display: block;
+      aspect-ratio: 4 / 3; overflow: hidden;
+      background: var(--greige); border-radius: 2px; margin-bottom: 18px;
+    }
+    .o-media img { width: 100%; height: 100%; object-fit: cover; transition: transform 1.1s var(--ease-out); }
+    .o-card:hover .o-media img { transform: scale(1.07); }
+    .o-veil {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(74,52,42,0.72) 0%, rgba(74,52,42,0.1) 55%, transparent 100%);
+      opacity: 0; transition: opacity 0.55s var(--ease-soft);
+    }
+    .o-card:hover .o-veil { opacity: 1; }
+    .o-cta {
+      position: absolute; left: 18px; right: 18px; bottom: 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 11px;
+      color: var(--white); font-size: 12.5px; font-weight: 600; letter-spacing: 0.06em;
+      opacity: 0; transform: translateY(13px);
+      transition: opacity 0.5s var(--ease-soft) 0.06s, transform 0.6s var(--ease-out) 0.06s;
+    }
+    .o-card:hover .o-cta { opacity: 1; transform: none; }
+    .o-cta svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; transition: transform 0.45s var(--ease-out); }
+    .o-card:hover .o-cta svg { transform: translateX(4px); }
+    .o-card .status { margin-bottom: 10px; }
+    .o-card h3 {
+      font-family: var(--font-display); font-size: 21px; font-weight: 400; line-height: 1.25;
+      margin-bottom: 6px; transition: color 0.35s var(--ease-soft);
+    }
+    .o-card:hover h3 { color: var(--purple); }
+    .o-card p { font-size: 13.5px; color: var(--muted); line-height: 1.65; }
+
+    /* ── Funding strip ───────────────────────── */
+    .purpose {
+      background: var(--deep); color: var(--white);
+      padding: 64px 4em;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 2.5em; flex-wrap: wrap;
+    }
+    .purpose-text { max-width: 620px; }
+    .purpose h2 { font-family: var(--font-display); font-size: 30px; font-weight: 400; margin-bottom: 10px; }
+    .purpose p { font-size: 15px; color: rgba(255,255,255,0.66); line-height: 1.7; }
+    .purpose-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* ── Not found ───────────────────────────── */
+    .not-found { padding: 120px 4em; text-align: center; }
+    .not-found h1 { font-family: var(--font-gemola); font-weight: 400; font-size: clamp(34px, 4vw, 56px); margin-bottom: 14px; }
+    .not-found p { color: var(--muted); margin-bottom: 28px; }
+
+    /* ── Footer ──────────────────────────────── */
+    footer {
+      background: var(--deep); color: rgba(255,255,255,0.42);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 30px 4em;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; gap: 1rem; flex-wrap: wrap;
+    }
+    footer a { color: rgba(255,255,255,0.42); transition: color 0.3s var(--ease-soft); }
+    footer a:hover { color: rgba(255,255,255,0.9); }
+    .footer-links { display: flex; gap: 1.5em; flex-wrap: wrap; }
+
+    #scroll-top {
+      position: fixed; bottom: 2rem; right: 2rem; z-index: 200;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--brown); border: 1.5px solid var(--tan);
+      color: var(--cream); font-size: 20px; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.2s ease;
+    }
+    #scroll-top:hover { transform: translateY(-3px); background: var(--tan); }
+
+    /* ── Responsive ──────────────────────────── */
+    @media (max-width: 1000px) {
+      .nav-inner { padding: 0 1.5em; }
+      .nav-toggle { display: flex; }
+      .nav-right { display: none; }
+      .nav-links {
+        position: absolute; top: 100%; left: 0; right: 0;
+        flex-direction: column; align-items: stretch; gap: 0;
+        background: var(--brown);
+        max-height: 0; opacity: 0; overflow: hidden;
+        transition: max-height 0.35s ease, opacity 0.25s ease;
+      }
+      .nav-links.open { max-height: 400px; opacity: 1; }
+      .nav-link { display: block; padding: 14px 1.5em; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .nav-links li:last-child .nav-link { border-bottom: none; }
+
+      .breadcrumb { padding: 18px 1.5em; }
+      .c-hero { height: 72vh; }
+      .c-hero-text { left: 1.5em; right: 1.5em; bottom: 52px; }
+      .c-hero-credit { left: 1.5em; right: 1.5em; bottom: 16px; }
+      .c-hero-scroll { display: none; }
+      .overview { grid-template-columns: 1fr; gap: 3em; padding: 64px 1.5em; }
+      .facts { position: static; }
+      .gallery { padding: 64px 1.5em 72px; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 42vw; gap: 8px; }
+      .g-item, .g-item.half { grid-column: span 1; grid-row: span 1; }
+      .g-item.hero-a, .g-item.full { grid-column: span 2; grid-row: span 1; }
+      .g-item.hero-b { grid-column: span 1; grid-row: span 1; }
+      .g-item:last-child:nth-child(even) { grid-column: span 2; }
+      .lb-stage { padding: 64px 12px 12px; }
+      .lb-prev, .lb-next { top: auto; bottom: 14px; margin-top: 0; }
+      .lb-prev { left: 12px; }
+      .lb-next { right: 12px; }
+      .lb-bar { padding: 14px 72px 22px; flex-direction: column; align-items: flex-start; gap: 4px; }
+      .docs { grid-template-columns: 1fr; gap: 2.5em; padding: 64px 1.5em 24px; }
+      .c-cases { padding: 64px 1.5em 24px; }
+      .others { padding: 64px 1.5em 72px; }
+      .others-grid { grid-template-columns: 1fr 1fr; }
+      .purpose { padding: 48px 1.5em; }
+      .not-found { padding: 88px 1.5em; }
+      footer { padding: 24px 1.5em; }
+    }
+    @media (max-width: 600px) {
+      .others-grid { grid-template-columns: 1fr; }
+      .facts dl div { grid-template-columns: 1fr; gap: 2px; }
+      .doc { grid-template-columns: 40px 1fr; }
+      .doc-state { grid-column: 2; }
+    }
+    @media (hover: none) {
+      .g-cap { opacity: 1; transform: none; }
+      .o-veil { opacity: 1; }
+      .o-cta { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="assets/images/Logo varijacije white.png" alt="Pure Community Support">
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="/"       class="nav-link">Home</a></li>
+        <li><a href="/shop"   class="nav-link">Shop</a></li>
+        <li><a href="/about"  class="nav-link">About</a></li>
+        <li class="nav-item-sub">
+          <a href="/cases" class="nav-link active">Campaigns<span class="nav-caret" aria-hidden="true"></span></a>
+          <div class="nav-sub">
+            <ul class="nav-sub-inner" role="list">
+              <li><a href="/cases" class="nav-sub-all">All cases &amp; campaigns</a></li>
+              <li><a href="/cases/food-essentials"><span class="nav-sub-dot" aria-hidden="true"></span>Community Food &amp; Essentials Kit</a></li>
+              <li><a href="/cases/lotus-art"><span class="nav-sub-dot" aria-hidden="true"></span>Lotus Art for Healing Workshop</a></li>
+              <li><a href="/cases/youth-leadership"><span class="nav-sub-dot" aria-hidden="true"></span>Youth Leadership Circle</a></li>
+              <li><a href="/cases/heritage-craft"><span class="nav-sub-dot planned" aria-hidden="true"></span>Heritage Craft Class</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="/impact" class="nav-link">Impact</a></li>
+        <li><a href="/blog"   class="nav-link">Blog</a></li>
+      </ul>
+      <div class="nav-right">
+        <div class="lang-switcher">
+          <span class="active">EN</span>
+          <span class="sep">/</span>
+          <span><a href="/vi/">VI</a></span>
+        </div>
+        <a href="/shop" class="nav-cta">Shop Now</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a>
+    <span class="sep">/</span>
+    <a href="/cases">Cases &amp; Campaigns</a>
+    <span class="sep">/</span>
+    <span class="current" id="crumb-current" aria-current="page"></span>
+  </nav>
+
+  <div id="campaign">
+    <!-- Hero -->
+    <header class="c-hero" id="c-hero">
+      <img class="c-hero-img" id="c-hero-img" alt="">
+      <div class="c-hero-veil" aria-hidden="true"></div>
+      <div class="c-hero-text">
+        <div class="c-hero-meta" data-reveal style="--d:0.2s">
+          <span class="status on-photo" id="c-status"></span>
+          <span class="c-hero-count" id="c-count"></span>
+        </div>
+        <h1 id="c-title" data-reveal style="--d:0.3s"></h1>
+        <p class="c-hero-vi" id="c-title-vi" lang="vi" data-reveal style="--d:0.4s"></p>
+      </div>
+      <p class="c-hero-credit" id="c-hero-credit"></p>
+      <span class="c-hero-scroll" aria-hidden="true"></span>
+    </header>
+
+    <!-- Overview -->
+    <main class="overview">
+      <div>
+        <p class="eyebrow" data-reveal>About the programme</p>
+        <p class="lede" id="c-summary" data-reveal style="--d:0.06s"></p>
+        <div class="body-text" id="c-about" data-reveal style="--d:0.12s"></div>
+        <p class="covers-title" data-reveal>What the programme covers</p>
+        <ul class="covers" id="c-covers"></ul>
+        <p class="tag" data-reveal>Placeholder · details to be confirmed</p>
+      </div>
+
+      <aside class="facts" aria-labelledby="facts-heading" data-reveal style="--d:0.1s">
+        <h2 id="facts-heading">At a glance</h2>
+        <dl>
+          <div><dt>Status</dt><dd id="f-status"></dd></div>
+          <div><dt>Focus</dt><dd id="f-focus"></dd></div>
+          <div><dt>Location</dt><dd id="f-location"></dd></div>
+          <div><dt>Format</dt><dd id="f-format"></dd></div>
+          <div><dt>Participants</dt><dd>Referred through local community partners</dd></div>
+        </dl>
+        <div class="funds">
+          <p class="funds-label">Community funds received</p>
+          <p class="funds-value tbd">To be published</p>
+          <p class="funds-note">Campaigns have no funding target. The total received is updated each quarter in the transparency report.</p>
+        </div>
+        <a href="/shop" class="btn btn-primary">
+          Visit the shop
+          <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </aside>
+    </main>
+
+    <!-- Gallery -->
+    <section class="gallery" id="gallery" aria-labelledby="gallery-heading">
+      <div class="gallery-head">
+        <div data-reveal>
+          <p class="eyebrow">In pictures</p>
+          <h2 class="section-title" id="gallery-heading">From the <em>programme</em></h2>
+        </div>
+        <p id="gallery-count" data-reveal style="--d:0.1s"></p>
+      </div>
+      <div class="gallery-grid" id="gallery-grid"></div>
+    </section>
+
+    <!-- Documents -->
+    <section class="docs" aria-labelledby="docs-heading">
+      <div class="docs-intro" data-reveal>
+        <p class="eyebrow">Transparency</p>
+        <h2 class="section-title" id="docs-heading">Reports &amp; <em>documents</em></h2>
+        <p>Quarterly reports for this campaign will be published here, including the funds received and how they were used.</p>
+      </div>
+      <ul class="doc-list">
+        <li class="doc" data-reveal style="--d:0.05s">
+          <span class="doc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><polyline points="14 3 14 8 19 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg></span>
+          <div><h3>Programme overview</h3><p>Scope, eligibility and schedule</p></div>
+          <span class="doc-state">Coming soon</span>
+        </li>
+        <li class="doc" data-reveal style="--d:0.12s">
+          <span class="doc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><line x1="6" y1="20" x2="6" y2="12"/><line x1="12" y1="20" x2="12" y2="6"/><line x1="18" y1="20" x2="18" y2="10"/></svg></span>
+          <div><h3>Quarterly transparency report</h3><p>Funds received and allocated</p></div>
+          <span class="doc-state">Coming soon</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- Cases in this campaign (shown only when consented cases exist) -->
+    <section class="c-cases" id="c-cases" aria-labelledby="c-cases-heading" hidden>
+      <div data-reveal>
+        <p class="eyebrow">Individual cases</p>
+        <h2 class="section-title" id="c-cases-heading">Cases in this <em>campaign</em></h2>
+      </div>
+      <div class="c-cases-grid" id="c-cases-grid"></div>
+    </section>
+
+    <!-- Other campaigns -->
+    <section class="others" aria-labelledby="others-heading">
+      <div class="others-head">
+        <div data-reveal>
+          <p class="eyebrow">Continue exploring</p>
+          <h2 class="section-title" id="others-heading">Other <em>campaigns</em></h2>
+        </div>
+        <a href="/cases" class="text-link" data-reveal style="--d:0.1s">
+          All cases &amp; campaigns
+          <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+      <div class="others-grid" id="others-grid"></div>
+    </section>
+  </div>
+
+  <!-- Not found -->
+  <section class="not-found" id="not-found" hidden>
+    <p class="eyebrow">Cases &amp; Campaigns</p>
+    <h1>This campaign isn't available</h1>
+    <p>It may have been renamed or is not yet published.</p>
+    <a class="btn btn-primary" href="/cases">View all campaigns <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+  </section>
+
+  <!-- Funding -->
+  <section class="purpose" aria-labelledby="purpose-heading">
+    <div class="purpose-text" data-reveal>
+      <h2 id="purpose-heading">How the programmes are funded</h2>
+      <p>
+        Pure's revenue comes from product sales only. After operating costs, 50% of net profit is allocated
+        to community programmes in Hue; the other half is reinvested into the artisans and the catalog.
+      </p>
+    </div>
+    <div class="purpose-actions" data-reveal style="--d:0.1s">
+      <a href="/shop" class="btn btn-light">
+        Visit the shop
+        <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="/impact" class="btn btn-outline">See our impact</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <img src="assets/images/Logo varijacije white.png" alt="Pure Community Support" style="height:38px;width:auto;">
+    <ul class="footer-links" role="list">
+      <li><a href="/shop">Shop</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/cases">Campaigns</a></li>
+      <li><a href="/impact">Impact</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="mailto:hello@purecommunitysupport.vn">Contact</a></li>
+    </ul>
+    <span>© 2026 Pure Community Support · Hue, Vietnam</span>
+  </footer>
+
+  <!-- Lightbox -->
+  <dialog class="lb" id="lightbox" aria-label="Photo viewer">
+    <div class="lb-stage">
+      <img id="lb-img" alt="">
+      <button class="lb-btn lb-close" type="button" id="lb-close" aria-label="Close photo viewer"><svg viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg></button>
+      <button class="lb-btn lb-prev" type="button" id="lb-prev" aria-label="Previous photo"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="lb-btn lb-next" type="button" id="lb-next" aria-label="Next photo"><svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg></button>
+    </div>
+    <div class="lb-bar">
+      <span id="lb-caption"></span>
+      <span class="lb-count" id="lb-count"></span>
+    </div>
+  </dialog>
+
+  <button id="scroll-top" aria-label="Scroll to top">↑</button>
+
+  <script src="assets/js/campaigns.js"></script>
+  <script>
+    /* Mobile nav toggle */
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    /* Scroll reveal */
+    const revealer = 'IntersectionObserver' in window
+      ? new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            el.classList.add('in');
+            revealer.unobserve(el);
+            /* Once the entrance has played, hand the element back to its own hover styles */
+            const delay = parseFloat(getComputedStyle(el).getPropertyValue('--d')) || 0;
+            setTimeout(() => { el.removeAttribute('data-reveal'); el.classList.remove('in'); }, 1800 + delay * 1000);
+          });
+        }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 })
+      : null;
+    function observeReveals(root = document) {
+      root.querySelectorAll('[data-reveal]:not(.in)').forEach(el => revealer ? revealer.observe(el) : el.classList.add('in'));
+    }
+
+    /* ── Render the campaign from assets/js/campaigns.js ── */
+    const CAMPAIGNS = window.PURE_CAMPAIGNS;
+    const PHOTOS = window.PURE_PHOTOS;
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+    const src = key => `assets/images/campaigns/${key}.jpg`;
+    const url = c => `/cases/${c.id}`;
+    const STATUS = { running: 'Running', planned: 'Planned' };
+    const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+    const creditHTML = key => {
+      const p = PHOTOS[key];
+      return `Placeholder photo: <a href="${p.url}" target="_blank" rel="noopener">${esc(p.author)}</a>, ${esc(p.license)}`;
+    };
+
+    // /cases/<id> on the live site; campaign.html?id=<id> also works for local previews.
+    const pathId = location.pathname.replace(/\/+$/, '').split('/').pop();
+    const campaignId = new URLSearchParams(location.search).get('id') || pathId;
+    const c = CAMPAIGNS.find(x => x.id === campaignId);
+
+    function setMeta(selector, attr, value) {
+      const el = document.querySelector(selector);
+      if (el) el.setAttribute(attr, value);
+    }
+
+    if (!c) {
+      $('campaign').hidden = true;
+      document.querySelector('.breadcrumb').hidden = true;
+      $('not-found').hidden = false;
+      document.title = 'Campaign not found — Pure Community Support';
+    } else {
+      const index = CAMPAIGNS.indexOf(c);
+      document.title = `${c.title} — Cases & Campaigns | Pure Community Support`;
+      setMeta('meta[name="description"]', 'content', `${c.summary} Funded by 50% of Pure Community Support's net profit.`);
+      setMeta('meta[property="og:title"]', 'content', `${c.title} — Pure Community Support`);
+      setMeta('meta[property="og:description"]', 'content', c.summary);
+
+      /* Mark the current campaign in the nav dropdown */
+      document.querySelectorAll('.nav-sub a').forEach(a => {
+        if (a.getAttribute('href') === url(c)) a.setAttribute('aria-current', 'page');
+      });
+
+      $('crumb-current').textContent = c.title;
+
+      /* Hero */
+      const hero = $('c-hero');
+      const heroImg = $('c-hero-img');
+      heroImg.alt = `${PHOTOS[c.cover].alt} (placeholder photo)`;
+      const markLoaded = () => hero.classList.add('loaded');
+      heroImg.addEventListener('load', markLoaded);
+      heroImg.addEventListener('error', markLoaded);
+      heroImg.src = src(c.cover);
+      if (heroImg.complete) markLoaded();
+      $('c-status').textContent = STATUS[c.status];
+      $('c-count').textContent = `Campaign ${String(index + 1).padStart(2, '0')} of ${String(CAMPAIGNS.length).padStart(2, '0')}`;
+      $('c-title').textContent = c.title;
+      $('c-title-vi').textContent = c.titleVi;
+      $('c-hero-credit').innerHTML = creditHTML(c.cover);
+
+      /* Overview */
+      $('c-summary').textContent = c.summary;
+      $('c-about').innerHTML = c.about.map(p => `<p>${esc(p)}</p>`).join('');
+      $('c-covers').innerHTML = c.covers.map((item, i) => `
+        <li data-reveal style="--d:${i * 0.07}s">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+          ${esc(item)}
+        </li>`).join('');
+      $('f-status').textContent = STATUS[c.status];
+      $('f-focus').textContent = c.focus;
+      $('f-location').textContent = c.location;
+      $('f-format').textContent = c.format;
+
+      /* Gallery: two large photos, then rows of three; a short last row stretches to fill */
+      const photos = c.gallery;
+      const rest = photos.length - 2;
+      const sizeFor = i => {
+        if (i === 0) return 'hero-a';
+        if (i === 1) return 'hero-b';
+        const pos = i - 2;
+        const lastRowStart = rest - (rest % 3 || 3);
+        if (pos < lastRowStart) return '';
+        const inLastRow = rest - lastRowStart;
+        return inLastRow === 1 ? 'full' : inLastRow === 2 ? 'half' : '';
+      };
+      $('gallery-count').textContent = `${photos.length} photographs · placeholders`;
+      $('gallery-grid').innerHTML = photos.map((k, i) => `
+        <button class="g-item ${sizeFor(i)}" type="button" data-index="${i}" data-reveal="mask" style="--d:${(i % 3) * 0.1}s" aria-label="Open photo: ${esc(PHOTOS[k].alt)}">
+          <img src="${src(k)}" alt="${esc(PHOTOS[k].alt)} (placeholder photo)" loading="lazy">
+          <span class="g-zoom" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></span>
+          <span class="g-cap" aria-hidden="true">${esc(PHOTOS[k].alt)}</span>
+        </button>`).join('');
+
+      /* Lightbox */
+      const lb = $('lightbox');
+      let current = 0;
+      function showPhoto(i) {
+        current = (i + photos.length) % photos.length;
+        const k = photos[current];
+        const img = $('lb-img');
+        img.style.animation = 'none';
+        img.offsetHeight; // restart the fade-in for each photo
+        img.style.animation = '';
+        img.src = src(k);
+        img.alt = `${PHOTOS[k].alt} (placeholder photo)`;
+        $('lb-caption').innerHTML = `${esc(PHOTOS[k].alt)} · ${creditHTML(k)}`;
+        $('lb-count').textContent = `${current + 1} / ${photos.length}`;
+      }
+      $('gallery-grid').addEventListener('click', e => {
+        const item = e.target.closest('[data-index]');
+        if (!item) return;
+        showPhoto(Number(item.dataset.index));
+        lb.showModal();
+      });
+      $('lb-close').addEventListener('click', () => lb.close());
+      $('lb-prev').addEventListener('click', () => showPhoto(current - 1));
+      $('lb-next').addEventListener('click', () => showPhoto(current + 1));
+      lb.addEventListener('click', e => {
+        if (e.target === lb || e.target.classList.contains('lb-stage')) lb.close();
+      });
+      lb.addEventListener('keydown', e => {
+        if (e.key === 'ArrowLeft') showPhoto(current - 1);
+        if (e.key === 'ArrowRight') showPhoto(current + 1);
+      });
+      lb.addEventListener('close', () => {
+        const trigger = document.querySelector(`.g-item[data-index="${current}"]`);
+        if (trigger) trigger.focus({ preventScroll: true });
+      });
+
+      /* Individual cases (published only with consent) */
+      if (c.cases && c.cases.length) {
+        $('c-cases').hidden = false;
+        $('c-cases-grid').innerHTML = c.cases.map((cs, i) => `
+          <article class="case-card" data-reveal style="--d:${(i % 3) * 0.08}s">
+            ${cs.img ? `<img src="${esc(cs.img)}" alt="${esc(cs.name)}" loading="lazy">` : ''}
+            <div class="case-body">
+              <h3>${esc(cs.name)}</h3>
+              <p>${esc(cs.story)}</p>
+              <span class="case-support">Total support received: ${esc(cs.support || 'To be published')}</span>
+            </div>
+          </article>`).join('');
+      }
+
+      /* Other campaigns */
+      $('others-grid').innerHTML = CAMPAIGNS.filter(x => x.id !== c.id).map((o, i) => `
+        <a class="o-card" href="${url(o)}" data-reveal style="--d:${i * 0.1}s">
+          <span class="o-media">
+            <img src="${src(o.cover)}" alt="${esc(PHOTOS[o.cover].alt)} (placeholder photo)" loading="lazy">
+            <span class="o-veil" aria-hidden="true"></span>
+            <span class="o-cta" aria-hidden="true"><span>View campaign</span>${ARROW}</span>
+          </span>
+          <span class="status ${o.status}">${STATUS[o.status]}</span>
+          <h3>${esc(o.title)}</h3>
+          <p>${esc(o.summary)}</p>
+        </a>`).join('');
+    }
+
+    observeReveals();
+
+    /* Scroll to top */
+    const scrollBtn = document.getElementById('scroll-top');
+    window.addEventListener('scroll', () => {
+      scrollBtn.style.opacity = window.scrollY > 120 ? '1' : '0';
+      scrollBtn.style.pointerEvents = window.scrollY > 120 ? 'auto' : 'none';
+    }, { passive: true });
+    scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  </script>
+
+</body>
+</html>

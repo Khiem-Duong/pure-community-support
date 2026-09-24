@@ -15,6 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/nav-menu.css">
 
   <style>
     /* ─── Fonts ─────────────────────────────────────────────── */
@@ -1080,7 +1081,18 @@
         <li><a href="/"         class="nav-link active">Home</a></li>
         <li><a href="/shop"     class="nav-link">Shop</a></li>
         <li><a href="/about"    class="nav-link">About</a></li>
-        <li><a href="/cases"    class="nav-link">Campaigns</a></li>
+        <li class="nav-item-sub">
+          <a href="/cases" class="nav-link">Campaigns<span class="nav-caret" aria-hidden="true"></span></a>
+          <div class="nav-sub">
+            <ul class="nav-sub-inner" role="list">
+              <li><a href="/cases" class="nav-sub-all">All cases &amp; campaigns</a></li>
+              <li><a href="/cases/food-essentials"><span class="nav-sub-dot" aria-hidden="true"></span>Community Food &amp; Essentials Kit</a></li>
+              <li><a href="/cases/lotus-art"><span class="nav-sub-dot" aria-hidden="true"></span>Lotus Art for Healing Workshop</a></li>
+              <li><a href="/cases/youth-leadership"><span class="nav-sub-dot" aria-hidden="true"></span>Youth Leadership Circle</a></li>
+              <li><a href="/cases/heritage-craft"><span class="nav-sub-dot planned" aria-hidden="true"></span>Heritage Craft Class</a></li>
+            </ul>
+          </div>
+        </li>
         <li><a href="/impact"   class="nav-link">Impact</a></li>
         <li><a href="/blog"     class="nav-link">Blog</a></li>
       </ul>
