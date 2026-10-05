@@ -295,33 +295,41 @@ html.js .hero-photo.in > .ph { transform: scale(1); }
   margin-bottom: 48px;
 }
 .hero-short .hero-caption { margin-bottom: 0; }
+/* Same colour scheme as the home page stats bar */
 .hero-bottom {
-  border-top: 1px solid rgba(255,255,255,0.14);
+  border-top: 2px solid var(--tan);
   display: grid;
   grid-template-columns: 1.4fr 1fr 1fr;
   position: relative;
   z-index: 2;
-  background: rgba(42,21,24,0.5);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: var(--brown);
 }
 .hero-stat {
+  position: relative;
   padding: 28px 4em;
-  border-right: 1px solid rgba(255,255,255,0.14);
-  transition: background 0.3s ease;
+  border-right: 1px solid rgba(245,241,234,0.08);
+  transition: background 0.45s ease;
 }
 .hero-stat:last-child { border-right: none; }
-.hero-stat:hover { background: rgba(255,255,255,0.05); }
+.hero-stat::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  height: 2px; width: 0; background: var(--tan);
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.hero-stat:hover { background: rgba(245,241,234,0.04); }
+.hero-stat:hover::before { width: 100%; }
 .hero-stat-num {
   font-family: var(--font-display);
   font-size: clamp(36px, 4vw, 56px);
-  color: var(--tan);
+  color: var(--cream);
   line-height: 1;
   margin-bottom: 6px;
   font-variant-numeric: tabular-nums;
+  transition: color 0.4s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
+.hero-stat:hover .hero-stat-num { color: var(--tan); transform: translateY(-3px); }
 .hero-stat-num .unit { font-size: 0.6em; margin-left: 4px; }
-.hero-stat-label { font-size: 13px; color: rgba(255,255,255,0.64); line-height: 1.4; }
+.hero-stat-label { font-size: 13px; color: rgba(245,241,234,0.62); line-height: 1.4; }
 
 /* ── Bands + type (same as about.html) ────────── */
 .band { padding: 96px 4em; }
@@ -883,7 +891,7 @@ footer a:hover { color: rgba(255,255,255,0.8); }
 }
 @media (max-width: 960px) {
   .hero-bottom { grid-template-columns: 1fr; }
-  .hero-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 22px 1.5em; }
+  .hero-stat { border-right: none; border-bottom: 1px solid rgba(245,241,234,0.08); padding: 22px 1.5em; }
   .hero-stat:last-child { border-bottom: none; }
   .hero-main { padding: 48px 1.5em 0; }
   .hero-short .hero-main { padding-bottom: 48px; }

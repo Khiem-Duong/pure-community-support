@@ -17,6 +17,7 @@
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/nav-menu.css">
 
+  <script>document.documentElement.classList.add('js');</script>
   <style>
     /* ─── Fonts ─────────────────────────────────────────────── */
     @font-face {
@@ -394,32 +395,80 @@
       text-transform: uppercase;
       color: var(--tan);
     }
-    .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      border-top: 1px solid var(--greige);
+    /* Stats bar (v2b dark ledger) */
+    .stats {
+      background: var(--brown);
+      color: var(--cream);
+      border-top: 2px solid var(--tan);
     }
-    .hero-stat {
-      padding: 24px 32px;
-      border-right: 1px solid var(--greige);
+    .stats-head {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 2em; flex-wrap: wrap;
+      padding: 30px 40px 22px;
+      border-bottom: 1px solid rgba(245,241,234,0.08);
     }
-    .hero-stat:last-child { border-right: none; }
-    .hero-stat-number {
-      font-family: var(--font-display);
-      font-size: 36px;
-      font-weight: 400;
-      color: var(--purple);
-      line-height: 1;
-      margin-bottom: 6px;
-    }
-    .hero-stat-label {
-      font-family: var(--font-body);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
+    .stats-head p { font-size: 13px; color: rgba(245,241,234,0.6); }
+    .stats-head a {
       color: var(--tan);
+      border-bottom: 1px solid rgba(178,150,125,0.4);
+      transition: color var(--transition), border-color var(--transition);
     }
+    .stats-head a:hover { color: var(--cream); border-color: var(--cream); }
+    .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+    .stat {
+      position: relative;
+      display: block;
+      padding: 34px 40px 32px;
+      border-right: 1px solid rgba(245,241,234,0.08);
+      transition: background 0.45s ease;
+    }
+    .stat:last-child { border-right: none; }
+    .stat::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      height: 2px; width: 0; background: var(--tan);
+      transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .stat:hover { background: rgba(245,241,234,0.04); }
+    .stat:hover::before { width: 100%; }
+    .stat-idx {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+      color: rgba(178,150,125,0.85); margin-bottom: 16px;
+    }
+    .stat-idx::after {
+      content: ''; flex: 0 0 28px; height: 1px; background: currentColor;
+      transition: flex-basis 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .stat:hover .stat-idx::after { flex-basis: 56px; }
+    .stat-num {
+      font-family: var(--font-display);
+      font-size: clamp(42px, 4.4vw, 60px);
+      line-height: 1; color: var(--cream);
+      margin-bottom: 10px;
+      transition: color 0.4s ease, transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .stat:hover .stat-num { color: var(--tan); transform: translateY(-3px); }
+    .stat-title {
+      font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 8px;
+    }
+    .stat-text {
+      font-size: 13.5px; line-height: 1.65; color: rgba(245,241,234,0.62);
+      max-width: 320px; margin-bottom: 16px;
+    }
+    .stat-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.06em; color: var(--cream);
+      transition: gap 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .stat:hover .stat-link { gap: 14px; }
+    .stat-link svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+    /* Fade up on load/scroll; the attribute is removed afterwards so hover styles take over */
+    .js .stats [data-reveal] {
+      opacity: 0; transform: translateY(24px);
+      transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s), transform 1s cubic-bezier(0.22, 1, 0.36, 1) var(--d, 0s);
+    }
+    .js .stats [data-reveal].in { opacity: 1; transform: none; }
 
     /* ─── Category Strip ────────────────────────────────────── */
     .categories {
@@ -1052,9 +1101,10 @@
       .blog-grid        { grid-template-columns: 1fr; }
       .impact-grid      { grid-template-columns: 1fr 1fr; }
       .footer-top       { grid-template-columns: 1fr; gap: 32px; }
-      .hero-stats       { grid-template-columns: 1fr; }
-      .hero-stat        { border-right: none; border-bottom: 1px solid var(--greige); }
-      .hero-stat:last-child { border-bottom: none; }
+      .stats-head       { padding: 26px 24px 18px; }
+      .stats-grid       { grid-template-columns: 1fr; }
+      .stat             { border-right: none; border-bottom: 1px solid rgba(245,241,234,0.08); padding: 28px 24px; }
+      .stat:last-child  { border-bottom: none; }
     }
     @media (max-width: 480px) {
       .categories-inner { grid-template-columns: 1fr 1fr; }
@@ -1172,18 +1222,32 @@
         <div class="hero-caption">Hue artisans · Handmade in Vietnam</div>
       </div>
     </div>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="hero-stat-number">50%</div>
-        <div class="hero-stat-label">Net profit to community</div>
+    <div class="stats">
+      <div class="stats-head" data-reveal>
+        <p>Figures are updated each quarter in our <a href="/reports">transparency reports</a>.</p>
       </div>
-      <div class="hero-stat">
-        <div class="hero-stat-number">10+</div>
-        <div class="hero-stat-label">Years of community work</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-number">Huế</div>
-        <div class="hero-stat-label">Vietnam</div>
+      <div class="stats-grid">
+        <a class="stat" href="/impact" data-reveal>
+          <span class="stat-idx">01</span>
+          <div class="stat-num"><span class="count" data-target="50">50</span>%</div>
+          <p class="stat-title">Net profit to community</p>
+          <p class="stat-text">After operating costs, half of the net profit from every sale funds programmes in Hue.</p>
+          <span class="stat-link">See our impact <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+        <a class="stat" href="/about" data-reveal style="--d:0.1s">
+          <span class="stat-idx">02</span>
+          <div class="stat-num"><span class="count" data-target="10">10</span>+</div>
+          <p class="stat-title">Years of community work</p>
+          <p class="stat-text">A decade of work by the founding team, now organised and reported in public.</p>
+          <span class="stat-link">Our story <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
+        <a class="stat" href="/about#artisans" data-reveal style="--d:0.2s">
+          <span class="stat-idx">03</span>
+          <div class="stat-num">Huế</div>
+          <p class="stat-title">Made in Vietnam</p>
+          <p class="stat-text">Every piece is made by hand by artisans in and around the former imperial capital.</p>
+          <span class="stat-link">Meet the artisans <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </a>
       </div>
     </div>
   </section>
@@ -1757,6 +1821,24 @@
       const isOpen = navLinks.classList.toggle('open');
       navToggle.setAttribute('aria-expanded', isOpen);
     });
+
+    /* Stats bar: fade up when it enters the viewport */
+    const statsReveal = document.querySelectorAll('.stats [data-reveal]');
+    const revealStat = el => {
+      el.classList.add('in');
+      const delay = parseFloat(getComputedStyle(el).getPropertyValue('--d')) || 0;
+      setTimeout(() => { el.removeAttribute('data-reveal'); el.classList.remove('in'); }, 1600 + delay * 1000);
+    };
+    if ('IntersectionObserver' in window) {
+      const statsObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        statsObserver.unobserve(entry.target);
+        revealStat(entry.target);
+      }), { threshold: 0.2 });
+      statsReveal.forEach(el => statsObserver.observe(el));
+    } else {
+      statsReveal.forEach(revealStat);
+    }
 
     /* Counter animation for impact numbers */
     function animateCounter(el, target, duration) {

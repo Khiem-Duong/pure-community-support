@@ -279,20 +279,33 @@
     .tile-go svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
 
     /* ── Summary strip ───────────────────────── */
+    /* Same colour scheme as the home page stats bar */
     .summary {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      border-bottom: 1px solid var(--border);
-      background: #FAF7F3;
+      background: var(--brown);
+      border-top: 2px solid var(--tan);
     }
     .summary-item {
+      position: relative;
       padding: 34px 4em 32px;
-      border-right: 1px solid var(--border);
-      transition: background 0.4s var(--ease-soft);
+      border-right: 1px solid rgba(245,241,234,0.08);
+      transition: background 0.45s var(--ease-soft);
     }
     .summary-item:last-child { border-right: none; }
-    .summary-item:hover { background: rgba(178,150,125,0.08); }
-    .summary-num { display: block; font-family: var(--font-display); font-size: 40px; line-height: 1; color: var(--brown); margin-bottom: 8px; }
+    .summary-item::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      height: 2px; width: 0; background: var(--tan);
+      transition: width 0.6s var(--ease-out);
+    }
+    .summary-item:hover { background: rgba(245,241,234,0.04); }
+    .summary-item:hover::before { width: 100%; }
+    .summary-num {
+      display: block; font-family: var(--font-display); font-size: 40px; line-height: 1;
+      color: var(--cream); margin-bottom: 8px;
+      transition: color 0.4s var(--ease-soft), transform 0.5s var(--ease-out);
+    }
+    .summary-item:hover .summary-num { color: var(--tan); transform: translateY(-3px); }
     .summary-label { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--tan); }
 
     /* ── Programmes list ─────────────────────── */
@@ -505,7 +518,7 @@
       .summary { grid-template-columns: 1fr 1fr; }
       .summary-item { padding: 26px 1.5em; }
       .summary-item:nth-child(2) { border-right: none; }
-      .summary-item:nth-child(-n+2) { border-bottom: 1px solid var(--border); }
+      .summary-item:nth-child(-n+2) { border-bottom: 1px solid rgba(245,241,234,0.08); }
       .programmes { padding: 64px 1.5em 24px; }
       .feature, .feature.flip { grid-template-columns: 1fr; gap: 28px; padding-bottom: 72px; }
       .feature.flip .feature-figure { order: 0; }
