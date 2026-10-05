@@ -12,6 +12,10 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.3.1] - 2026-10-05
+### What changed
+- Added .assetsignore so the Cloudflare deploy no longer uploads the .git folder (its pack file exceeded the 25 MiB asset limit and failed the deploy; it also stops the repo history being served publicly)
+
 ## [0.3.0] - 2026-10-05
 ### What changed
 - Added an order list in place of a shopping cart: new page at /order-list (order-list.html)

@@ -1,0 +1,7 @@
+# Files Cloudflare should not upload or serve (same syntax as .gitignore).
+# The deploy uses the repo root as the assets directory, so without this the
+# .git folder is uploaded too, and its pack file is over the 25 MiB asset limit.
+.git
+.gitignore
+.assetsignore
+.DS_Store
