@@ -18,6 +18,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/nav-menu.css">
+  <link rel="stylesheet" href="assets/css/order-list.css">
 
   <style>
     @font-face {
@@ -483,6 +484,7 @@
           </div>
         </li>
         <li><a href="/blog" class="nav-link">Blog</a></li>
+        <li class="nav-order-item"><a href="/order-list" class="nav-link">Order list<span class="nav-order-count" data-ol-count hidden></span></a></li>
       </ul>
       <div class="nav-right">
         <div class="lang-switcher">
@@ -490,6 +492,7 @@
           <span class="sep">/</span>
           <span><a href="/vi/">VI</a></span>
         </div>
+        <a href="/order-list" class="nav-order" data-ol-link title="Order list" aria-label="Order list"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M15 5.5h3v15H6v-15h3"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="14.5" x2="15" y2="14.5"/><line x1="9" y1="18" x2="13" y2="18"/></svg><span class="nav-order-count" data-ol-count hidden></span></a>
         <a href="/shop" class="nav-cta">Shop Now</a>
       </div>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
@@ -545,13 +548,14 @@
         <div class="spec"><dt>Made by</dt><dd id="item-maker"></dd></div>
       </dl>
 
-      <!-- Inquiry -->
+      <!-- Order list + inquiry -->
       <div class="purchase">
         <div class="purchase-top">
           <span class="stock"><span class="stock-dot" aria-hidden="true"></span>Availability to be confirmed</span>
         </div>
         <div class="actions">
-          <a class="btn btn-primary" id="item-inquire" href="mailto:hello@purecommunitysupport.vn">
+          <div id="item-order"></div>
+          <a class="btn btn-ghost" id="item-inquire" href="mailto:hello@purecommunitysupport.vn">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H5.17L4 17.17V4z"/></svg>
             Inquire about this piece
           </a>
@@ -614,6 +618,8 @@
   <button id="scroll-top" aria-label="Scroll to top">↑</button>
 
   <script src="assets/js/products.js"></script>
+
+  <script src="assets/js/order-list.js"></script>
   <script>
     /* Mobile nav toggle */
     const navToggle = document.querySelector('.nav-toggle');
@@ -672,9 +678,10 @@
       $('item-collection').textContent = coll;
       $('item-name').textContent = item.name;
       const price = $('item-price');
-      price.textContent = item.price || 'Price TBD';
-      price.classList.toggle('tbd', !item.price);
-      $('item-price-note').hidden = Boolean(item.price);
+      const hasPrice = typeof item.price === 'number';
+      price.textContent = window.PURE_PRICE_LABEL(item);
+      price.classList.toggle('tbd', !hasPrice);
+      $('item-price-note').textContent = hasPrice ? 'Placeholder price' : 'Pricing to be confirmed';
       $('item-desc').textContent = item.desc
         ? item.desc
         : 'Description coming soon. Final details, materials and pricing for this piece are being confirmed.';
@@ -684,6 +691,7 @@
       $('item-maker').textContent = item.maker || 'Hue artisan (TBD)';
       $('item-maker-strip').textContent = item.maker || 'Hue artisan';
       $('item-inquire').href = `mailto:hello@purecommunitysupport.vn?subject=${encodeURIComponent('Inquiry: ' + item.name)}`;
+      window.PureOrder.bindAdd($('item-order'), { btnClass: 'btn btn-primary' }).setProduct(item);
 
       /* More from the same collection */
       const siblings = PRODUCTS.filter(p => p.collection === item.collection && p.id !== item.id);
@@ -709,7 +717,7 @@
               <p class="card-cat">${esc(coll)}</p>
               <h3>${esc(p.name)}</h3>
               <div class="card-foot">
-                <span class="card-price">${esc(p.price || 'Price TBD')}</span>
+                <span class="card-price">${esc(window.PURE_PRICE_LABEL(p))}</span>
                 <span class="card-artisan">${esc(p.maker || 'Hue artisan')}</span>
               </div>
             </a>

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order list — Pure Community Support</title>
+  <meta name="description" content="Review the handmade Hue pieces in your order list.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="assets/images/Vector Logo Pure Community support 2-15.svg" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="assets/images/Vector Logo Pure Community support 2-13.svg" media="(prefers-color-scheme: dark)">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/nav-menu.css">
+  <link rel="stylesheet" href="assets/css/order-list.css">
+
+  <script>document.documentElement.classList.add('js');</script>
+  <style>
+    @font-face {
+      font-family: 'Gemola';
+      src: url('-temp/Logos & fonts/Gemola.ttf') format('truetype');
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    :root {
+      --cream:   #F5F1EA;
+      --greige:  #DAD1C4;
+      --tan:     #B2967D;
+      --purple:  #652E86;
+      --brown:   #4A342A;
+      --deep:    #2E1A14;
+      --muted:   #6B4E3C;
+      --white:   #ffffff;
+      --border:  rgba(178,150,125,0.22);
+
+      --font-display: 'DM Serif Display', Georgia, serif;
+      --font-gemola:  'Gemola', Georgia, serif;
+      --font-body:    'Be Vietnam Pro', sans-serif;
+
+      --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-body);
+      color: var(--brown);
+      background: var(--cream);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    h1, h2 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    :focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; border-radius: 2px; }
+    [hidden] { display: none !important; }
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-delay: 0s !important; }
+    }
+
+    /* ── Nav (site standard) ─────────────────── */
+    .nav { background: var(--brown); position: relative; z-index: 100; }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4em;
+    }
+    .nav-logo { display: flex; align-items: center; }
+    .nav-logo img { height: 5vw; width: auto; display: block; margin-block: 1vw; }
+    .nav-links { display: flex; align-items: center; gap: 36px; }
+    .nav-link {
+      font-size: 12px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: rgba(245,241,234,0.7);
+      position: relative; padding-bottom: 2px;
+      transition: color 0.3s var(--ease-soft);
+    }
+    .nav-link::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px; background: var(--tan);
+      transition: width 0.3s var(--ease-soft);
+    }
+    .nav-link:hover { color: var(--cream); }
+    .nav-link:hover::after { width: 100%; }
+    .nav-link.active { color: var(--cream); }
+    .nav-link.active::after { width: 100%; }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .lang-switcher {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      color: rgba(245,241,234,0.45);
+    }
+    .lang-switcher span { cursor: pointer; padding: 4px 6px; border-radius: 2px; transition: color 0.3s, background 0.3s; }
+    .lang-switcher span.active { color: var(--cream); background: rgba(255,255,255,0.1); }
+    .lang-switcher .sep { color: rgba(255,255,255,0.2); }
+    .nav-cta {
+      background: var(--tan); color: var(--cream);
+      font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 10px 22px; border-radius: 2px;
+      transition: background 0.3s var(--ease-soft);
+    }
+    .nav-cta:hover { background: #8B6E5A; }
+    .nav-toggle { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 40px; height: 40px; }
+    .nav-toggle-bar { display: block; width: 22px; height: 2px; background: rgba(255,255,255,0.85); border-radius: 1px; transition: transform 0.25s ease, opacity 0.2s ease; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(2) { opacity: 0; }
+    .nav-toggle[aria-expanded="true"] .nav-toggle-bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── Breadcrumb ──────────────────────────── */
+    .breadcrumb {
+      padding: 22px 4em;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px; color: var(--tan); letter-spacing: 0.04em;
+      display: flex; align-items: center; gap: 9px; flex-wrap: wrap;
+    }
+    .breadcrumb a { transition: color 0.3s var(--ease-soft); }
+    .breadcrumb a:hover { color: var(--brown); }
+    .breadcrumb .sep { opacity: 0.5; }
+    .breadcrumb .current { color: var(--brown); font-weight: 500; }
+
+    /* ── Scroll reveal ───────────────────────── */
+    .js [data-reveal] {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.8s var(--ease-soft), transform 0.9s var(--ease-out);
+      transition-delay: var(--d, 0s);
+    }
+    .js [data-reveal].in { opacity: 1; transform: none; }
+
+    /* ── Header ──────────────────────────────── */
+    .ol-header {
+      padding: 64px 4em 40px;
+      display: flex; align-items: flex-end; justify-content: space-between;
+      gap: 2em; flex-wrap: wrap;
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 11px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 16px;
+    }
+    .eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--tan); }
+    .ol-header h1 {
+      font-family: var(--font-gemola);
+      font-size: clamp(40px, 5vw, 72px);
+      font-weight: 400; line-height: 1.02; margin-bottom: 16px;
+    }
+    .ol-intro { max-width: 560px; font-size: 15px; color: var(--muted); line-height: 1.75; }
+    .ol-count {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--tan);
+      white-space: nowrap;
+    }
+    .ol-count strong { font-weight: 400; color: var(--brown); font-size: 30px; margin-right: 6px; }
+
+    /* ── Order table ─────────────────────────── */
+    .ol-main { padding: 0 4em 96px; flex: 1; }
+    .ol-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .ol-table th {
+      padding: 0 16px 14px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--tan);
+      text-align: left;
+      border-bottom: 1px solid var(--brown);
+    }
+    .ol-table th:first-child, .ol-table td:first-child { padding-left: 0; }
+    .ol-table th.num, .ol-table td.num { text-align: right; }
+    .ol-table th.col-price { width: 130px; }
+    .ol-table th.col-qty { width: 180px; }
+    .ol-table th.col-total { width: 150px; }
+    .ol-table th.col-remove { width: 56px; }
+    .ol-table td {
+      padding: 20px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .ol-row { transition: background 0.35s var(--ease-soft), opacity 0.35s var(--ease-soft); }
+    .ol-row:hover { background: rgba(178,150,125,0.07); }
+    .ol-row.enter { animation: row-in 0.7s var(--ease-out) both; animation-delay: calc(var(--i, 0) * 70ms + 0.15s); }
+    .ol-row.leaving { opacity: 0; }
+    @keyframes row-in {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .ol-item-link { display: flex; align-items: center; gap: 18px; }
+    .ol-thumb {
+      flex-shrink: 0;
+      width: 76px; height: 92px;
+      border-radius: 2px;
+      overflow: hidden;
+      background: var(--greige);
+    }
+    .ol-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.9s var(--ease-out); }
+    .ol-row:hover .ol-thumb img { transform: scale(1.08); }
+    .ol-item-cat {
+      display: block;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 4px;
+    }
+    .ol-item-name {
+      font-family: var(--font-display);
+      font-size: 20px; line-height: 1.25;
+      background-image: linear-gradient(var(--purple), var(--purple));
+      background-size: 0 1px; background-repeat: no-repeat; background-position: 0 100%;
+      transition: color 0.35s var(--ease-soft), background-size 0.45s var(--ease-out);
+    }
+    .ol-item-link:hover .ol-item-name,
+    .ol-item-link:focus-visible .ol-item-name { color: var(--purple); background-size: 100% 1px; }
+    .ol-item-hint { display: block; margin-top: 4px; font-size: 12px; color: var(--tan); }
+
+    .ol-price { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .ol-line {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-variant-numeric: tabular-nums;
+    }
+    .ol-line-amount { display: inline-block; }
+    .ol-line-amount.bump { animation: bump 0.45s var(--ease-out); }
+    .tbd { color: var(--tan); font-style: italic; font-family: var(--font-body); font-size: 13px; }
+    @keyframes bump {
+      0%   { transform: translateY(-5px); color: var(--purple); opacity: 0.4; }
+      100% { transform: none; opacity: 1; }
+    }
+
+    .ol-remove {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      color: var(--tan);
+      border: 1px solid transparent;
+      transition: color 0.3s var(--ease-soft), border-color 0.3s var(--ease-soft), transform 0.4s var(--ease-out);
+    }
+    .ol-remove:hover { color: var(--brown); border-color: var(--border); transform: rotate(90deg); }
+    .ol-remove svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+
+    /* ── Summary ─────────────────────────────── */
+    .ol-bottom {
+      display: grid;
+      grid-template-columns: 1fr minmax(320px, 420px);
+      gap: 48px;
+      align-items: start;
+      margin-top: 40px;
+    }
+    .ol-links { display: flex; flex-wrap: wrap; align-items: center; gap: 22px; padding-top: 8px; }
+    .text-link {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-size: 12.5px; font-weight: 600; letter-spacing: 0.07em;
+      color: var(--purple);
+      border-bottom: 1px solid rgba(101,46,134,0.3);
+      padding-bottom: 3px;
+      transition: border-color 0.35s var(--ease-soft), gap 0.4s var(--ease-out);
+    }
+    .text-link:hover { border-color: var(--purple); gap: 14px; }
+    .text-link svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .text-link.back svg { transform: rotate(180deg); }
+    .clear-btn {
+      font-size: 12.5px; font-weight: 600; letter-spacing: 0.07em;
+      color: var(--muted);
+      padding-bottom: 3px;
+      border-bottom: 1px solid transparent;
+      transition: color 0.3s var(--ease-soft), border-color 0.3s var(--ease-soft);
+    }
+    .clear-btn:hover { color: var(--brown); border-color: var(--tan); }
+
+    .ol-summary {
+      background: var(--brown);
+      color: var(--cream);
+      border-top: 2px solid var(--tan);
+      border-radius: 0 0 3px 3px;
+      padding: 28px 30px 30px;
+    }
+    .ol-summary h2 {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--tan);
+      margin-bottom: 18px;
+    }
+    .sum-row {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(245,241,234,0.08);
+      font-size: 14px;
+      color: rgba(245,241,234,0.72);
+    }
+    .sum-row .amount { color: var(--cream); font-variant-numeric: tabular-nums; }
+    .sum-row .pending { color: var(--tan); font-style: italic; font-size: 13px; text-align: right; }
+    .sum-total {
+      border-bottom: none;
+      padding-top: 18px;
+      color: var(--cream);
+      font-weight: 600;
+    }
+    .sum-total .amount {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 34px;
+      line-height: 1;
+      transition: color 0.3s var(--ease-soft);
+    }
+    .ol-summary:hover .sum-total .amount { color: var(--tan); }
+    .sum-note {
+      margin-top: 18px;
+      font-size: 12px; line-height: 1.65;
+      color: rgba(245,241,234,0.55);
+    }
+    .sum-note strong { color: rgba(245,241,234,0.85); font-weight: 600; }
+
+    /* ── Empty state ─────────────────────────── */
+    .ol-empty {
+      padding: 72px 0 40px;
+      text-align: center;
+      border-top: 1px solid var(--brown);
+    }
+    .ol-empty-icon {
+      width: 84px; height: 84px; margin: 0 auto 26px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.5s var(--ease-out);
+    }
+    .ol-empty:hover .ol-empty-icon { transform: rotate(-8deg) scale(1.05); }
+    .ol-empty-icon svg { width: 34px; height: 34px; stroke: var(--tan); fill: none; stroke-width: 1.4; stroke-linejoin: round; }
+    .ol-empty h2 { font-family: var(--font-display); font-weight: 400; font-size: 30px; margin-bottom: 10px; }
+    .ol-empty p { color: var(--muted); max-width: 440px; margin: 0 auto 28px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 30px; border-radius: 2px;
+      font-size: 13.5px; font-weight: 600; letter-spacing: 0.05em;
+      background: var(--tan); color: var(--white);
+      transition: background 0.35s var(--ease-soft), transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+    }
+    .btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; transition: transform 0.4s var(--ease-out); }
+    .btn:hover { background: var(--purple); transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.18); }
+    .btn:hover svg { transform: translateX(4px); }
+
+    /* ── Undo toast ──────────────────────────── */
+    .toast {
+      position: fixed; left: 50%; bottom: 28px; z-index: 300;
+      display: flex; align-items: center; gap: 18px;
+      max-width: calc(100% - 32px);
+      padding: 13px 14px 13px 20px;
+      border-radius: 3px;
+      background: var(--deep); color: var(--cream);
+      font-size: 13.5px;
+      box-shadow: 0 16px 40px rgba(46,26,20,0.3);
+      transform: translate(-50%, 20px);
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.3s var(--ease-soft), transform 0.45s var(--ease-out), visibility 0s linear 0.45s;
+    }
+    .toast.show { opacity: 1; visibility: visible; transform: translate(-50%, 0); transition-delay: 0s; }
+    .toast button {
+      padding: 7px 14px; border-radius: 2px;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--deep); background: var(--tan);
+      transition: background 0.3s var(--ease-soft);
+    }
+    .toast button:hover { background: var(--cream); }
+
+    /* ── Footer ──────────────────────────────── */
+    footer {
+      background: var(--deep); color: rgba(255,255,255,0.42);
+      padding: 30px 4em;
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 12px; gap: 1rem; flex-wrap: wrap;
+    }
+    footer a { color: rgba(255,255,255,0.42); transition: color 0.3s var(--ease-soft); }
+    footer a:hover { color: rgba(255,255,255,0.9); }
+    .footer-links { display: flex; gap: 1.5em; flex-wrap: wrap; }
+
+    @media (max-width: 1000px) {
+      .nav-inner { padding: 0 1.5em; }
+      .nav-toggle { display: flex; }
+      .nav-right { display: none; }
+      .nav-logo img { height: 48px; margin-block: 12px; }
+      .nav-links {
+        position: absolute; top: 100%; left: 0; right: 0;
+        flex-direction: column; align-items: stretch; gap: 0;
+        background: var(--brown);
+        max-height: 0; opacity: 0; overflow: hidden;
+        transition: max-height 0.35s ease, opacity 0.25s ease;
+      }
+      .nav-links.open { max-height: 400px; opacity: 1; }
+      .nav-link { display: block; padding: 14px 1.5em; border-bottom: 1px solid rgba(255,255,255,0.06); }
+      .nav-links li:last-child .nav-link { border-bottom: none; }
+      .breadcrumb { padding: 18px 1.5em; }
+      .ol-header { padding: 44px 1.5em 32px; }
+      .ol-main { padding: 0 1.5em 72px; }
+      .ol-bottom { grid-template-columns: 1fr; gap: 28px; }
+      .ol-links { order: 2; justify-content: space-between; }
+      footer { padding: 24px 1.5em; }
+    }
+
+    /* Table becomes a stack of cards on small screens */
+    @media (max-width: 720px) {
+      .ol-table thead {
+        position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);
+      }
+      .ol-table, .ol-table tbody, .ol-table tr, .ol-table td { display: block; }
+      .ol-table tbody { border-top: 1px solid var(--brown); }
+      .ol-row {
+        display: grid !important;
+        grid-template-columns: 1fr auto;
+        grid-template-areas:
+          "item  remove"
+          "price price"
+          "qty   line";
+        gap: 14px 12px;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .ol-table td { padding: 0; border: none; }
+      .ol-table td.num { text-align: left; }
+      .ol-item { grid-area: item; }
+      .ol-remove-cell { grid-area: remove; align-self: start; }
+      .ol-price { grid-area: price; display: flex !important; justify-content: space-between; }
+      .ol-qty-cell { grid-area: qty; align-self: center; }
+      .ol-line { grid-area: line; align-self: center; text-align: right !important; }
+      .ol-price::before {
+        content: attr(data-label);
+        font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+        text-transform: uppercase; color: var(--tan);
+      }
+      .ol-thumb { width: 64px; height: 78px; }
+      .ol-item-name { font-size: 18px; }
+      .ol-summary { padding: 24px 22px 26px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav class="nav" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="/" class="nav-logo">
+        <img src="assets/images/Logo varijacije white.png" alt="Pure Community Support">
+      </a>
+      <ul class="nav-links" id="nav-links" role="list">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/shop" class="nav-link">Shop</a></li>
+        <li><a href="/about" class="nav-link">About</a></li>
+        <li class="nav-item-sub">
+          <a href="/cases" class="nav-link">Campaigns<span class="nav-caret" aria-hidden="true"></span></a>
+          <div class="nav-sub">
+            <ul class="nav-sub-inner" role="list">
+              <li><a href="/cases" class="nav-sub-all">All cases &amp; campaigns</a></li>
+              <li><a href="/cases/food-essentials"><span class="nav-sub-dot" aria-hidden="true"></span>Community Food &amp; Essentials Kit</a></li>
+              <li><a href="/cases/lotus-art"><span class="nav-sub-dot" aria-hidden="true"></span>Lotus Art for Healing Workshop</a></li>
+              <li><a href="/cases/youth-leadership"><span class="nav-sub-dot" aria-hidden="true"></span>Youth Leadership Circle</a></li>
+              <li><a href="/cases/heritage-craft"><span class="nav-sub-dot planned" aria-hidden="true"></span>Heritage Craft Class</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="nav-item-sub">
+          <a href="/impact" class="nav-link">Impact<span class="nav-caret" aria-hidden="true"></span></a>
+          <div class="nav-sub">
+            <ul class="nav-sub-inner" role="list">
+              <li><a href="/impact" class="nav-sub-all">Impact overview</a></li>
+              <li><a href="/reports"><span class="nav-sub-dot" aria-hidden="true"></span>Transparency reports</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="/blog" class="nav-link">Blog</a></li>
+        <li class="nav-order-item"><a href="/order-list" class="nav-link active" aria-current="page">Order list<span class="nav-order-count" data-ol-count hidden></span></a></li>
+      </ul>
+      <div class="nav-right">
+        <div class="lang-switcher">
+          <span class="active">EN</span>
+          <span class="sep">/</span>
+          <span><a href="/vi/">VI</a></span>
+        </div>
+        <a href="/order-list" class="nav-order" data-ol-link title="Order list" aria-label="Order list" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M15 5.5h3v15H6v-15h3"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="14.5" x2="15" y2="14.5"/><line x1="9" y1="18" x2="13" y2="18"/></svg><span class="nav-order-count" data-ol-count hidden></span></a>
+        <a href="/shop" class="nav-cta">Shop Now</a>
+      </div>
+      <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="/">Home</a>
+    <span class="sep">/</span>
+    <a href="/shop">Shop</a>
+    <span class="sep">/</span>
+    <span class="current" aria-current="page">Order list</span>
+  </nav>
+
+  <!-- Header -->
+  <header class="ol-header">
+    <div data-reveal>
+      <p class="eyebrow">Your selection</p>
+      <h1>Order list</h1>
+      <p class="ol-intro">
+        The pieces you have selected from the catalog. Adjust quantities or remove items below;
+        totals update as you go. Your list is saved in this browser.
+      </p>
+    </div>
+    <p class="ol-count" id="ol-count" data-reveal style="--d:0.1s" aria-live="polite"></p>
+  </header>
+
+  <main class="ol-main">
+    <!-- Items -->
+    <div id="ol-filled" hidden>
+      <table class="ol-table">
+        <caption class="sr-only">Items in your order list</caption>
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col" class="num col-price">Price</th>
+            <th scope="col" class="col-qty">Quantity</th>
+            <th scope="col" class="num col-total">Total</th>
+            <th scope="col" class="col-remove"><span class="sr-only">Remove</span></th>
+          </tr>
+        </thead>
+        <tbody id="ol-rows"></tbody>
+      </table>
+
+      <div class="ol-bottom">
+        <div class="ol-links">
+          <a class="text-link back" href="/shop"><svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>Continue shopping</a>
+          <button class="clear-btn" type="button" id="ol-clear">Clear list</button>
+        </div>
+
+        <section class="ol-summary" aria-labelledby="sum-heading" data-reveal>
+          <h2 id="sum-heading">Summary</h2>
+          <div class="sum-row"><span id="sum-sub-label">Subtotal</span><span class="amount" id="sum-sub"></span></div>
+          <div class="sum-row"><span>Shipping</span><span class="pending">Confirmed with your order</span></div>
+          <div class="sum-row sum-total"><span>Total</span><span class="amount" id="sum-total" aria-live="polite"></span></div>
+          <p class="sum-note" id="sum-tbd" hidden></p>
+          <p class="sum-note">
+            Prices shown are placeholders while the catalog is finalised. Shipping is not included in the total.
+            <strong>Half of the net profit</strong> from every sale funds community programmes in Hue.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <!-- Empty -->
+    <section class="ol-empty" id="ol-empty" hidden>
+      <div class="ol-empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 4h6v3H9z"/><path d="M15 5.5h3v15H6v-15h3"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="14.5" x2="15" y2="14.5"/><line x1="9" y1="18" x2="13" y2="18"/></svg></div>
+      <h2>Your order list is empty</h2>
+      <p>Open any piece in the shop and choose “Add to order list” to start your selection.</p>
+      <a class="btn" href="/shop">Browse the shop <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-text"></span><button type="button" id="toast-undo">Undo</button></div>
+
+  <!-- Footer -->
+  <footer>
+    <img src="assets/images/Logo varijacije white.png" alt="Pure Community Support" style="height:38px;width:auto;">
+    <ul class="footer-links" role="list">
+      <li><a href="/shop">Shop</a></li>
+      <li><a href="/about">About</a></li>
+      <li><a href="/cases">Campaigns</a></li>
+      <li><a href="/impact">Impact</a></li>
+      <li><a href="/blog">Blog</a></li>
+      <li><a href="mailto:hello@purecommunitysupport.vn">Contact</a></li>
+    </ul>
+    <span>© 2026 Pure Community Support · Hue, Vietnam</span>
+  </footer>
+
+  <script src="assets/js/products.js"></script>
+  <script src="assets/js/order-list.js"></script>
+  <script>
+    /* Mobile nav toggle */
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', isOpen);
+    });
+
+    /* Scroll reveal: fade sections in as they enter the viewport */
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.15 });
+    document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
+
+    /* ── Order list ─────────────────────────── */
+    const Order = window.PureOrder;
+    const PRODUCTS = window.PURE_PRODUCTS;
+    const COLLECTIONS = window.PURE_COLLECTIONS;
+    const money = window.PURE_FORMAT_PRICE;
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+    const product = id => PRODUCTS.find(p => p.id === id);
+    const hasPrice = p => typeof p.price === 'number';
+    const collectionName = id => (COLLECTIONS.find(c => c.id === id) || {}).name || '';
+    const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
+
+    const rowsEl = $('ol-rows');
+    let firstRender = true;
+    let busy = false; // true while this page is the one changing the list
+
+    const ICON_MINUS = '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/></svg>';
+    const ICON_PLUS = '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="6" x2="12" y2="18"/><line x1="6" y1="12" x2="18" y2="12"/></svg>';
+    const ICON_X = '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>';
+
+    /* Items that are no longer in the catalog are dropped from the list. */
+    function validItems() {
+      const all = Order.items();
+      const valid = all.filter(row => product(row.id));
+      if (valid.length !== all.length) {
+        busy = true;
+        Order.replace(valid);
+        busy = false;
+      }
+      return valid;
+    }
+
+    function lineHTML(p, qty) {
+      return hasPrice(p) ? money(p.price * qty) : '<span class="tbd">Price TBD</span>';
+    }
+
+    function rowHTML(row, i) {
+      const p = product(row.id);
+      const qtyId = `qty-${p.id}`;
+      return `
+        <tr class="ol-row${firstRender ? ' enter' : ''}" data-id="${p.id}" style="--i:${i}">
+          <td class="ol-item" data-label="Item">
+            <a class="ol-item-link" href="/shop/${p.id}">
+              <span class="ol-thumb"><img src="${p.img}" alt="" loading="lazy"${p.pos ? ` style="object-position:${p.pos};"` : ''}></span>
+              <span>
+                <span class="ol-item-cat">${esc(collectionName(p.collection))}</span>
+                <span class="ol-item-name">${esc(p.name)}</span>
+              </span>
+            </a>
+          </td>
+          <td class="ol-price num" data-label="Price">${hasPrice(p) ? money(p.price) : '<span class="tbd">Price TBD</span>'}</td>
+          <td class="ol-qty-cell" data-label="Quantity">
+            <div class="ol-stepper" role="group" aria-label="Quantity for ${esc(p.name)}">
+              <button class="ol-step" type="button" data-step="-1" aria-label="Decrease quantity of ${esc(p.name)}"${row.qty <= 1 ? ' disabled' : ''}>${ICON_MINUS}</button>
+              <input class="ol-qty" id="${qtyId}" type="number" inputmode="numeric" min="1" max="${Order.MAX_QTY}" step="1" value="${row.qty}" aria-label="Quantity of ${esc(p.name)}">
+              <button class="ol-step" type="button" data-step="1" aria-label="Increase quantity of ${esc(p.name)}"${row.qty >= Order.MAX_QTY ? ' disabled' : ''}>${ICON_PLUS}</button>
+            </div>
+          </td>
+          <td class="ol-line num" data-label="Total"><span class="ol-line-amount">${lineHTML(p, row.qty)}</span></td>
+          <td class="ol-remove-cell"><button class="ol-remove" type="button" aria-label="Remove ${esc(p.name)} from order list">${ICON_X}</button></td>
+        </tr>`;
+    }
+
+    function renderSummary(items) {
+      const units = items.reduce((sum, row) => sum + row.qty, 0);
+      const priced = items.filter(row => hasPrice(product(row.id)));
+      const subtotal = priced.reduce((sum, row) => sum + product(row.id).price * row.qty, 0);
+      const unpriced = items.length - priced.length;
+
+      $('ol-count').innerHTML = `<strong>${units}</strong>${units === 1 ? 'item' : 'items'}`;
+      $('sum-sub-label').textContent = `Subtotal (${plural(units, 'item')})`;
+      $('sum-sub').textContent = money(subtotal);
+      $('sum-total').textContent = money(subtotal);
+      $('sum-tbd').hidden = !unpriced;
+      $('sum-tbd').textContent = unpriced
+        ? `${plural(unpriced, 'item')} without a confirmed price ${unpriced === 1 ? 'is' : 'are'} not included in the total.`
+        : '';
+    }
+
+    function render() {
+      const items = validItems();
+      $('ol-filled').hidden = !items.length;
+      $('ol-empty').hidden = Boolean(items.length);
+      if (!items.length) {
+        $('ol-count').textContent = '';
+        firstRender = false;
+        return;
+      }
+      rowsEl.innerHTML = items.map(rowHTML).join('');
+      renderSummary(items);
+      firstRender = false;
+    }
+
+    /* Quantity changed in a row: update that row and the summary in place,
+       so the field being edited keeps focus. */
+    function updateRow(tr, qty, fromTyping) {
+      const id = tr.dataset.id;
+      const p = product(id);
+      const input = tr.querySelector('.ol-qty');
+      if (!fromTyping) input.value = qty;
+      tr.querySelector('[data-step="-1"]').disabled = qty <= 1;
+      tr.querySelector('[data-step="1"]').disabled = qty >= Order.MAX_QTY;
+      const amount = tr.querySelector('.ol-line-amount');
+      amount.innerHTML = lineHTML(p, qty);
+      amount.classList.remove('bump');
+      void amount.offsetWidth;
+      amount.classList.add('bump');
+      busy = true;
+      Order.set(id, qty);
+      busy = false;
+      renderSummary(validItems());
+    }
+
+    rowsEl.addEventListener('click', e => {
+      const tr = e.target.closest('.ol-row');
+      if (!tr) return;
+      const stepBtn = e.target.closest('.ol-step');
+      if (stepBtn) {
+        updateRow(tr, Order.clamp(Order.qty(tr.dataset.id) + Number(stepBtn.dataset.step)));
+        return;
+      }
+      if (e.target.closest('.ol-remove')) removeRow(tr);
+    });
+    rowsEl.addEventListener('input', e => {
+      if (!e.target.matches('.ol-qty') || e.target.value === '') return;
+      updateRow(e.target.closest('.ol-row'), Order.clamp(e.target.value), true);
+    });
+    rowsEl.addEventListener('change', e => {
+      if (!e.target.matches('.ol-qty')) return;
+      updateRow(e.target.closest('.ol-row'), Order.clamp(e.target.value));
+    });
+
+    /* ── Remove / clear, with undo ──────────── */
+    let undoAction = null;
+    let toastTimer = null;
+
+    function showToast(text, undo) {
+      undoAction = undo;
+      $('toast-text').textContent = text;
+      $('toast').classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 6000);
+    }
+    function hideToast() {
+      $('toast').classList.remove('show');
+      undoAction = null;
+    }
+    $('toast-undo').addEventListener('click', () => {
+      const undo = undoAction;
+      hideToast();
+      if (undo) undo();
+    });
+
+    function removeRow(tr) {
+      const id = tr.dataset.id;
+      const items = Order.items();
+      const index = items.findIndex(row => row.id === id);
+      const removed = items[index];
+      tr.classList.add('leaving');
+      setTimeout(() => {
+        busy = true;
+        Order.remove(id);
+        busy = false;
+        render();
+        // Keep keyboard focus nearby: the next row's remove button, or the empty-state link.
+        const removes = rowsEl.querySelectorAll('.ol-remove');
+        const next = removes[Math.min(index, removes.length - 1)];
+        (next || $('ol-empty').querySelector('a')).focus({ preventScroll: true });
+        showToast(`Removed ${product(id).name}.`, () => Order.restore(removed, index));
+      }, 300);
+    }
+
+    $('ol-clear').addEventListener('click', () => {
+      const snapshot = Order.items();
+      busy = true;
+      Order.replace([]);
+      busy = false;
+      render();
+      showToast('Order list cleared.', () => Order.replace(snapshot));
+    });
+
+    /* Undo, or another tab, changed the list */
+    Order.onChange(() => { if (!busy) render(); });
+
+    render();
+  </script>
+
+</body>
+</html>

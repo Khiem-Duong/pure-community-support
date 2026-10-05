@@ -4,8 +4,17 @@
    PLACEHOLDER DATA (spec §4.4, 21 Sep 2026 draft). Names, prices, materials,
    colours and descriptions are not final. To update a product, edit its entry:
      name, collection, img, desc, material, colour, maker, price, isNew
+   `price` is a number in USD (placeholder values); leave it out to show "Price TBD".
    Image paths are relative to the site root. Entries with `credit` use a
    temporary Wikimedia Commons photo (see assets/images/placeholders/CREDITS.md). */
+
+/* Formats a USD amount ("$48", "$48.50"). Used by the shop, item and order list pages. */
+window.PURE_FORMAT_PRICE = amount => new Intl.NumberFormat('en-US', {
+  style: 'currency', currency: 'USD', minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
+}).format(amount);
+
+/* Price label for a product: formatted price, or "Price TBD" when none is set. */
+window.PURE_PRICE_LABEL = p => typeof p.price === 'number' ? window.PURE_FORMAT_PRICE(p.price) : 'Price TBD';
 
 window.PURE_COLLECTIONS = [
   { id: 'resort',   name: 'Resort wear' },
@@ -19,6 +28,7 @@ window.PURE_PRODUCTS = [
     "id": "dress-01",
     "name": "Dress 01",
     "collection": "resort",
+    "price": 78,
     "img": "assets/images/placeholders/d1.jpg",
     "isNew": true,
     "pos": "center 20%",
@@ -32,6 +42,7 @@ window.PURE_PRODUCTS = [
     "id": "dress-02",
     "name": "Dress 02",
     "collection": "resort",
+    "price": 84,
     "img": "assets/images/placeholders/d2.jpg",
     "isNew": true,
     "pos": "center 20%",
@@ -45,6 +56,7 @@ window.PURE_PRODUCTS = [
     "id": "dress-03",
     "name": "Dress 03",
     "collection": "resort",
+    "price": 72,
     "img": "assets/images/placeholders/d3.jpg",
     "isNew": true,
     "credit": {
@@ -57,6 +69,7 @@ window.PURE_PRODUCTS = [
     "id": "dress-04",
     "name": "Dress 04",
     "collection": "resort",
+    "price": 88,
     "img": "assets/images/placeholders/d4.jpg",
     "isNew": true,
     "pos": "center 20%",
@@ -70,6 +83,7 @@ window.PURE_PRODUCTS = [
     "id": "dress-05",
     "name": "Dress 05",
     "collection": "resort",
+    "price": 76,
     "img": "assets/images/placeholders/d5.jpg",
     "isNew": true,
     "credit": {
@@ -82,6 +96,7 @@ window.PURE_PRODUCTS = [
     "id": "kimono-01",
     "name": "Kimono 01",
     "collection": "resort",
+    "price": 72,
     "img": "assets/images/Silk_kimono.jpg",
     "isNew": true,
     "pos": "center 40%"
@@ -90,6 +105,7 @@ window.PURE_PRODUCTS = [
     "id": "kimono-02",
     "name": "Kimono 02",
     "collection": "resort",
+    "price": 96,
     "img": "assets/images/placeholders/k7.jpg",
     "isNew": true,
     "credit": {
@@ -102,6 +118,7 @@ window.PURE_PRODUCTS = [
     "id": "dress-06",
     "name": "Dress 06",
     "collection": "resort",
+    "price": 82,
     "img": "assets/images/placeholders/d8.jpg",
     "isNew": true,
     "credit": {
@@ -114,6 +131,7 @@ window.PURE_PRODUCTS = [
     "id": "dress-07",
     "name": "Dress 07",
     "collection": "resort",
+    "price": 74,
     "img": "assets/images/placeholders/d9.jpg",
     "isNew": true,
     "credit": {
@@ -126,6 +144,7 @@ window.PURE_PRODUCTS = [
     "id": "dress-08",
     "name": "Dress 08",
     "collection": "resort",
+    "price": 90,
     "img": "assets/images/placeholders/d10.jpg",
     "isNew": true,
     "credit": {
@@ -138,6 +157,7 @@ window.PURE_PRODUCTS = [
     "id": "dress-09",
     "name": "Dress 09",
     "collection": "resort",
+    "price": 80,
     "img": "assets/images/placeholders/d11.jpg",
     "isNew": true,
     "credit": {
@@ -150,6 +170,7 @@ window.PURE_PRODUCTS = [
     "id": "blouse-01",
     "name": "Blouse 01",
     "collection": "resort",
+    "price": 54,
     "img": "assets/images/placeholders/b12.jpg",
     "isNew": true,
     "credit": {
@@ -162,6 +183,7 @@ window.PURE_PRODUCTS = [
     "id": "blouse-02",
     "name": "Blouse 02",
     "collection": "resort",
+    "price": 48,
     "img": "assets/images/placeholders/b13.jpg",
     "isNew": true,
     "credit": {
@@ -174,6 +196,7 @@ window.PURE_PRODUCTS = [
     "id": "blouse-03",
     "name": "Blouse 03",
     "collection": "resort",
+    "price": 58,
     "img": "assets/images/placeholders/b14.jpg",
     "isNew": true,
     "credit": {
@@ -186,6 +209,7 @@ window.PURE_PRODUCTS = [
     "id": "blouse-04",
     "name": "Blouse 04",
     "collection": "resort",
+    "price": 52,
     "img": "assets/images/placeholders/b15.jpg",
     "isNew": true,
     "credit": {
@@ -198,6 +222,7 @@ window.PURE_PRODUCTS = [
     "id": "blouse-05",
     "name": "Blouse 05",
     "collection": "resort",
+    "price": 56,
     "img": "assets/images/placeholders/b16.jpg",
     "isNew": true,
     "credit": {
@@ -210,6 +235,7 @@ window.PURE_PRODUCTS = [
     "id": "sleep-mask",
     "name": "Sleep Mask",
     "collection": "pamper",
+    "price": 22,
     "img": "assets/images/placeholders/mask.jpg",
     "isNew": true,
     "credit": {
@@ -222,6 +248,7 @@ window.PURE_PRODUCTS = [
     "id": "handkerchief",
     "name": "Handkerchief",
     "collection": "pamper",
+    "price": 14,
     "img": "assets/images/placeholders/hanky.jpg",
     "isNew": true,
     "credit": {
@@ -234,6 +261,7 @@ window.PURE_PRODUCTS = [
     "id": "pillow-cover",
     "name": "Pillow Cover",
     "collection": "pamper",
+    "price": 28,
     "img": "assets/images/1785487884721_3929329604013453076_g3424696855698798357_3b40e286e8acb1ac8598495f0a8777a5.jpg",
     "isNew": true
   },
@@ -241,6 +269,7 @@ window.PURE_PRODUCTS = [
     "id": "hair-tie",
     "name": "Hair Tie",
     "collection": "pamper",
+    "price": 9,
     "img": "assets/images/placeholders/scrunchie.jpg",
     "isNew": true,
     "credit": {
@@ -253,6 +282,7 @@ window.PURE_PRODUCTS = [
     "id": "gong",
     "name": "Gong",
     "collection": "bells",
+    "price": 48,
     "img": "assets/images/DSC07542.jpeg",
     "isNew": true,
     "pos": "center top"
@@ -261,6 +291,7 @@ window.PURE_PRODUCTS = [
     "id": "singing-bowl",
     "name": "Singing Bowl",
     "collection": "bells",
+    "price": 42,
     "img": "assets/images/DSC07535.jpeg",
     "isNew": true,
     "pos": "center top"
@@ -269,6 +300,7 @@ window.PURE_PRODUCTS = [
     "id": "ceremonial-bell",
     "name": "Ceremonial Bell",
     "collection": "bells",
+    "price": 36,
     "img": "assets/images/placeholders/bell.jpg",
     "isNew": false,
     "desc": "Hand-cast bronze bell with a clear, sustained tone. Companion piece to the gong.",
@@ -282,6 +314,7 @@ window.PURE_PRODUCTS = [
     "id": "incense-holder",
     "name": "Carved Incense Holder",
     "collection": "bells",
+    "price": 18,
     "img": "assets/images/placeholders/incense.jpg",
     "isNew": false,
     "desc": "Hand-carved, used in household and ceremonial altars.",
@@ -295,6 +328,7 @@ window.PURE_PRODUCTS = [
     "id": "cotton-t-shirt",
     "name": "Cotton T-Shirt",
     "collection": "everyday",
+    "price": 26,
     "img": "assets/images/placeholders/tshirt.jpg",
     "isNew": false,
     "desc": "Simple cotton tee with a Hue-inspired print. Unisex fit.",
@@ -308,6 +342,7 @@ window.PURE_PRODUCTS = [
     "id": "handwoven-tote",
     "name": "Handwoven Tote Bag",
     "collection": "everyday",
+    "price": 36,
     "img": "assets/images/Handwoven_tote_bag.jpg",
     "isNew": false,
     "desc": "Woven on a traditional loom. Sturdy, natural fibre, built to last years."
@@ -316,6 +351,7 @@ window.PURE_PRODUCTS = [
     "id": "eco-bag",
     "name": "Eco Bag",
     "collection": "everyday",
+    "price": 16,
     "img": "assets/images/placeholders/ecobag.jpg",
     "isNew": false,
     "desc": "Foldable everyday bag in natural fibre. Made to replace the plastic one.",
@@ -329,6 +365,7 @@ window.PURE_PRODUCTS = [
     "id": "woven-tablecloth",
     "name": "Woven Tablecloth",
     "collection": "everyday",
+    "price": 64,
     "img": "assets/images/placeholders/tablecloth.jpg",
     "isNew": false,
     "desc": "Loom-woven cotton with a subtle traditional Hue pattern along the border.",
@@ -342,6 +379,7 @@ window.PURE_PRODUCTS = [
     "id": "silk-scarf",
     "name": "Silk Scarf",
     "collection": "everyday",
+    "price": 38,
     "img": "assets/images/placeholders/scarf.jpg",
     "isNew": false,
     "desc": "Hand-dyed silk in a single continuous length. Light enough for year-round wear.",
@@ -355,6 +393,7 @@ window.PURE_PRODUCTS = [
     "id": "market-basket",
     "name": "Market Basket Bag",
     "collection": "everyday",
+    "price": 32,
     "img": "assets/images/placeholders/basket.jpg",
     "isNew": false,
     "desc": "A rigid woven basket bag built for daily errands.",
@@ -368,6 +407,7 @@ window.PURE_PRODUCTS = [
     "id": "placemat-set",
     "name": "Woven Placemat Set",
     "collection": "everyday",
+    "price": 30,
     "img": "assets/images/placeholders/placemat.jpg",
     "isNew": false,
     "desc": "Set of four loom-woven placemats, made to match the tablecloth pattern.",

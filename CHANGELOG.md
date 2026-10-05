@@ -12,6 +12,16 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.3.0] - 2026-10-05
+### What changed
+- Added an order list in place of a shopping cart: new page at /order-list (order-list.html)
+- Order list table: item (links to the item page), price, quantity with − / + controls, and a line total that updates as the quantity changes; subtotal and total at the bottom
+- Remove items or clear the list, both with undo; the list is saved in the visitor's browser
+- "Add to order list" button in the shop quick view and on item pages; a quantity must be chosen before the item is added
+- Order list icon with item count in the nav on every page ("Order list" in the mobile menu)
+- Placeholder USD prices added to every product in assets/js/products.js, with shared price formatting
+- New shared files: assets/js/order-list.js, assets/css/order-list.css
+
 ## [0.2.1] - 2026-08-10
 ### What changed
 - Added 3D-printable version of the PURE logo (assets/images/3d-print/)

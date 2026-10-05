@@ -1,0 +1,171 @@
+/* Order list — nav link, item count and the "Add to order list" control.
+   Shared by every page. Relies on each page's :root colour tokens. */
+
+/* ── Nav: order list link (desktop, inside .nav-right) ── */
+.nav-order {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: rgba(245, 241, 234, 0.75);
+  transition: color 0.3s ease, background 0.3s ease;
+}
+.nav-order:hover,
+.nav-order[aria-current="page"] { color: var(--cream, #F5F1EA); background: rgba(255, 255, 255, 0.08); }
+.nav-order svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linejoin: round; }
+.nav-order-count {
+  position: absolute;
+  top: 1px;
+  right: -3px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: var(--tan, #B2967D);
+  color: var(--cream, #F5F1EA);
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  animation: ol-pop 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.nav-order-count[hidden] { display: none; }
+
+/* ── Nav: order list item in the open mobile menu only ── */
+.nav-links .nav-order-item { display: none; }
+.nav-links.open .nav-order-item { display: list-item; }
+.nav-order-item .nav-link { display: flex; align-items: center; gap: 10px; }
+.nav-order-item .nav-order-count {
+  position: static;
+  animation: none;
+}
+
+@keyframes ol-pop {
+  from { transform: scale(0.4); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* ── "Add to order list" control ── */
+.ol-add { display: flex; flex-direction: column; gap: 10px; }
+.ol-add .ol-open[hidden] { display: none; }
+.ol-add .ol-open svg { stroke-linejoin: round; }
+
+.ol-picker {
+  padding: 16px 18px;
+  border: 1px solid var(--border, rgba(178, 150, 125, 0.22));
+  border-radius: 3px;
+  background: var(--white, #fff);
+  animation: ol-open 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ol-picker[hidden] { display: none; }
+@keyframes ol-open {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+.ol-picker-label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--tan, #B2967D);
+}
+.ol-picker-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+
+/* Quantity stepper — also used in the order list table */
+.ol-stepper {
+  display: inline-flex;
+  align-items: stretch;
+  height: 44px;
+  border: 1px solid var(--border, rgba(178, 150, 125, 0.22));
+  border-radius: 3px;
+  background: var(--cream, #F5F1EA);
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+.ol-stepper:hover,
+.ol-stepper:focus-within { border-color: var(--tan, #B2967D); }
+.ol-step {
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brown, #4A342A);
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.ol-step:hover:not(:disabled) { background: var(--brown, #4A342A); color: var(--cream, #F5F1EA); }
+.ol-step:disabled { color: rgba(74, 52, 42, 0.25); cursor: not-allowed; }
+.ol-step svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; }
+.ol-qty {
+  width: 48px;
+  border: none;
+  border-left: 1px solid var(--border, rgba(178, 150, 125, 0.22));
+  border-right: 1px solid var(--border, rgba(178, 150, 125, 0.22));
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--brown, #4A342A);
+  text-align: center;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+.ol-qty::-webkit-outer-spin-button,
+.ol-qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.ol-qty:focus { outline: none; background: rgba(178, 150, 125, 0.12); }
+
+.ol-confirm {
+  height: 44px;
+  padding: 0 22px;
+  border-radius: 3px;
+  background: var(--brown, #4A342A);
+  color: var(--cream, #F5F1EA);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  transition: background 0.3s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ol-confirm:hover { background: var(--purple, #652E86); transform: translateY(-2px); }
+.ol-cancel {
+  padding: 10px 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted, #6B4E3C);
+  border-bottom: 1px solid transparent;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+.ol-cancel:hover { color: var(--brown, #4A342A); border-color: var(--tan, #B2967D); }
+
+.ol-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted, #6B4E3C);
+}
+.ol-note:empty { display: none; }
+.ol-note strong { color: var(--brown, #4A342A); font-weight: 600; }
+.ol-note a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 4px;
+  font-weight: 600;
+  color: var(--purple, #652E86);
+  border-bottom: 1px solid rgba(101, 46, 134, 0.3);
+  transition: gap 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.3s ease;
+}
+.ol-note a:hover { gap: 10px; border-color: var(--purple, #652E86); }
+.ol-note a svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
+.ol-note.flash { animation: ol-flash 1.6s ease; }
+@keyframes ol-flash {
+  0%   { background: rgba(101, 46, 134, 0.12); }
+  100% { background: transparent; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-order-count, .ol-picker, .ol-note.flash { animation: none; }
+}
