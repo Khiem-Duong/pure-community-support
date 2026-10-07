@@ -8,106 +8,390 @@
   <link rel="icon" href="/assets/images/Vector Logo Pure Community support 2-15.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Placeholder signed-in page, served by worker/index.js at /admin.
-       Replaced by the sidebar dashboard (see -temp/admin-v1-sidebar-dashboard.html) when the panel is built. -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Admin dashboard (sidebar design, from -temp/admin-v1-sidebar-dashboard.html).
+       Served by worker/index.js at /admin to signed-in users; the Worker fills in the
+       double-brace placeholders. Nothing on this page saves changes yet. -->
   <style nonce="{{nonce}}">
     :root {
-      --cream:  #F5F1EA;
-      --tan:    #B2967D;
-      --purple: #652E86;
-      --brown:  #4A342A;
-      --muted:  #6B4E3C;
-      --white:  #ffffff;
-      --border: rgba(178,150,125,0.35);
+      --cream: #F5F1EA; --greige: #DAD1C4; --tan: #B2967D; --purple: #652E86; --brown: #4A342A;
+      --muted: #6B4E3C; --white: #ffffff; --line: #E6DFD4;
+      --radius: 8px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      min-height: 100vh;
-      font-family: 'Be Vietnam Pro', sans-serif;
-      color: var(--brown);
-      background: var(--cream);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
-    :focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; border-radius: 2px; }
+    body { font-family: 'Be Vietnam Pro', system-ui, sans-serif; font-size: 15px; line-height: 1.55; color: var(--brown); background: var(--cream); }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    button { cursor: pointer; }
+    a { color: var(--purple); }
+    :focus-visible { outline: 3px solid var(--purple); outline-offset: 2px; }
+    [hidden] { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-    .bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 14px 32px;
-      background: var(--brown);
+    /* ── Top bar ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 20;
+      display: flex; align-items: center; gap: 16px;
+      height: 60px; padding: 0 20px;
+      background: var(--brown); color: var(--cream);
       border-bottom: 2px solid var(--tan);
-      color: var(--cream);
     }
-    .bar img { width: 110px; height: auto; display: block; }
-    .who { display: flex; align-items: center; gap: 18px; font-size: 13.5px; }
-    .who span { color: rgba(245,241,234,0.7); }
-    .who strong { color: var(--cream); font-weight: 600; }
-    .logout {
-      padding: 9px 16px;
-      border: 1px solid rgba(245,241,234,0.3);
-      border-radius: 3px;
-      font-size: 12.5px;
-      font-weight: 600;
-      color: var(--cream);
-      transition: background 0.25s ease, border-color 0.25s ease;
-    }
-    .logout:hover { background: rgba(255,255,255,0.08); border-color: var(--tan); }
+    .brand { font-weight: 700; font-size: 16px; letter-spacing: .02em; }
+    .brand span { font-weight: 400; opacity: .7; }
+    .topbar .spacer { flex: 1; }
+    .me { font-size: 14px; text-align: right; }
+    .me small { display: block; font-size: 12px; opacity: .7; }
+    .topbar a.site { color: var(--cream); font-size: 14px; }
+    .logout { background: none; border: 1px solid rgba(245,241,234,.4); color: var(--cream); border-radius: 6px; padding: 7px 12px; font-size: 13.5px; font-weight: 600; }
+    .logout:hover { background: rgba(255,255,255,.08); border-color: var(--tan); }
+    .menu-btn { display: none; background: none; border: 1px solid rgba(255,255,255,.3); color: var(--cream); border-radius: 6px; padding: 6px 10px; }
 
-    main { max-width: 640px; margin: 72px auto; padding: 0 24px; }
-    h1 {
-      font-family: 'DM Serif Display', Georgia, serif;
-      font-weight: 400;
-      font-size: 38px;
-      line-height: 1.15;
-      margin-bottom: 12px;
+    /* ── Layout ── */
+    .layout { display: grid; grid-template-columns: 250px 1fr; min-height: calc(100vh - 62px); }
+    .sidebar { background: var(--white); border-right: 1px solid var(--line); padding: 16px 12px; }
+    .nav-group { margin-bottom: 18px; }
+    .nav-group h2 { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--tan); padding: 0 12px 6px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 12px; width: 100%;
+      min-height: 44px; padding: 8px 12px; border: none; border-radius: var(--radius);
+      background: none; text-align: left; font-size: 15px; font-weight: 500;
     }
-    p { color: var(--muted); margin-bottom: 14px; }
-    .details {
-      margin-top: 28px;
-      padding: 20px 24px;
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 3px;
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 8px 24px;
-      font-size: 14px;
-    }
-    .details dt {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
-      text-transform: uppercase; color: var(--tan); padding-top: 3px;
-    }
+    .nav-item svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; flex-shrink: 0; }
+    .nav-item:hover { background: var(--cream); }
+    .nav-item[aria-current="page"] { background: rgba(101,46,134,.1); color: var(--purple); font-weight: 600; }
+    .nav-item .count { margin-left: auto; min-width: 24px; padding: 1px 8px; border-radius: 20px; background: var(--purple); color: var(--white); font-size: 12px; font-weight: 700; text-align: center; }
+    .main { padding: 28px 32px 64px; max-width: 1180px; }
+    .main:focus { outline: none; }
 
-    @media (max-width: 600px) {
-      .bar { padding: 12px 18px; }
-      .who span { display: none; }
-      main { margin: 48px auto; }
+    /* ── Common pieces ── */
+    h1 { font-size: 26px; font-weight: 700; margin-bottom: 4px; }
+    .lead { color: var(--muted); margin-bottom: 24px; }
+    .card { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+    .card + .card { margin-top: 16px; }
+    .card h2 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .card .hint { font-size: 13.5px; color: var(--muted); margin-bottom: 14px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      min-height: 44px; padding: 10px 18px; border-radius: var(--radius);
+      border: 1.5px solid var(--brown); background: var(--white); font-weight: 600; font-size: 14.5px; text-decoration: none; color: var(--brown);
+    }
+    .btn:hover { background: var(--cream); }
+    .btn-primary { background: var(--purple); border-color: var(--purple); color: var(--white); }
+    .btn-primary:hover { background: #4f2369; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
+    .notice { display: flex; gap: 10px; align-items: center; padding: 12px 16px; margin-bottom: 20px; border-radius: var(--radius); background: rgba(178,150,125,.18); border: 1px solid var(--tan); font-weight: 500; }
+    .empty-note { padding: 6px 0 2px; color: var(--muted); }
+
+    /* ── Home ── */
+    .home-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; align-items: start; }
+    .actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .action {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 6px;
+      padding: 16px; min-height: 96px; text-align: left;
+      border: 1.5px solid var(--line); border-radius: var(--radius); background: var(--white);
+    }
+    .action:hover:not(:disabled) { border-color: var(--purple); background: rgba(101,46,134,.04); }
+    .action:disabled { opacity: .45; cursor: not-allowed; }
+    .action svg { width: 24px; height: 24px; stroke: var(--purple); fill: none; stroke-width: 1.8; }
+    .action strong { font-size: 15px; }
+    .action span { font-size: 13px; color: var(--muted); }
+    .numbers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .number { padding: 14px; background: var(--cream); border-radius: var(--radius); }
+    .number b { display: block; font-size: 22px; }
+    .number span { font-size: 13px; color: var(--muted); }
+
+    /* ── Products ── */
+    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    .search { flex: 1; min-width: 220px; position: relative; }
+    .search input { width: 100%; min-height: 44px; padding: 10px 14px 10px 40px; border: 1.5px solid var(--greige); border-radius: var(--radius); background: var(--white); }
+    .search svg { position: absolute; left: 12px; top: 12px; width: 20px; height: 20px; stroke: var(--muted); fill: none; stroke-width: 2; }
+    .seg { display: inline-flex; border: 1.5px solid var(--greige); border-radius: var(--radius); overflow: hidden; background: var(--white); }
+    .seg button { min-height: 41px; padding: 8px 14px; border: none; background: none; font-weight: 500; }
+    .seg button[aria-pressed="true"] { background: var(--brown); color: var(--cream); }
+    table { width: 100%; border-collapse: collapse; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+    th { text-align: left; font-size: 12.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); background: #FAF7F3; padding: 12px 14px; }
+    td { padding: 12px 14px; border-top: 1px solid var(--line); vertical-align: middle; }
+    tr:hover td { background: #FCFAF7; }
+    td .sub { font-size: 13.5px; color: var(--muted); }
+    .thumb { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; background: var(--greige); }
+    .switch { display: inline-flex; align-items: center; gap: 10px; border: none; background: none; min-height: 44px; font-weight: 600; font-size: 14px; }
+    .switch .track { width: 44px; height: 26px; border-radius: 20px; background: var(--greige); position: relative; transition: background .2s; flex-shrink: 0; }
+    .switch .track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
+    .switch[aria-checked="true"] .track { background: var(--purple); }
+    .switch[aria-checked="true"] .track::after { transform: translateX(18px); }
+    .switch:disabled { cursor: not-allowed; opacity: .55; }
+    .empty { padding: 40px; text-align: center; color: var(--muted); background: var(--white); border: 1px dashed var(--greige); border-radius: var(--radius); }
+
+    /* ── Sections still to be built ── */
+    .placeholder { padding: 32px; background: var(--white); border: 1px dashed var(--greige); border-radius: var(--radius); }
+    .placeholder ul { margin: 12px 0 0 20px; color: var(--muted); }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(20px);
+      display: flex; align-items: center; gap: 16px;
+      padding: 12px 14px 12px 18px; border-radius: var(--radius);
+      background: var(--brown); color: var(--cream); box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 50;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%); pointer-events: auto; }
+    .toast button { background: none; border: 1px solid rgba(245,241,234,.5); color: var(--cream); border-radius: 6px; padding: 6px 12px; font-weight: 600; }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { display: none; position: fixed; inset: 62px 0 0 0; z-index: 15; overflow-y: auto; }
+      .sidebar.open { display: block; }
+      .menu-btn { display: inline-block; }
+      .me small, .topbar a.site { display: none; }
+      .main { padding: 20px 16px 64px; }
+      .home-grid { grid-template-columns: 1fr; }
+      .numbers { grid-template-columns: 1fr 1fr; }
+      .products-table thead { display: none; }
+      .products-table tr { display: grid; grid-template-columns: 56px 1fr; gap: 4px 12px; padding: 12px; border-top: 1px solid var(--line); }
+      .products-table td { border: none; padding: 0; }
+      .products-table td:first-child { grid-row: span 4; }
     }
   </style>
 </head>
-<body>
-  <header class="bar">
-    <img src="/assets/images/Logo varijacije white.png" alt="Pure Community Support">
-    <div class="who">
-      <span>Signed in as <strong>{{name}}</strong></span>
-      <form method="post" action="/admin/logout">
-        <button class="logout" type="submit">Sign out</button>
-      </form>
-    </div>
+<body data-role="{{roleKey}}" data-name="{{name}}">
+  <header class="topbar">
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="sidebar">Menu</button>
+    <div class="brand">Pure <span>· Admin</span></div>
+    <div class="spacer"></div>
+    <div class="me">{{name}}<small>{{role}}</small></div>
+    <a class="site" href="/" target="_blank" rel="noopener">View site ↗</a>
+    <form method="post" action="/admin/logout"><button class="logout" type="submit">Sign out</button></form>
   </header>
 
-  <main>
-    <h1>Welcome, {{name}}</h1>
-    <p>You are signed in. The admin panel is being built; products, cases, campaigns and reports will be managed from here.</p>
-    <dl class="details">
-      <dt>Email</dt><dd>{{email}}</dd>
-      <dt>Role</dt><dd>{{role}}</dd>
-    </dl>
-  </main>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar" aria-label="Admin sections">
+      <div class="nav-group">
+        <button class="nav-item" data-view="home" aria-current="page"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Home</button>
+        <button class="nav-item" data-view="review"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9"/></svg>Waiting for review</button>
+      </div>
+      <div class="nav-group">
+        <h2>Shop</h2>
+        <button class="nav-item" data-view="products"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>Products</button>
+        <button class="nav-item" data-view="orders"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Orders</button>
+      </div>
+      <div class="nav-group">
+        <h2>Community</h2>
+        <button class="nav-item" data-view="campaigns"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Campaigns &amp; cases</button>
+        <button class="nav-item" data-view="impact"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Impact numbers</button>
+        <button class="nav-item" data-view="money"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M12 12h9"/></svg>Profit split</button>
+      </div>
+      <div class="nav-group">
+        <h2>Stories</h2>
+        <button class="nav-item" data-view="blog"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>Blog posts</button>
+        <button class="nav-item" data-view="media"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 7"/></svg>Photos &amp; files</button>
+      </div>
+      <div class="nav-group" data-super-only>
+        <h2>Settings</h2>
+        <button class="nav-item" data-view="people"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><path d="M16 4a3.5 3.5 0 0 1 0 7M22 20a7 7 0 0 0-4-6.3"/></svg>People &amp; roles</button>
+      </div>
+    </nav>
+
+    <main class="main" id="main" tabindex="-1">
+      <div class="notice" id="viewer-note" hidden>You have view-only access. You can look around, but buttons that change things are turned off.</div>
+
+      <!-- Home -->
+      <section data-screen="home">
+        <h1 id="greeting">Welcome</h1>
+        <p class="lead">Here's what needs doing today.</p>
+        <div class="home-grid">
+          <div>
+            <div class="card">
+              <h2>Needs your attention</h2>
+              <p class="hint" id="attention-hint"></p>
+              <p class="empty-note">Nothing waiting. You're all caught up.</p>
+            </div>
+            <div class="card">
+              <h2>Recent activity</h2>
+              <p class="hint">Who changed what, newest first.</p>
+              <p class="empty-note">Activity will appear here once content is managed from this panel.</p>
+            </div>
+          </div>
+          <div>
+            <div class="card">
+              <h2>Quick actions</h2>
+              <p class="hint">The things you do most often.</p>
+              <div class="actions-grid">
+                <button class="action" type="button" data-go="products" data-edit><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><strong>Add a product</strong><span>New item for the shop</span></button>
+                <button class="action" type="button" data-go="products"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg><strong>Mark sold out</strong><span>Change stock status</span></button>
+                <button class="action" type="button" data-go="blog" data-edit><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg><strong>Write a post</strong><span>Blog or report</span></button>
+                <button class="action" type="button" data-go="impact" data-edit><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7"/></svg><strong>Update numbers</strong><span>Impact page figures</span></button>
+              </div>
+            </div>
+            <div class="card">
+              <h2>On the site now</h2>
+              <p class="hint">From the live catalog and campaign pages.</p>
+              <div class="numbers">
+                <div class="number"><b id="n-products">–</b><span>Products</span></div>
+                <div class="number"><b id="n-running">–</b><span>Running programmes</span></div>
+                <div class="number"><b id="n-planned">–</b><span>Planned programmes</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Review -->
+      <section data-screen="review" hidden>
+        <h1>Waiting for review</h1>
+        <p class="lead">Editors' changes to campaigns, cases, blog posts and impact numbers appear here before they go live.</p>
+        <p class="empty">Nothing is waiting for review.</p>
+      </section>
+
+      <!-- Products -->
+      <section data-screen="products" hidden>
+        <h1>Products</h1>
+        <p class="lead">Turn the switch off when something sells out.</p>
+        <div class="notice">Saving isn't connected yet. Changes on this screen are not kept and do not affect the shop.</div>
+        <div class="toolbar">
+          <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><label class="sr-only" for="product-search">Search products</label><input id="product-search" type="search" placeholder="Search by name or collection"></div>
+          <div class="seg" role="group" aria-label="Show">
+            <button type="button" data-stock="all" aria-pressed="true">All</button>
+            <button type="button" data-stock="in" aria-pressed="false">In stock</button>
+            <button type="button" data-stock="out" aria-pressed="false">Sold out</button>
+          </div>
+          <button class="btn btn-primary" type="button" data-edit id="add-product"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add a product</button>
+        </div>
+        <table class="products-table">
+          <thead><tr><th><span class="sr-only">Photo</span></th><th>Product</th><th>Price</th><th>Stock</th><th><span class="sr-only">Actions</span></th></tr></thead>
+          <tbody id="product-rows"></tbody>
+        </table>
+        <p class="empty" id="product-empty" hidden>No products match. Try a different word, or choose "All".</p>
+      </section>
+
+      <!-- Sections still to be built -->
+      <section data-screen="other" hidden>
+        <h1 id="other-title"></h1>
+        <p class="lead" id="other-lead"></p>
+        <div class="placeholder"><strong>Coming soon.</strong> This section will work like Products and Waiting for review:<ul id="other-list"></ul></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-text"></span><button type="button" id="toast-undo">Undo</button></div>
+
+  <script nonce="{{nonce}}" src="/assets/js/products.js"></script>
+  <script nonce="{{nonce}}" src="/assets/js/campaigns.js"></script>
+  <script nonce="{{nonce}}">
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+
+    /* Signed-in user, set by the Worker */
+    const ROLE = document.body.dataset.role; // superadmin | editor | viewer
+    const NAME = document.body.dataset.name;
+    const isSuper = ROLE === 'superadmin';
+    const canEdit = ROLE !== 'viewer';
+
+    /* Live site data */
+    const PRODUCTS = window.PURE_PRODUCTS || [];
+    const COLLECTIONS = window.PURE_COLLECTIONS || [];
+    const CAMPAIGNS = window.PURE_CAMPAIGNS || [];
+    const collectionName = id => (COLLECTIONS.find(c => c.id === id) || {}).name || '';
+    const priceLabel = window.PURE_PRICE_LABEL || (() => 'Price TBD');
+
+    // Stock status isn't stored anywhere yet, so everything starts as in stock.
+    const products = PRODUCTS.map(p => ({ id: p.id, name: p.name, coll: collectionName(p.collection), price: priceLabel(p), inStock: true, img: '/' + p.img }));
+
+    /* Navigation between screens */
+    const TITLES = {
+      orders: ['Orders', 'See new orders and update their status from pending to delivered.', ['A table of orders, newest first', 'One button per order to move it to the next step', 'Viewers can see orders but not change them']],
+      campaigns: ['Campaigns & cases', 'Edit the four programmes and add individual cases.', ['A list of campaigns with status badges', 'Cases cannot be submitted until "consent confirmed" is ticked', 'Editors save drafts; super-admins publish']],
+      impact: ['Impact numbers', 'The figures shown on the Impact page.', ['One row per figure with the current value', 'Editors’ changes go to Waiting for review before going live']],
+      money: ['Profit split', 'Quarterly revenue, costs and the 50/50 split.', ['One record per quarter', 'The community share is calculated automatically']],
+      blog: ['Blog posts', 'Stories, campaign updates and transparency recaps.', ['Write in English and Vietnamese side by side', 'Editors submit for review; super-admins publish']],
+      media: ['Photos & files', 'Every photo and document used on the site.', ['Drag photos in to upload', 'A reminder of the no-photos-of-children rule on every upload']],
+      people: ['People & roles', 'Who can sign in, and what they can do.', ['Add someone by email and pick their role', 'Reset passwords and turn accounts off', 'Only super-admins see this section', 'Until then, people are managed in the D1 Console']]
+    };
+    function show(view) {
+      if (view === 'people' && !isSuper) view = 'home';
+      document.querySelectorAll('.nav-item').forEach(b => {
+        if (b.dataset.view === view) b.setAttribute('aria-current', 'page');
+        else b.removeAttribute('aria-current');
+      });
+      const screen = ['home', 'review', 'products'].includes(view) ? view : 'other';
+      document.querySelectorAll('[data-screen]').forEach(s => s.hidden = s.dataset.screen !== screen);
+      if (screen === 'other') {
+        const [title, lead, items] = TITLES[view];
+        $('other-title').textContent = title;
+        $('other-lead').textContent = lead;
+        $('other-list').innerHTML = items.map(i => `<li>${esc(i)}</li>`).join('');
+      }
+      $('sidebar').classList.remove('open');
+      document.querySelector('.menu-btn').setAttribute('aria-expanded', 'false');
+      $('main').focus({ preventScroll: true });
+      window.scrollTo(0, 0);
+    }
+    document.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', () => show(b.dataset.view)));
+    document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => show(b.dataset.go)));
+    document.querySelector('.menu-btn').addEventListener('click', e => {
+      const open = $('sidebar').classList.toggle('open');
+      e.currentTarget.setAttribute('aria-expanded', open);
+    });
+
+    /* Toast with undo */
+    let undoFn = null, toastTimer;
+    function toast(text, undo) {
+      $('toast-text').textContent = text;
+      undoFn = undo;
+      $('toast-undo').hidden = !undo;
+      $('toast').classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => $('toast').classList.remove('show'), 6000);
+    }
+    $('toast-undo').addEventListener('click', () => { if (undoFn) undoFn(); $('toast').classList.remove('show'); });
+
+    /* Products screen */
+    let stockFilter = 'all';
+    function renderProducts() {
+      const q = $('product-search').value.trim().toLowerCase();
+      const list = products.filter(p =>
+        (stockFilter === 'all' || (stockFilter === 'in') === p.inStock) &&
+        (!q || p.name.toLowerCase().includes(q) || p.coll.toLowerCase().includes(q)));
+      $('product-rows').innerHTML = list.map(p => `
+        <tr>
+          <td><img class="thumb" src="${esc(p.img)}" alt="" loading="lazy"></td>
+          <td><strong>${esc(p.name)}</strong><br><span class="sub">${esc(p.coll)}</span></td>
+          <td>${esc(p.price)}</td>
+          <td><button class="switch" type="button" role="switch" aria-checked="${p.inStock}" data-id="${esc(p.id)}" ${canEdit ? '' : 'disabled'}><span class="track" aria-hidden="true"></span>${p.inStock ? 'In stock' : 'Sold out'}</button></td>
+          <td><button class="btn" type="button" data-edit-product ${canEdit ? '' : 'disabled'}>Edit</button></td>
+        </tr>`).join('');
+      $('product-empty').hidden = list.length > 0;
+      $('product-rows').querySelectorAll('.switch').forEach(sw => sw.addEventListener('click', () => {
+        const p = products.find(x => x.id === sw.dataset.id);
+        p.inStock = !p.inStock;
+        renderProducts();
+        toast(`${p.name} marked as ${p.inStock ? 'in stock' : 'sold out'} (not saved yet).`, () => { p.inStock = !p.inStock; renderProducts(); });
+      }));
+      $('product-rows').querySelectorAll('[data-edit-product]').forEach(b => b.addEventListener('click', () => toast('Editing products isn’t available yet.')));
+    }
+    $('product-search').addEventListener('input', renderProducts);
+    document.querySelectorAll('[data-stock]').forEach(b => b.addEventListener('click', () => {
+      stockFilter = b.dataset.stock;
+      document.querySelectorAll('[data-stock]').forEach(x => x.setAttribute('aria-pressed', x === b));
+      renderProducts();
+    }));
+    $('add-product').addEventListener('click', () => toast('Adding products isn’t available yet.'));
+
+    /* Role: hide or turn off what this person can't use */
+    document.querySelectorAll('[data-super-only]').forEach(el => el.hidden = !isSuper);
+    document.querySelectorAll('[data-edit]').forEach(el => el.disabled = !canEdit);
+    $('viewer-note').hidden = canEdit;
+    $('attention-hint').textContent = isSuper
+      ? 'Changes submitted by editors wait here for you to publish or send back.'
+      : 'Your submitted changes wait here until a super-admin publishes them.';
+
+    /* Home */
+    const h = new Date().getHours();
+    $('greeting').textContent = `${h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'}, ${NAME}`;
+    $('n-products').textContent = PRODUCTS.length;
+    $('n-running').textContent = CAMPAIGNS.filter(c => c.status === 'running').length;
+    $('n-planned').textContent = CAMPAIGNS.filter(c => c.status === 'planned').length;
+
+    renderProducts();
+  </script>
 </body>
 </html>

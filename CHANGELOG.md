@@ -12,6 +12,15 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.5.0] - 2026-10-07
+### What changed
+- Replaced the placeholder signed-in page at /admin with the sidebar dashboard design
+- Dashboard uses the signed-in user's real role: view-only notice and disabled buttons for viewers, People & roles for super-admins only, and a Sign out button
+- Products screen lists the live catalog (search and stock filter work; saving is not connected yet and is labelled as such)
+- Home shows live counts (products, running and planned programmes); sample people and activity removed in favour of empty states
+- schema.sql comments switched to /* */ so the file still runs when pasted into the D1 Console (which joins lines)
+- Removed a stray editor lock file (.#wrangler.jsonc) committed by mistake
+
 ## [0.4.1] - 2026-10-07
 ### What changed
 - Removed the name column from the admin users table (schema.sql); the admin now shows the part of the email before the @ as the display name

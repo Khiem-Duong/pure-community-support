@@ -89,7 +89,7 @@ async function handleAdmin(request, env, url, path) {
   }
 
   if (path === '/admin') {
-    return page(homeTemplate, { name: displayName(user.email), email: user.email, role: ROLE_NAMES[user.role] || user.role });
+    return page(homeTemplate, { name: displayName(user.email), role: ROLE_NAMES[user.role] || user.role, roleKey: user.role });
   }
   return new Response('Not found', { status: 404, headers: BASE_HEADERS });
 }
