@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin — Pure Community Support</title>
+  <link rel="icon" href="/assets/images/Vector Logo Pure Community support 2-15.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Placeholder signed-in page, served by worker/index.js at /admin.
+       Replaced by the sidebar dashboard (see -temp/admin-v1-sidebar-dashboard.html) when the panel is built. -->
+  <style nonce="{{nonce}}">
+    :root {
+      --cream:  #F5F1EA;
+      --tan:    #B2967D;
+      --purple: #652E86;
+      --brown:  #4A342A;
+      --muted:  #6B4E3C;
+      --white:  #ffffff;
+      --border: rgba(178,150,125,0.35);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      color: var(--brown);
+      background: var(--cream);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    :focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; border-radius: 2px; }
+
+    .bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 32px;
+      background: var(--brown);
+      border-bottom: 2px solid var(--tan);
+      color: var(--cream);
+    }
+    .bar img { width: 110px; height: auto; display: block; }
+    .who { display: flex; align-items: center; gap: 18px; font-size: 13.5px; }
+    .who span { color: rgba(245,241,234,0.7); }
+    .who strong { color: var(--cream); font-weight: 600; }
+    .logout {
+      padding: 9px 16px;
+      border: 1px solid rgba(245,241,234,0.3);
+      border-radius: 3px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--cream);
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+    .logout:hover { background: rgba(255,255,255,0.08); border-color: var(--tan); }
+
+    main { max-width: 640px; margin: 72px auto; padding: 0 24px; }
+    h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-weight: 400;
+      font-size: 38px;
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+    p { color: var(--muted); margin-bottom: 14px; }
+    .details {
+      margin-top: 28px;
+      padding: 20px 24px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px 24px;
+      font-size: 14px;
+    }
+    .details dt {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--tan); padding-top: 3px;
+    }
+
+    @media (max-width: 600px) {
+      .bar { padding: 12px 18px; }
+      .who span { display: none; }
+      main { margin: 48px auto; }
+    }
+  </style>
+</head>
+<body>
+  <header class="bar">
+    <img src="/assets/images/Logo varijacije white.png" alt="Pure Community Support">
+    <div class="who">
+      <span>Signed in as <strong>{{name}}</strong></span>
+      <form method="post" action="/admin/logout">
+        <button class="logout" type="submit">Sign out</button>
+      </form>
+    </div>
+  </header>
+
+  <main>
+    <h1>Welcome, {{name}}</h1>
+    <p>You are signed in. The admin panel is being built; products, cases, campaigns and reports will be managed from here.</p>
+    <dl class="details">
+      <dt>Email</dt><dd>{{email}}</dd>
+      <dt>Role</dt><dd>{{role}}</dd>
+    </dl>
+  </main>
+</body>
+</html>

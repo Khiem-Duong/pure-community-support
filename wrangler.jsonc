@@ -1,0 +1,23 @@
+// Cloudflare Workers deploy config.
+// Only the files in ./public are served as the website; everything else in the
+// repo (docs, future Worker code, database schema) is never published.
+{
+  // Must match the Worker's name in the Cloudflare dashboard exactly,
+  // otherwise a deploy creates a separate new Worker.
+  "name": "pure-community-support",
+  "main": "worker/index.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/admin", "/admin/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "purecommunitysupportd1db", "database_id": "6c909377-7eb8-455e-a44a-9f5c1fbb5da5" }
+  ],
+  // The admin pages in ./admin are bundled into the Worker as text (imported in worker/index.js),
+  // so they are never served as public files.
+  "rules": [
+    { "type": "Text", "globs": ["**/*.html"], "fallthrough": true }
+  ]
+}

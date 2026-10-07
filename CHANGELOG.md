@@ -12,6 +12,16 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.4.0] - 2026-10-07
+### What changed
+- Moved the website into public/ — only files in that folder are published; docs (CHANGELOG.md, SPEC_NOTES.md) and server code are no longer served
+- Removed .assetsignore (no longer needed now that .git sits outside the published folder)
+- Added wrangler.jsonc: publishes ./public, runs the Worker first for /admin, connects the D1 database (purecommunitysupportd1db)
+- Added a Cloudflare Worker (worker/) with admin sign-in: /admin/login, /admin/logout and a placeholder signed-in page at /admin
+- Sign-in uses PBKDF2 password hashes and hashed session tokens stored in D1, 12-hour sessions, and a 15-minute pause after repeated failed attempts
+- Added schema.sql (users, sessions, login_attempts tables) and scripts/hash-password.mjs for creating the first super-admin
+- Temporary /admin/db-check route to confirm the D1 connection
+
 ## [0.3.1] - 2026-10-05
 ### What changed
 - Added .assetsignore so the Cloudflare deploy no longer uploads the .git folder (its pack file exceeded the 25 MiB asset limit and failed the deploy; it also stops the repo history being served publicly)

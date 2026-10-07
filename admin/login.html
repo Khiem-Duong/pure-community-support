@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Admin sign in — Pure Community Support</title>
+  <link rel="icon" href="/assets/images/Vector Logo Pure Community support 2-15.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Served by worker/index.js at /admin/login, which fills in the double-brace placeholders. -->
+  <style nonce="{{nonce}}">
+    :root {
+      --cream:  #F5F1EA;
+      --greige: #DAD1C4;
+      --tan:    #B2967D;
+      --purple: #652E86;
+      --brown:  #4A342A;
+      --deep:   #2E1A14;
+      --muted:  #6B4E3C;
+      --white:  #ffffff;
+      --border: rgba(178,150,125,0.35);
+      --error:  #9B2C2C;
+      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) 1.1fr;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      color: var(--brown);
+      background: var(--cream);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    :focus-visible { outline: 2px solid var(--purple); outline-offset: 3px; border-radius: 2px; }
+
+    /* Brand side */
+    .brand {
+      background: var(--brown);
+      border-right: 2px solid var(--tan);
+      color: var(--cream);
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .brand img { width: 150px; height: auto; display: block; }
+    .brand h2 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-weight: 400;
+      font-size: clamp(26px, 2.6vw, 36px);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .brand p { font-size: 14px; color: rgba(245,241,234,0.62); max-width: 340px; }
+
+    /* Form side */
+    .panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+    }
+    .card { width: 100%; max-width: 400px; animation: rise 0.7s var(--ease-out) both; }
+    @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 11px;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--tan); margin-bottom: 14px;
+    }
+    .eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--tan); }
+    h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-weight: 400;
+      font-size: 38px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .lede { font-size: 14.5px; color: var(--muted); margin-bottom: 28px; }
+
+    .msg {
+      margin-bottom: 22px;
+      padding: 12px 16px;
+      border-radius: 3px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .msg-error { background: rgba(155,44,44,0.08); border-left: 3px solid var(--error); color: var(--error); }
+    .msg-info  { background: rgba(101,46,134,0.06); border-left: 3px solid var(--purple); color: var(--brown); }
+
+    .field { margin-bottom: 20px; }
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      height: 50px;
+      padding: 0 16px;
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      background: var(--white);
+      font: inherit;
+      font-size: 16px;
+      color: var(--brown);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+    input:hover { border-color: var(--tan); }
+    input:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(101,46,134,0.15); }
+    .password-wrap { position: relative; }
+    .password-wrap input { padding-right: 78px; }
+    .toggle {
+      position: absolute;
+      top: 50%; right: 8px;
+      transform: translateY(-50%);
+      padding: 6px 10px;
+      border-radius: 2px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--muted);
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .toggle:hover { background: var(--cream); color: var(--brown); }
+
+    .submit {
+      width: 100%;
+      height: 52px;
+      margin-top: 6px;
+      border-radius: 3px;
+      background: var(--brown);
+      color: var(--cream);
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: background 0.3s ease, transform 0.4s var(--ease-out), box-shadow 0.4s var(--ease-out);
+    }
+    .submit:hover { background: var(--purple); transform: translateY(-2px); box-shadow: 0 12px 26px rgba(74,52,42,0.22); }
+    .submit:disabled { opacity: 0.7; cursor: progress; transform: none; box-shadow: none; }
+
+    .help {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .help a { font-weight: 600; color: var(--purple); text-underline-offset: 3px; }
+
+    @media (max-width: 800px) {
+      body { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      .brand { padding: 22px 24px; border-right: none; border-bottom: 2px solid var(--tan); flex-direction: row; align-items: center; }
+      .brand img { width: 110px; }
+      .brand div { display: none; }
+      .panel { align-items: flex-start; padding: 40px 24px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="brand">
+    <img src="/assets/images/Logo varijacije white.png" alt="Pure Community Support">
+    <div>
+      <h2>Admin</h2>
+      <p>Manage products, cases, campaigns and reports for the Pure Community Support website.</p>
+    </div>
+  </aside>
+
+  <main class="panel">
+    <div class="card">
+      <p class="eyebrow">Team access</p>
+      <h1>Sign in</h1>
+      <p class="lede">Use the email address and password given to you by a super-admin.</p>
+
+      {{messageHtml}}
+
+      <form method="post" action="/admin/login" id="login-form">
+        <div class="field">
+          <label for="email">Email address</label>
+          <input id="email" name="email" type="email" autocomplete="username" required autofocus>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="password-wrap">
+            <input id="password" name="password" type="password" autocomplete="current-password" required>
+            <button class="toggle" type="button" id="toggle" aria-controls="password" aria-pressed="false">Show</button>
+          </div>
+        </div>
+        <button class="submit" type="submit" id="submit">Sign in</button>
+      </form>
+
+      <p class="help">
+        Forgot your password? Ask a super-admin to reset it.<br>
+        <a href="/">Back to the website</a>
+      </p>
+    </div>
+  </main>
+
+  <script nonce="{{nonce}}">
+    const password = document.getElementById('password');
+    const toggle = document.getElementById('toggle');
+    toggle.addEventListener('click', () => {
+      const show = password.type === 'password';
+      password.type = show ? 'text' : 'password';
+      toggle.textContent = show ? 'Hide' : 'Show';
+      toggle.setAttribute('aria-pressed', String(show));
+      password.focus();
+    });
+    document.getElementById('login-form').addEventListener('submit', () => {
+      const submit = document.getElementById('submit');
+      submit.disabled = true;
+      submit.textContent = 'Signing in…';
+    });
+  </script>
+</body>
+</html>
