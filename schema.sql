@@ -7,15 +7,15 @@
 --
 -- First super-admin:
 --   1. node scripts/hash-password.mjs   (type the password; it prints a hash)
---   2. In the D1 Console, run the INSERT the script prints, with your email and name.
+--   2. In the D1 Console, run the INSERT the script prints, with your email.
 -- Never put a plain password, or a hash, into a file in this repo.
 
 -- People who can sign in to /admin. Roles follow spec §7.1.
+-- The admin shows the part of the email before the @ as the person's display name.
 CREATE TABLE IF NOT EXISTS users (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
   email         TEXT    NOT NULL UNIQUE COLLATE NOCASE,
-  name          TEXT    NOT NULL,
-  role          TEXT    NOT NULL CHECK (role IN ('superadmin', 'editor', 'viewer')),
+  role         TEXT    NOT NULL CHECK (role IN ('superadmin', 'editor', 'viewer')),
   password_hash TEXT    NOT NULL,            -- pbkdf2$<iterations>$<salt>$<hash>
   active        INTEGER NOT NULL DEFAULT 1,  -- 0 = cannot sign in
   created_at    TEXT    NOT NULL DEFAULT (datetime('now')),

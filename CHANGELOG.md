@@ -12,6 +12,12 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.4.1] - 2026-10-07
+### What changed
+- Removed the name column from the admin users table (schema.sql); the admin now shows the part of the email before the @ as the display name
+- Updated the Worker's user lookup and the INSERT printed by scripts/hash-password.mjs to match
+- Existing databases created with the old schema need: ALTER TABLE users DROP COLUMN name;
+
 ## [0.4.0] - 2026-10-07
 ### What changed
 - Moved the website into public/ — only files in that folder are published; docs (CHANGELOG.md, SPEC_NOTES.md) and server code are no longer served

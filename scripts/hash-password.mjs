@@ -64,10 +64,10 @@ console.log(`
 Hash:
 ${stored}
 
-Paste into the D1 Console (change the email, name and role first):
+Paste into the D1 Console (change the email and role first):
 
-INSERT INTO users (email, name, role, password_hash)
-VALUES ('you@example.com', 'Your Name', 'superadmin', '${stored}');
+INSERT INTO users (email, role, password_hash)
+VALUES ('you@example.com', 'superadmin', '${stored}');
 
 Roles: superadmin, editor, viewer.
 To change an existing user's password instead:

@@ -89,7 +89,7 @@ async function handleAdmin(request, env, url, path) {
   }
 
   if (path === '/admin') {
-    return page(homeTemplate, { name: user.name, email: user.email, role: ROLE_NAMES[user.role] || user.role });
+    return page(homeTemplate, { name: displayName(user.email), email: user.email, role: ROLE_NAMES[user.role] || user.role });
   }
   return new Response('Not found', { status: 404, headers: BASE_HEADERS });
 }
@@ -146,7 +146,7 @@ async function currentUser(request, env) {
   const token = getCookie(request, SESSION_COOKIE);
   if (!token) return null;
   return env.DB.prepare(`
-    SELECT u.id, u.email, u.name, u.role
+    SELECT u.id, u.email, u.role
     FROM sessions s JOIN users u ON u.id = s.user_id
     WHERE s.token_hash = ? AND s.expires_at > datetime('now') AND u.active = 1
   `).bind(await sha256Hex(token)).first();
@@ -180,6 +180,9 @@ function redirect(location, extraHeaders = {}) {
 function forbidden() {
   return new Response('Forbidden', { status: 403, headers: BASE_HEADERS });
 }
+
+/* Display name: the part of the email before the @ ("khiem" for khiem@example.com). */
+const displayName = email => String(email).split('@')[0];
 
 const escapeHtml = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
