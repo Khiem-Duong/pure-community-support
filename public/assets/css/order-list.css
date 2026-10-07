@@ -15,7 +15,7 @@
 }
 .nav-order:hover,
 .nav-order[aria-current="page"] { color: var(--cream, #F5F1EA); background: rgba(255, 255, 255, 0.08); }
-.nav-order svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linejoin: round; }
+.nav-order svg { width: 21px; height: 21px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
 .nav-order-count {
   position: absolute;
   top: 1px;
@@ -51,20 +51,12 @@
 
 /* ── "Add to order list" control ── */
 .ol-add { display: flex; flex-direction: column; gap: 10px; }
-.ol-add .ol-open[hidden] { display: none; }
-.ol-add .ol-open svg { stroke-linejoin: round; }
 
 .ol-picker {
-  padding: 16px 18px;
+  padding: 16px 18px 18px;
   border: 1px solid var(--border, rgba(178, 150, 125, 0.22));
   border-radius: 3px;
   background: var(--white, #fff);
-  animation: ol-open 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.ol-picker[hidden] { display: none; }
-@keyframes ol-open {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: none; }
 }
 .ol-picker-label {
   display: block;
@@ -75,7 +67,23 @@
   text-transform: uppercase;
   color: var(--tan, #B2967D);
 }
-.ol-picker-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.ol-picker-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+
+/* Live price for the chosen quantity */
+.ol-total { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.2; text-align: right; }
+.ol-total-amount {
+  font-family: 'DM Serif Display', Georgia, serif;
+  font-size: 26px;
+  color: var(--brown, #4A342A);
+  font-variant-numeric: tabular-nums;
+  animation: ol-tick 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ol-total-each { margin-top: 3px; font-size: 12px; color: var(--muted, #6B4E3C); font-variant-numeric: tabular-nums; }
+.ol-total-tbd { font-size: 13px; font-style: italic; color: var(--tan, #B2967D); }
+@keyframes ol-tick {
+  from { opacity: 0.4; transform: translateY(-4px); }
+  to   { opacity: 1; transform: none; }
+}
 
 /* Quantity stepper — also used in the order list table */
 .ol-stepper {
@@ -120,26 +128,24 @@
 .ol-qty:focus { outline: none; background: rgba(178, 150, 125, 0.12); }
 
 .ol-confirm {
-  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 50px;
   padding: 0 22px;
   border-radius: 3px;
   background: var(--brown, #4A342A);
   color: var(--cream, #F5F1EA);
   font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.05em;
-  transition: background 0.3s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  transition: background 0.3s ease, transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.ol-confirm:hover { background: var(--purple, #652E86); transform: translateY(-2px); }
-.ol-cancel {
-  padding: 10px 4px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--muted, #6B4E3C);
-  border-bottom: 1px solid transparent;
-  transition: color 0.3s ease, border-color 0.3s ease;
-}
-.ol-cancel:hover { color: var(--brown, #4A342A); border-color: var(--tan, #B2967D); }
+.ol-confirm:hover { background: var(--purple, #652E86); transform: translateY(-2px); box-shadow: 0 12px 26px rgba(74, 52, 42, 0.22); }
+.ol-confirm svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linejoin: round; stroke-linecap: round; }
 
 .ol-note {
   font-size: 13px;
@@ -167,5 +173,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nav-order-count, .ol-picker, .ol-note.flash { animation: none; }
+  .nav-order-count, .ol-total-amount, .ol-note.flash { animation: none; }
 }

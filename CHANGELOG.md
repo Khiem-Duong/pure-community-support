@@ -12,6 +12,13 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.5.1] - 2026-10-07
+### What changed
+- Removed the "Inquire about this piece" button from item pages
+- Shop quick view and item pages now show the quantity picker directly (no separate "Add to order list" button to open it)
+- Button reads "Add x to order list" and the price total updates live as the quantity changes (e.g. "$156", "2 × $78")
+- Order list icon changed to a shopping cart in the nav, on the add button and on the empty order list
+
 ## [0.5.0] - 2026-10-07
 ### What changed
 - Replaced the placeholder signed-in page at /admin with the sidebar dashboard design

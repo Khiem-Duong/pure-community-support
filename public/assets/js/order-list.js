@@ -3,10 +3,9 @@
    every order list count on the page. Loaded on every page; the list itself is
    shown on order-list.html (/order-list).
 
-   PureOrder.bindAdd(root, options) turns an empty <div> into the
-   "Add to order list" control used in the shop quick view and on item pages:
-   the button opens a quantity picker, and the item is only added once a
-   quantity has been confirmed. */
+   PureOrder.bindAdd(root) turns an empty <div> into the "Add to order list"
+   control used in the shop quick view and on item pages: a quantity picker
+   with a live price total, and an "Add x to order list" button. */
 
 (function () {
   const KEY = 'pcs-order-list';
@@ -98,20 +97,20 @@
 
   /* ── "Add to order list" control ─────────────── */
   let uid = 0;
-  const ICON_LIST = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M15 5.5h3v15H6v-15h3"/><line x1="12" y1="10.5" x2="12" y2="16.5"/><line x1="9" y1="13.5" x2="15" y2="13.5"/></svg>';
+  const ICON_CART = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.5" cy="19.5" r="1.5"/><circle cx="17.5" cy="19.5" r="1.5"/><path d="M2.5 3.5h2.7l2.3 11a1.5 1.5 0 0 0 1.5 1.2h8.7a1.5 1.5 0 0 0 1.5-1.1L21 7.5H6.1"/></svg>';
   const ICON_MINUS = '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="6" y1="12" x2="18" y2="12"/></svg>';
   const ICON_PLUS = '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="12" y1="6" x2="12" y2="18"/><line x1="6" y1="12" x2="18" y2="12"/></svg>';
   const ICON_ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
 
-  /* options.btnClass: classes for the main button, so it matches the page's buttons.
-     Returns { setProduct(product) } — call it whenever the product shown changes. */
-  function bindAdd(root, options) {
+  /* Formats a price; uses the catalog's formatter when products.js is loaded. */
+  const money = n => (window.PURE_FORMAT_PRICE ? window.PURE_FORMAT_PRICE(n) : `$${n}`);
+
+  /* Returns { setProduct(product) } — call it whenever the product shown changes. */
+  function bindAdd(root) {
     const id = `ol-qty-${++uid}`;
-    const btnClass = (options && options.btnClass) || 'btn';
     root.classList.add('ol-add');
     root.innerHTML = `
-      <button class="${btnClass} ol-open" type="button" aria-expanded="false" aria-controls="${id}-picker">${ICON_LIST}<span>Add to order list</span></button>
-      <div class="ol-picker" id="${id}-picker" hidden>
+      <div class="ol-picker">
         <label class="ol-picker-label" for="${id}">Choose a quantity</label>
         <div class="ol-picker-row">
           <div class="ol-stepper">
@@ -119,24 +118,31 @@
             <input class="ol-qty" id="${id}" type="number" inputmode="numeric" min="1" max="${MAX_QTY}" step="1" value="1">
             <button class="ol-step" type="button" data-step="1" aria-label="Increase quantity">${ICON_PLUS}</button>
           </div>
-          <button class="ol-confirm" type="button">Add 1 to list</button>
-          <button class="ol-cancel" type="button">Cancel</button>
+          <p class="ol-total" aria-live="polite"></p>
         </div>
+        <button class="ol-confirm" type="button">${ICON_CART}<span>Add 1 to order list</span></button>
       </div>
       <p class="ol-note" role="status" aria-live="polite"></p>`;
 
-    const openBtn = root.querySelector('.ol-open');
-    const picker = root.querySelector('.ol-picker');
     const input = root.querySelector('.ol-qty');
     const confirmBtn = root.querySelector('.ol-confirm');
+    const confirmLabel = confirmBtn.querySelector('span');
+    const total = root.querySelector('.ol-total');
     const note = root.querySelector('.ol-note');
     let product = null;
 
+    /* Quantity changed: update the button label, the +/- limits and the price. */
     function syncPicker() {
       const qty = clamp(input.value);
-      confirmBtn.textContent = `Add ${qty} to list`;
+      confirmLabel.textContent = `Add ${qty} to order list`;
       root.querySelector('[data-step="-1"]').disabled = qty <= 1;
       root.querySelector('[data-step="1"]').disabled = qty >= MAX_QTY;
+      if (!product || typeof product.price !== 'number') {
+        total.innerHTML = '<span class="ol-total-tbd">Price to be confirmed</span>';
+        return;
+      }
+      total.innerHTML = `<span class="ol-total-amount">${money(product.price * qty)}</span>`
+        + (qty > 1 ? `<span class="ol-total-each">${qty} × ${money(product.price)}</span>` : '');
     }
 
     function showNote(justAdded) {
@@ -153,33 +159,15 @@
       }
     }
 
-    function openPicker() {
-      input.value = 1;
-      syncPicker();
-      picker.hidden = false;
-      openBtn.hidden = true;
-      openBtn.setAttribute('aria-expanded', 'true');
-      input.focus();
-      input.select();
-    }
-
-    function closePicker(focusButton) {
-      picker.hidden = true;
-      openBtn.hidden = false;
-      openBtn.setAttribute('aria-expanded', 'false');
-      if (focusButton) openBtn.focus();
-    }
-
     function confirm() {
       if (!product) return;
       const qty = clamp(input.value);
       api.add(product.id, qty);
-      closePicker(true);
+      input.value = 1;
+      syncPicker();
       showNote(qty);
     }
 
-    openBtn.addEventListener('click', openPicker);
-    root.querySelector('.ol-cancel').addEventListener('click', () => closePicker(true));
     confirmBtn.addEventListener('click', confirm);
     root.querySelectorAll('.ol-step').forEach(btn => btn.addEventListener('click', () => {
       input.value = clamp(clamp(input.value) + Number(btn.dataset.step));
@@ -196,7 +184,8 @@
     return {
       setProduct(p) {
         product = p;
-        closePicker(false);
+        input.value = 1;
+        syncPicker();
         note.classList.remove('flash');
         showNote(0);
       },

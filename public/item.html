@@ -492,7 +492,7 @@
           <span class="sep">/</span>
           <span><a href="/vi/">VI</a></span>
         </div>
-        <a href="/order-list" class="nav-order" data-ol-link title="Order list" aria-label="Order list"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h6v3H9z"/><path d="M15 5.5h3v15H6v-15h3"/><line x1="9" y1="11" x2="15" y2="11"/><line x1="9" y1="14.5" x2="15" y2="14.5"/><line x1="9" y1="18" x2="13" y2="18"/></svg><span class="nav-order-count" data-ol-count hidden></span></a>
+        <a href="/order-list" class="nav-order" data-ol-link title="Order list" aria-label="Order list"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.5" cy="19.5" r="1.5"/><circle cx="17.5" cy="19.5" r="1.5"/><path d="M2.5 3.5h2.7l2.3 11a1.5 1.5 0 0 0 1.5 1.2h8.7a1.5 1.5 0 0 0 1.5-1.1L21 7.5H6.1"/></svg><span class="nav-order-count" data-ol-count hidden></span></a>
         <a href="/shop" class="nav-cta">Shop Now</a>
       </div>
       <button class="nav-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links">
@@ -548,17 +548,13 @@
         <div class="spec"><dt>Made by</dt><dd id="item-maker"></dd></div>
       </dl>
 
-      <!-- Order list + inquiry -->
+      <!-- Order list -->
       <div class="purchase">
         <div class="purchase-top">
           <span class="stock"><span class="stock-dot" aria-hidden="true"></span>Availability to be confirmed</span>
         </div>
         <div class="actions">
           <div id="item-order"></div>
-          <a class="btn btn-ghost" id="item-inquire" href="mailto:hello@purecommunitysupport.vn">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v12H5.17L4 17.17V4z"/></svg>
-            Inquire about this piece
-          </a>
           <a class="btn btn-ghost" href="/shop">
             Back to the shop
             <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -690,8 +686,7 @@
       $('item-collection-spec').textContent = coll;
       $('item-maker').textContent = item.maker || 'Hue artisan (TBD)';
       $('item-maker-strip').textContent = item.maker || 'Hue artisan';
-      $('item-inquire').href = `mailto:hello@purecommunitysupport.vn?subject=${encodeURIComponent('Inquiry: ' + item.name)}`;
-      window.PureOrder.bindAdd($('item-order'), { btnClass: 'btn btn-primary' }).setProduct(item);
+      window.PureOrder.bindAdd($('item-order')).setProduct(item);
 
       /* More from the same collection */
       const siblings = PRODUCTS.filter(p => p.collection === item.collection && p.id !== item.id);
