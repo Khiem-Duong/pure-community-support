@@ -1091,7 +1091,7 @@
     const PRODUCTS = window.PURE_PRODUCTS;
 
     const MIN_PER_PAGE = 12; // products per page on ordinary screens
-    const MIN_ROWS = 2;      // never fewer rows than this, however wide the screen
+    const MIN_ROWS = 2;      // the minimum, not a cap: taller windows get as many rows as fit
     const itemUrl = id => `/shop/${id}`;
     const priceLabel = window.PURE_PRICE_LABEL;
     const collectionName = id => (COLLECTIONS.find(c => c.id === id) || {}).name || '';
@@ -1157,16 +1157,26 @@
       pager.innerHTML = html;
     }
 
-    /* Products per page follows the number of columns that fit the screen: whole rows only,
-       and at least MIN_ROWS of them, so a wide screen never shows one long row and a few leftovers. */
+    /* Products per page follows the screen: whole rows only. The number of rows is whatever
+       fits the window's height, but never fewer than MIN_ROWS, and never so few that an
+       ordinary screen shows less than MIN_PER_PAGE products. */
     function pageSize() {
-      const tracks = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(t => t.endsWith('px'));
+      const style = getComputedStyle(grid);
+      const tracks = style.gridTemplateColumns.split(' ').filter(t => t.endsWith('px'));
       const columns = Math.max(1, tracks.length);
-      return columns * Math.max(MIN_ROWS, Math.ceil(MIN_PER_PAGE / columns));
+      const rowGap = parseFloat(style.rowGap) || 0;
+      // Row height: a card already on the page, or an estimate (4:5 photo + text) before the first render.
+      const card = grid.querySelector('.card');
+      const rowHeight = card
+        ? card.getBoundingClientRect().height
+        : (parseFloat(tracks[0]) || 280) * 1.25 + 150;
+      const rowsThatFit = Math.floor((window.innerHeight + rowGap) / (rowHeight + rowGap));
+      const rows = Math.max(MIN_ROWS, Math.ceil(MIN_PER_PAGE / columns), rowsThatFit);
+      return columns * rows;
     }
     let currentPageSize = MIN_PER_PAGE;
 
-    function render() {
+    function render(isRetry) {
       const list = currentList();
       currentPageSize = pageSize();
       const totalPages = Math.max(1, Math.ceil(list.length / currentPageSize));
@@ -1180,6 +1190,8 @@
         ? `Showing ${start + 1}–${start + pageItems.length} of ${list.length} products`
         : 'Showing 0 products';
       renderPager(totalPages);
+      // The first render sizes rows from an estimate; now that real cards exist, correct it once if needed.
+      if (!isRetry && pageItems.length && pageSize() !== currentPageSize) render(true);
     }
 
     function scrollToGrid() {

@@ -12,6 +12,11 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.5.8] - 2026-10-12
+### What changed
+- Footer now stays at the bottom of the window on every page, even when the page is shorter than the window (large screens, zoomed-out browsers)
+- Shop: two rows is the minimum rather than the limit — the grid shows as many full rows as fit the window's height (still at least 2 rows and about 12 products on ordinary screens)
+
 ## [0.5.7] - 2026-10-12
 ### What changed
 - Nav bar scaling reduced by about 10% (text and icons now start growing at 1333px wide instead of 1200px)

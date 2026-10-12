@@ -1,5 +1,13 @@
-/* Campaigns dropdown in the main nav — shared by every page.
+/* Shared by every page: nav dropdowns, nav bar scaling, and the footer's position.
    Relies on each page's :root colour tokens (--brown, --tan, --cream). */
+
+/* ── Footer always at the bottom ──────────────────────────────
+   When a page is shorter than the window (large screens, zoomed-out browsers),
+   the footer still sits at the bottom of the window instead of floating mid-page.
+   The body is at least one window tall, and the sticky offset pushes the footer
+   down to the body's bottom edge; on longer pages it has no effect. */
+body { min-height: 100vh; min-height: 100dvh; }
+body > footer { position: sticky; top: 100vh; }
 
 .nav-item-sub { position: relative; }
 
