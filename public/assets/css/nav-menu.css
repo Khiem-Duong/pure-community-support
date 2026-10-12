@@ -116,12 +116,13 @@
 
 /* ── Bar scaling ──────────────────────────────────────────────
    The logo is sized in vw, so the bar grows with the window. Everything else in
-   the bar scales with it through --nav-s: 1px up to a 1200px-wide window, then in
-   step with the bar (e.g. link text is 12px at 1200px, 16px at 1600px, 19px at 1920px).
+   the bar scales with it through --nav-s: 1px up to a 1333px-wide window, then in
+   step with the bar (e.g. link text is 12px at 1333px, 13px at 1470px, 17px at 1920px).
+   To make the bar's contents larger or smaller overall, change the 0.075vw below.
    Each value below is the page's base size multiplied by --nav-s.
    Desktop bar only; the mobile menu keeps its own fixed sizes. */
 @media (min-width: 1001px) {
-  .nav { --nav-s: max(1px, 0.0833vw); }
+  .nav { --nav-s: max(1px, 0.075vw); }
 
   .nav .nav-links { gap: calc(36 * var(--nav-s)); }
   .nav .nav-link { font-size: calc(12 * var(--nav-s)); }

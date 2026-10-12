@@ -12,6 +12,11 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.5.7] - 2026-10-12
+### What changed
+- Nav bar scaling reduced by about 10% (text and icons now start growing at 1333px wide instead of 1200px)
+- Removed the Blog link from the top bar on every page until the blog exists (footer and home page blog links unchanged)
+
 ## [0.5.6] - 2026-10-12
 ### What changed
 - Nav bar: link text, dropdown arrows, EN / VI switch, cart icon and count, "Shop Now" button and the dropdown panels now scale with the bar on windows wider than 1200px (the logo already did); phone menu unchanged
