@@ -5,9 +5,13 @@
    When a page is shorter than the window (large screens, zoomed-out browsers),
    the footer still sits at the bottom of the window instead of floating mid-page.
    The body is at least one window tall, and the sticky offset pushes the footer
-   down to the body's bottom edge; on longer pages it has no effect. */
+   down to the body's bottom edge; on longer pages it has no effect.
+   Pages with a closing strip above the footer ("Where the money goes", the final
+   call to action, "Get Involved") wrap the strip and the footer in .page-end, so
+   the two stay together at the bottom. */
 body { min-height: 100vh; min-height: 100dvh; }
-body > footer { position: sticky; top: 100vh; }
+body > footer,
+body > .page-end { position: sticky; top: 100vh; }
 
 .nav-item-sub { position: relative; }
 

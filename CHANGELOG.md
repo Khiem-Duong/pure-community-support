@@ -12,6 +12,10 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.5.9] - 2026-10-12
+### What changed
+- Closing strips ("Where the money goes" on Shop, Cases and campaign pages; the final call to action on About, Impact and Reports; "Get Involved" on Home) are now grouped with the footer in a page-end wrapper, so both stay together at the bottom of the window on short pages
+
 ## [0.5.8] - 2026-10-12
 ### What changed
 - Footer now stays at the bottom of the window on every page, even when the page is shorter than the window (large screens, zoomed-out browsers)
