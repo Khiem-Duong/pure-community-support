@@ -12,6 +12,11 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.5.5] - 2026-10-12
+### What changed
+- Order list control: items already in the order list can be set to 0; "Update order list" then removes the item, the button returns to "Add to order list" and the stepper to 1
+- Items not in the list still have a minimum quantity of 1
+
 ## [0.5.4] - 2026-10-12
 ### What changed
 - Order list control (shop quick view and item pages): the quantity stepper now starts at the quantity already in the order list

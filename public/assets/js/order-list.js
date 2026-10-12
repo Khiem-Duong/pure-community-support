@@ -7,7 +7,8 @@
    control used in the shop quick view and on item pages: one compact row with
    a quantity stepper and a button showing the live total. The stepper starts at
    the quantity already in the order list, and the button reads "Update order
-   list" for items in the list ("Add to order list" otherwise). */
+   list" for items in the list ("Add to order list" otherwise). Items in the
+   list can be set to 0, which removes them. */
 
 (function () {
   const KEY = 'pcs-order-list';
@@ -130,11 +131,21 @@
 
     const inList = () => (product ? api.qty(product.id) : 0);
 
+    /* Lowest quantity allowed: 0 for an item already in the list (0 = remove it), otherwise 1. */
+    const minQty = () => (inList() ? 0 : 1);
+    function pickerQty(value) {
+      const text = String(value).trim();
+      const n = text === '' ? NaN : Math.round(Number(text));
+      if (!Number.isFinite(n)) return 1;
+      return Math.min(MAX_QTY, Math.max(minQty(), n));
+    }
+
     /* Quantity or list changed: update the button label, the +/- limits and the price. */
     function syncPicker() {
-      const qty = clamp(input.value);
+      const qty = pickerQty(input.value);
+      input.min = minQty();
       confirmLabel.textContent = inList() ? 'Update order list' : 'Add to order list';
-      root.querySelector('[data-step="-1"]').disabled = qty <= 1;
+      root.querySelector('[data-step="-1"]').disabled = qty <= minQty();
       root.querySelector('[data-step="1"]').disabled = qty >= MAX_QTY;
       // The total for the chosen quantity sits inside the button; hidden when the item has no price yet.
       const hasPrice = Boolean(product) && typeof product.price === 'number';
@@ -155,10 +166,10 @@
       syncPicker();
     }
 
-    /* Link to the order list once the item is in it; `done` ("Added." / "Updated.") confirms a click. */
+    /* Link to the order list while the item is in it; `done` ("Added." / "Updated." / "Removed.") confirms a click. */
     function showNote(done) {
-      if (!inList()) { note.innerHTML = ''; return; }
-      note.innerHTML = `${done ? `<span>${done}</span> ` : ''}<a href="/order-list">View order list ${ICON_ARROW}</a>`;
+      const link = inList() ? `<a href="/order-list">View order list ${ICON_ARROW}</a>` : '';
+      note.innerHTML = `${done ? `<span>${done}</span> ` : ''}${link}`;
       note.classList.remove('flash');
       if (done) {
         void note.offsetWidth; // restart the highlight animation
@@ -166,24 +177,27 @@
       }
     }
 
-    /* Adds the item with the chosen quantity, or sets its quantity if it is already in the list. */
+    /* Adds the item with the chosen quantity. For an item already in the list it sets the
+       quantity instead, and 0 removes it (the button then goes back to "Add to order list"). */
     function confirm() {
       if (!product) return;
-      const qty = clamp(input.value);
+      const qty = pickerQty(input.value);
       const wasInList = inList() > 0;
-      if (wasInList) api.set(product.id, qty);
-      else api.add(product.id, qty);
+      let done = 'Added.';
+      if (!wasInList) api.add(product.id, qty);
+      else if (qty === 0) { api.remove(product.id); done = 'Removed from your order list.'; }
+      else { api.set(product.id, qty); done = 'Updated.'; }
       showListQuantity();
-      showNote(wasInList ? 'Updated.' : 'Added.');
+      showNote(done);
     }
 
     confirmBtn.addEventListener('click', confirm);
     root.querySelectorAll('.ol-step').forEach(btn => btn.addEventListener('click', () => {
-      input.value = clamp(clamp(input.value) + Number(btn.dataset.step));
+      input.value = pickerQty(pickerQty(input.value) + Number(btn.dataset.step));
       syncPicker();
     }));
     input.addEventListener('input', syncPicker);
-    input.addEventListener('change', () => { input.value = clamp(input.value); syncPicker(); });
+    input.addEventListener('change', () => { input.value = pickerQty(input.value); syncPicker(); });
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter') { e.preventDefault(); confirm(); }
     });
