@@ -12,6 +12,12 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.5.3] - 2026-10-12
+### What changed
+- Shop quick view: previous / next arrows moved from the footer to the left and right sides of the popup (over the photo's edges on phones); the footer keeps the "3 / 31" counter
+- Quick view is larger (up to 1180 × 720px) and tightens automatically on shorter windows (smaller title, 2-line description, then hides description and tag) so it fits without scrolling
+- Shorter confirmation after adding to the order list ("Added 2. In your order list: 4.")
+
 ## [0.5.2] - 2026-10-12
 ### What changed
 - "Add to order list" control is now one compact row: quantity stepper plus an "Add x to order list" button with the live total inside it

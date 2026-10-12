@@ -165,6 +165,8 @@
 /* Phones: drop the icon and tighten the label so stepper and button stay on one row */
 @media (max-width: 480px) {
   .ol-row { gap: 8px; }
+  .ol-add .ol-step { width: 34px; }
+  .ol-add .ol-qty { width: 40px; }
   .ol-confirm { flex-basis: 190px; padding: 0 10px; gap: 7px; font-size: 11px; letter-spacing: 0.04em; }
   .ol-confirm svg { display: none; }
   .ol-confirm-price { padding-left: 8px; margin-left: 1px; font-size: 12.5px; }

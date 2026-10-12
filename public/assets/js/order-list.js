@@ -13,7 +13,6 @@
   const listeners = [];
 
   const clamp = n => Math.min(MAX_QTY, Math.max(1, Math.round(Number(n)) || 1));
-  const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
   function read() {
     try {
@@ -150,7 +149,7 @@
       const inList = product ? api.qty(product.id) : 0;
       if (!inList) { note.innerHTML = ''; return; }
       const lead = justAdded
-        ? `Added ${justAdded} × ${esc(product.name)}. In your order list: <strong>${inList}</strong>.`
+        ? `Added ${justAdded}. In your order list: <strong>${inList}</strong>.`
         : `In your order list: <strong>${inList}</strong>.`;
       note.innerHTML = `${lead} <a href="/order-list">View order list ${ICON_ARROW}</a>`;
       if (justAdded) {
