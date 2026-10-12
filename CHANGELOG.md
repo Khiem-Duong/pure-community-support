@@ -12,6 +12,12 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.5.2] - 2026-10-12
+### What changed
+- "Add to order list" control is now one compact row: quantity stepper plus an "Add x to order list" button with the live total inside it
+- Shop quick view tightened so it fits without scrolling: price and placeholder tag share a row, description capped at 3 lines, "View full details" is a text link in one footer row with the previous / next arrows, less padding
+- On phones the quick view photo is shorter and "Continue browsing" is hidden (the close button does the same job)
+
 ## [0.5.1] - 2026-10-07
 ### What changed
 - Removed the "Inquire about this piece" button from item pages

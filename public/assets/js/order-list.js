@@ -4,8 +4,8 @@
    shown on order-list.html (/order-list).
 
    PureOrder.bindAdd(root) turns an empty <div> into the "Add to order list"
-   control used in the shop quick view and on item pages: a quantity picker
-   with a live price total, and an "Add x to order list" button. */
+   control used in the shop quick view and on item pages: one compact row with
+   a quantity stepper and an "Add x to order list" button showing the live total. */
 
 (function () {
   const KEY = 'pcs-order-list';
@@ -110,24 +110,20 @@
     const id = `ol-qty-${++uid}`;
     root.classList.add('ol-add');
     root.innerHTML = `
-      <div class="ol-picker">
-        <label class="ol-picker-label" for="${id}">Choose a quantity</label>
-        <div class="ol-picker-row">
-          <div class="ol-stepper">
-            <button class="ol-step" type="button" data-step="-1" aria-label="Decrease quantity">${ICON_MINUS}</button>
-            <input class="ol-qty" id="${id}" type="number" inputmode="numeric" min="1" max="${MAX_QTY}" step="1" value="1">
-            <button class="ol-step" type="button" data-step="1" aria-label="Increase quantity">${ICON_PLUS}</button>
-          </div>
-          <p class="ol-total" aria-live="polite"></p>
+      <div class="ol-row">
+        <div class="ol-stepper" role="group" aria-label="Quantity">
+          <button class="ol-step" type="button" data-step="-1" aria-label="Decrease quantity">${ICON_MINUS}</button>
+          <input class="ol-qty" id="${id}" type="number" inputmode="numeric" min="1" max="${MAX_QTY}" step="1" value="1" aria-label="Quantity">
+          <button class="ol-step" type="button" data-step="1" aria-label="Increase quantity">${ICON_PLUS}</button>
         </div>
-        <button class="ol-confirm" type="button">${ICON_CART}<span>Add 1 to order list</span></button>
+        <button class="ol-confirm" type="button">${ICON_CART}<span class="ol-confirm-label">Add 1 to order list</span><span class="ol-confirm-price"></span></button>
       </div>
       <p class="ol-note" role="status" aria-live="polite"></p>`;
 
     const input = root.querySelector('.ol-qty');
     const confirmBtn = root.querySelector('.ol-confirm');
-    const confirmLabel = confirmBtn.querySelector('span');
-    const total = root.querySelector('.ol-total');
+    const confirmLabel = confirmBtn.querySelector('.ol-confirm-label');
+    const confirmPrice = confirmBtn.querySelector('.ol-confirm-price');
     const note = root.querySelector('.ol-note');
     let product = null;
 
@@ -137,12 +133,17 @@
       confirmLabel.textContent = `Add ${qty} to order list`;
       root.querySelector('[data-step="-1"]').disabled = qty <= 1;
       root.querySelector('[data-step="1"]').disabled = qty >= MAX_QTY;
-      if (!product || typeof product.price !== 'number') {
-        total.innerHTML = '<span class="ol-total-tbd">Price to be confirmed</span>';
-        return;
+      // The total for the chosen quantity sits inside the button; hidden when the item has no price yet.
+      const hasPrice = Boolean(product) && typeof product.price === 'number';
+      confirmPrice.hidden = !hasPrice;
+      if (!hasPrice) return;
+      const text = money(product.price * qty);
+      if (confirmPrice.textContent !== text) {
+        confirmPrice.textContent = text;
+        confirmPrice.classList.remove('tick');
+        void confirmPrice.offsetWidth; // restart the tick animation
+        confirmPrice.classList.add('tick');
       }
-      total.innerHTML = `<span class="ol-total-amount">${money(product.price * qty)}</span>`
-        + (qty > 1 ? `<span class="ol-total-each">${qty} × ${money(product.price)}</span>` : '');
     }
 
     function showNote(justAdded) {
