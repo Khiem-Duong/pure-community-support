@@ -12,6 +12,10 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.5.10] - 2026-10-12
+### What changed
+- Shop: if the last page would hold less than one row of products, that page is dropped and its products are shared among the earlier pages as evenly as whole numbers allow (e.g. 15, 15, 1 becomes 16, 15); every product is still shown
+
 ## [0.5.9] - 2026-10-12
 ### What changed
 - Closing strips ("Where the money goes" on Shop, Cases and campaign pages; the final call to action on About, Impact and Reports; "Get Involved" on Home) are now grouped with the footer in a page-end wrapper, so both stay together at the bottom of the window on short pages

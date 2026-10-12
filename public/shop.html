@@ -1160,10 +1160,10 @@
       pager.innerHTML = html;
     }
 
-    /* Products per page follows the screen: whole rows only. The number of rows is whatever
-       fits the window's height, but never fewer than MIN_ROWS, and never so few that an
-       ordinary screen shows less than MIN_PER_PAGE products. */
-    function pageSize() {
+    /* How many columns fit, and how many products make a full page: whole rows only. The number
+       of rows is whatever fits the window's height, but never fewer than MIN_ROWS, and never so
+       few that an ordinary screen shows less than MIN_PER_PAGE products. */
+    function gridLayout() {
       const style = getComputedStyle(grid);
       const tracks = style.gridTemplateColumns.split(' ').filter(t => t.endsWith('px'));
       const columns = Math.max(1, tracks.length);
@@ -1175,17 +1175,40 @@
         : (parseFloat(tracks[0]) || 280) * 1.25 + 150;
       const rowsThatFit = Math.floor((window.innerHeight + rowGap) / (rowHeight + rowGap));
       const rows = Math.max(MIN_ROWS, Math.ceil(MIN_PER_PAGE / columns), rowsThatFit);
-      return columns * rows;
+      return { columns, size: columns * rows };
     }
-    let currentPageSize = MIN_PER_PAGE;
 
-    function render(isRetry) {
+    /* How many products go on each page. Normally every page is full and the last takes the rest.
+       If the last page would hold less than one row, it is dropped and its products are shared
+       among the earlier pages as evenly as whole numbers allow (the first pages take the odd ones). */
+    function pageCounts(total, { columns, size }) {
+      const pages = Math.max(1, Math.ceil(total / size));
+      const lastCount = total - (pages - 1) * size;
+      if (pages === 1 || lastCount >= columns) {
+        return [...Array(pages - 1).fill(size), lastCount];
+      }
+      const kept = pages - 1;
+      const each = Math.floor(lastCount / kept);
+      const spare = lastCount % kept;
+      return Array.from({ length: kept }, (_, i) => size + each + (i < spare ? 1 : 0));
+    }
+
+    let layout = { columns: 1, size: MIN_PER_PAGE };
+    let pageStarts = [0]; // index of the first product on each page
+
+    /* keepIndex: stay on whichever page holds this product (used when the layout changes). */
+    function render(isRetry, keepIndex) {
       const list = currentList();
-      currentPageSize = pageSize();
-      const totalPages = Math.max(1, Math.ceil(list.length / currentPageSize));
+      layout = gridLayout();
+      const counts = pageCounts(list.length, layout);
+      const totalPages = counts.length;
+      pageStarts = counts.map((_, i) => counts.slice(0, i).reduce((sum, n) => sum + n, 0));
+      if (keepIndex !== undefined) {
+        state.page = Math.max(1, pageStarts.filter(start => start <= keepIndex).length);
+      }
       state.page = Math.min(state.page, totalPages);
-      const start = (state.page - 1) * currentPageSize;
-      const pageItems = list.slice(start, start + currentPageSize);
+      const start = pageStarts[state.page - 1];
+      const pageItems = list.slice(start, start + counts[state.page - 1]);
       grid.innerHTML = pageItems.length
         ? pageItems.map(cardHTML).join('')
         : '<p class="empty-state">No products in this collection yet.</p>';
@@ -1194,7 +1217,7 @@
         : 'Showing 0 products';
       renderPager(totalPages);
       // The first render sizes rows from an estimate; now that real cards exist, correct it once if needed.
-      if (!isRetry && pageItems.length && pageSize() !== currentPageSize) render(true);
+      if (!isRetry && pageItems.length && gridLayout().size !== layout.size) render(true, start);
     }
 
     function scrollToGrid() {
@@ -1212,16 +1235,14 @@
     });
     sortSelect.addEventListener('change', () => { state.sort = sortSelect.value; state.page = 1; render(); });
 
-    /* Window resized: if a different number of columns fits, re-page, keeping the first product shown in view. */
+    /* Window resized: if a different number of columns or rows fits, re-page, keeping the first product shown in view. */
     let resizeFrame = null;
     window.addEventListener('resize', () => {
       cancelAnimationFrame(resizeFrame);
       resizeFrame = requestAnimationFrame(() => {
-        const size = pageSize();
-        if (size === currentPageSize) return;
-        const firstShown = (state.page - 1) * currentPageSize;
-        state.page = Math.floor(firstShown / size) + 1;
-        render();
+        const next = gridLayout();
+        if (next.size === layout.size && next.columns === layout.columns) return;
+        render(false, pageStarts[state.page - 1] || 0);
       });
     });
     pager.addEventListener('click', e => {
