@@ -5,7 +5,9 @@
 
    PureOrder.bindAdd(root) turns an empty <div> into the "Add to order list"
    control used in the shop quick view and on item pages: one compact row with
-   a quantity stepper and an "Add x to order list" button showing the live total. */
+   a quantity stepper and a button showing the live total. The stepper starts at
+   the quantity already in the order list, and the button reads "Update order
+   list" for items in the list ("Add to order list" otherwise). */
 
 (function () {
   const KEY = 'pcs-order-list';
@@ -115,7 +117,7 @@
           <input class="ol-qty" id="${id}" type="number" inputmode="numeric" min="1" max="${MAX_QTY}" step="1" value="1" aria-label="Quantity">
           <button class="ol-step" type="button" data-step="1" aria-label="Increase quantity">${ICON_PLUS}</button>
         </div>
-        <button class="ol-confirm" type="button">${ICON_CART}<span class="ol-confirm-label">Add 1 to order list</span><span class="ol-confirm-price"></span></button>
+        <button class="ol-confirm" type="button">${ICON_CART}<span class="ol-confirm-label">Add to order list</span><span class="ol-confirm-price"></span></button>
       </div>
       <p class="ol-note" role="status" aria-live="polite"></p>`;
 
@@ -126,10 +128,12 @@
     const note = root.querySelector('.ol-note');
     let product = null;
 
-    /* Quantity changed: update the button label, the +/- limits and the price. */
+    const inList = () => (product ? api.qty(product.id) : 0);
+
+    /* Quantity or list changed: update the button label, the +/- limits and the price. */
     function syncPicker() {
       const qty = clamp(input.value);
-      confirmLabel.textContent = `Add ${qty} to order list`;
+      confirmLabel.textContent = inList() ? 'Update order list' : 'Add to order list';
       root.querySelector('[data-step="-1"]').disabled = qty <= 1;
       root.querySelector('[data-step="1"]').disabled = qty >= MAX_QTY;
       // The total for the chosen quantity sits inside the button; hidden when the item has no price yet.
@@ -145,27 +149,32 @@
       }
     }
 
-    function showNote(justAdded) {
-      const inList = product ? api.qty(product.id) : 0;
-      if (!inList) { note.innerHTML = ''; return; }
-      const lead = justAdded
-        ? `Added ${justAdded}. In your order list: <strong>${inList}</strong>.`
-        : `In your order list: <strong>${inList}</strong>.`;
-      note.innerHTML = `${lead} <a href="/order-list">View order list ${ICON_ARROW}</a>`;
-      if (justAdded) {
-        note.classList.remove('flash');
+    /* The stepper shows the quantity already in the order list (1 when the item isn't in it). */
+    function showListQuantity() {
+      input.value = inList() || 1;
+      syncPicker();
+    }
+
+    /* Link to the order list once the item is in it; `done` ("Added." / "Updated.") confirms a click. */
+    function showNote(done) {
+      if (!inList()) { note.innerHTML = ''; return; }
+      note.innerHTML = `${done ? `<span>${done}</span> ` : ''}<a href="/order-list">View order list ${ICON_ARROW}</a>`;
+      note.classList.remove('flash');
+      if (done) {
         void note.offsetWidth; // restart the highlight animation
         note.classList.add('flash');
       }
     }
 
+    /* Adds the item with the chosen quantity, or sets its quantity if it is already in the list. */
     function confirm() {
       if (!product) return;
       const qty = clamp(input.value);
-      api.add(product.id, qty);
-      input.value = 1;
-      syncPicker();
-      showNote(qty);
+      const wasInList = inList() > 0;
+      if (wasInList) api.set(product.id, qty);
+      else api.add(product.id, qty);
+      showListQuantity();
+      showNote(wasInList ? 'Updated.' : 'Added.');
     }
 
     confirmBtn.addEventListener('click', confirm);
@@ -179,15 +188,18 @@
       if (e.key === 'Enter') { e.preventDefault(); confirm(); }
     });
 
-    api.onChange(() => { if (product) showNote(0); });
+    /* The list changed elsewhere (order list page, another tab): show its quantity again. */
+    api.onChange(() => {
+      if (!product) return;
+      showListQuantity();
+      showNote();
+    });
 
     return {
       setProduct(p) {
         product = p;
-        input.value = 1;
-        syncPicker();
-        note.classList.remove('flash');
-        showNote(0);
+        showListQuantity();
+        showNote();
       },
     };
   }

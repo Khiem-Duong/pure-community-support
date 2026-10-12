@@ -12,6 +12,12 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.5.4] - 2026-10-12
+### What changed
+- Order list control (shop quick view and item pages): the quantity stepper now starts at the quantity already in the order list
+- Button reads "Add to order list" for new items and "Update order list" for items already in the list; updating sets the quantity instead of adding on top
+- Removed the "In your order list: x." line; the "View order list" link stays, with a brief "Added." / "Updated." confirmation after a click
+
 ## [0.5.3] - 2026-10-12
 ### What changed
 - Shop quick view: previous / next arrows moved from the footer to the left and right sides of the popup (over the photo's edges on phones); the footer keeps the "3 / 31" counter
