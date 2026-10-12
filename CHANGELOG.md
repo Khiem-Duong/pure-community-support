@@ -12,6 +12,11 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.5.6] - 2026-10-12
+### What changed
+- Nav bar: link text, dropdown arrows, EN / VI switch, cart icon and count, "Shop Now" button and the dropdown panels now scale with the bar on windows wider than 1200px (the logo already did); phone menu unchanged
+- Shop: products per page now follows the number of columns that fit the screen — whole rows only, at least 2 rows (e.g. 5 columns → 15 products, 9 columns → 18) — and re-pages when the window is resized
+
 ## [0.5.5] - 2026-10-12
 ### What changed
 - Order list control: items already in the order list can be set to 0; "Update order list" then removes the item, the button returns to "Add to order list" and the stepper to 1

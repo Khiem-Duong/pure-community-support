@@ -113,3 +113,56 @@
   .nav-links.open .nav-sub a { padding: 11px 1.5em 11px 2.6em; }
   .nav-links.open .nav-sub a.nav-sub-all { display: none; }
 }
+
+/* ── Bar scaling ──────────────────────────────────────────────
+   The logo is sized in vw, so the bar grows with the window. Everything else in
+   the bar scales with it through --nav-s: 1px up to a 1200px-wide window, then in
+   step with the bar (e.g. link text is 12px at 1200px, 16px at 1600px, 19px at 1920px).
+   Each value below is the page's base size multiplied by --nav-s.
+   Desktop bar only; the mobile menu keeps its own fixed sizes. */
+@media (min-width: 1001px) {
+  .nav { --nav-s: max(1px, 0.0833vw); }
+
+  .nav .nav-links { gap: calc(36 * var(--nav-s)); }
+  .nav .nav-link { font-size: calc(12 * var(--nav-s)); }
+  .nav .nav-caret {
+    width: calc(6 * var(--nav-s));
+    height: calc(6 * var(--nav-s));
+    margin-left: calc(8 * var(--nav-s));
+    vertical-align: calc(3 * var(--nav-s));
+    border-right-width: calc(1.5 * var(--nav-s));
+    border-bottom-width: calc(1.5 * var(--nav-s));
+  }
+
+  .nav .nav-right { gap: calc(20 * var(--nav-s)); }
+  .nav .lang-switcher { font-size: calc(11 * var(--nav-s)); gap: calc(4 * var(--nav-s)); }
+  .nav .lang-switcher span { padding: calc(4 * var(--nav-s)) calc(6 * var(--nav-s)); }
+  .nav .nav-cta { font-size: calc(12 * var(--nav-s)); padding: calc(10 * var(--nav-s)) calc(22 * var(--nav-s)); }
+
+  /* Order list icon and its count */
+  .nav .nav-order { width: calc(38 * var(--nav-s)); height: calc(38 * var(--nav-s)); }
+  .nav .nav-order svg { width: calc(21 * var(--nav-s)); height: calc(21 * var(--nav-s)); }
+  .nav .nav-order-count {
+    top: calc(1 * var(--nav-s));
+    right: calc(-3 * var(--nav-s));
+    min-width: calc(18 * var(--nav-s));
+    height: calc(18 * var(--nav-s));
+    padding: 0 calc(5 * var(--nav-s));
+    border-radius: calc(9 * var(--nav-s));
+    font-size: calc(10 * var(--nav-s));
+    line-height: calc(18 * var(--nav-s));
+  }
+
+  /* Dropdown panels */
+  .nav .nav-sub { width: calc(300 * var(--nav-s)); }
+  .nav .nav-sub-inner { padding: calc(8 * var(--nav-s)) 0; }
+  .nav .nav-sub a {
+    gap: calc(12 * var(--nav-s));
+    padding: calc(11 * var(--nav-s)) calc(22 * var(--nav-s));
+    font-size: calc(13 * var(--nav-s));
+  }
+  .nav .nav-sub a:hover,
+  .nav .nav-sub a:focus-visible { padding-left: calc(28 * var(--nav-s)); }
+  .nav .nav-sub a.nav-sub-all { font-size: calc(10.5 * var(--nav-s)); margin-bottom: calc(4 * var(--nav-s)); }
+  .nav .nav-sub-dot { width: calc(6 * var(--nav-s)); height: calc(6 * var(--nav-s)); }
+}

@@ -1091,7 +1091,8 @@
     const COLLECTIONS = window.PURE_COLLECTIONS;
     const PRODUCTS = window.PURE_PRODUCTS;
 
-    const PAGE_SIZE = 12;
+    const MIN_PER_PAGE = 12; // products per page on ordinary screens
+    const MIN_ROWS = 2;      // never fewer rows than this, however wide the screen
     const itemUrl = id => `/shop/${id}`;
     const priceLabel = window.PURE_PRICE_LABEL;
     const collectionName = id => (COLLECTIONS.find(c => c.id === id) || {}).name || '';
@@ -1157,12 +1158,22 @@
       pager.innerHTML = html;
     }
 
+    /* Products per page follows the number of columns that fit the screen: whole rows only,
+       and at least MIN_ROWS of them, so a wide screen never shows one long row and a few leftovers. */
+    function pageSize() {
+      const tracks = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(t => t.endsWith('px'));
+      const columns = Math.max(1, tracks.length);
+      return columns * Math.max(MIN_ROWS, Math.ceil(MIN_PER_PAGE / columns));
+    }
+    let currentPageSize = MIN_PER_PAGE;
+
     function render() {
       const list = currentList();
-      const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+      currentPageSize = pageSize();
+      const totalPages = Math.max(1, Math.ceil(list.length / currentPageSize));
       state.page = Math.min(state.page, totalPages);
-      const start = (state.page - 1) * PAGE_SIZE;
-      const pageItems = list.slice(start, start + PAGE_SIZE);
+      const start = (state.page - 1) * currentPageSize;
+      const pageItems = list.slice(start, start + currentPageSize);
       grid.innerHTML = pageItems.length
         ? pageItems.map(cardHTML).join('')
         : '<p class="empty-state">No products in this collection yet.</p>';
@@ -1186,6 +1197,19 @@
       render();
     });
     sortSelect.addEventListener('change', () => { state.sort = sortSelect.value; state.page = 1; render(); });
+
+    /* Window resized: if a different number of columns fits, re-page, keeping the first product shown in view. */
+    let resizeFrame = null;
+    window.addEventListener('resize', () => {
+      cancelAnimationFrame(resizeFrame);
+      resizeFrame = requestAnimationFrame(() => {
+        const size = pageSize();
+        if (size === currentPageSize) return;
+        const firstShown = (state.page - 1) * currentPageSize;
+        state.page = Math.floor(firstShown / size) + 1;
+        render();
+      });
+    });
     pager.addEventListener('click', e => {
       const btn = e.target.closest('.page-btn');
       if (!btn || btn.disabled) return;
