@@ -12,6 +12,10 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.6.2] - 2026-10-15
+### What changed
+- Admin: the sidebar stays in view under the top bar while the page scrolls (wider than 900px), and scrolls on its own if taller than the window; the phone menu is unchanged
+
 ## [0.6.1] - 2026-10-15
 ### What changed
 - Admin Tags: Delete button on each tag with a confirmation popup; when products use the tag it warns "Deleting this tag will remove it from x product(s):" and lists them (each opens its edit page in a new tab); undo available

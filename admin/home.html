@@ -49,7 +49,8 @@
 
     /* ── Layout ── */
     .layout { display: grid; grid-template-columns: 250px 1fr; min-height: calc(100vh - 62px); }
-    .sidebar { background: var(--white); border-right: 1px solid var(--line); padding: 16px 12px; }
+    /* Stays in view under the top bar while the page scrolls; scrolls on its own if taller than the window */
+    .sidebar { position: sticky; top: 62px; align-self: start; height: calc(100vh - 62px); height: calc(100dvh - 62px); overflow-y: auto; background: var(--white); border-right: 1px solid var(--line); padding: 16px 12px; }
     .nav-group { margin-bottom: 18px; }
     .nav-group h2 { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--tan); padding: 0 12px 6px; }
     .nav-item {
@@ -249,7 +250,7 @@
 
     @media (max-width: 900px) {
       .layout { grid-template-columns: 1fr; }
-      .sidebar { display: none; position: fixed; inset: 62px 0 0 0; z-index: 15; overflow-y: auto; }
+      .sidebar { display: none; position: fixed; inset: 62px 0 0 0; z-index: 15; height: auto; overflow-y: auto; }
       .sidebar.open { display: block; }
       .menu-btn { display: inline-block; }
       .me small, .topbar a.site { display: none; }
