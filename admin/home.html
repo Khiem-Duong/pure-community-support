@@ -104,7 +104,8 @@
     .number span { font-size: 13px; color: var(--muted); }
 
     /* ── Products ── */
-    .toolbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+    /* Stays under the top bar while the product list scrolls */
+    .toolbar { position: sticky; top: 62px; z-index: 12; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin: 0 -8px 16px; padding: 10px 8px; background: var(--cream); }
     .search { flex: 1; min-width: 220px; position: relative; }
     .search input { width: 100%; min-height: 44px; padding: 10px 14px 10px 40px; border: 1.5px solid var(--greige); border-radius: var(--radius); background: var(--white); }
     .search svg { position: absolute; left: 12px; top: 12px; width: 20px; height: 20px; stroke: var(--muted); fill: none; stroke-width: 2; }
@@ -123,6 +124,46 @@
     .switch[aria-checked="true"] .track { background: var(--purple); }
     .switch[aria-checked="true"] .track::after { transform: translateX(18px); }
     .switch:disabled { cursor: not-allowed; opacity: .55; }
+    .check { width: 20px; height: 20px; accent-color: var(--purple); cursor: pointer; vertical-align: middle; }
+    .products-table th:first-child, .products-table td:first-child { width: 44px; padding-right: 0; }
+    .products-table tr.selected td { background: rgba(101,46,134,.06); }
+
+    /* Tag filter button (Products toolbar) */
+    .filter-ms .ms-toggle { width: auto; max-width: 210px; min-height: 44px; gap: 8px; background: var(--white); font-weight: 500; }
+    .filter-ms .ms-toggle[aria-pressed="true"] { border-color: var(--purple); color: var(--purple); }
+    .filter-label { display: flex; min-width: 0; }
+    .filter-label .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .filter-label .more { flex-shrink: 0; padding-left: 4px; }
+    .filter-ms .ms-panel { right: auto; width: 270px; }
+    .ms-clear { display: block; width: 100%; min-height: 36px; margin-top: 6px; padding: 6px 8px; border: none; border-top: 1px solid var(--line); background: none; color: var(--purple); font-weight: 600; text-align: left; }
+
+    /* Batch action menu, aligned to the button's right edge */
+    .menu-wrap { position: relative; }
+    .menu-wrap > .btn svg { transition: transform .2s; }
+    .menu-wrap > .btn[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .menu { position: absolute; right: 0; top: calc(100% + 4px); z-index: 14; min-width: 220px; padding: 6px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 10px 30px rgba(74,52,42,.15); }
+    .menu button { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 42px; padding: 8px 12px; border: none; border-radius: 6px; background: none; text-align: left; font-weight: 500; }
+    .menu button:hover:not(:disabled), .menu button:focus-visible { background: var(--cream); }
+    .menu button:disabled { opacity: .45; cursor: not-allowed; }
+    .menu button svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; transition: transform .2s; }
+    .menu button[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .menu .danger { color: var(--error); }
+    .menu .sub { padding-left: 14px; }
+    .menu hr { margin: 6px 4px; border: none; border-top: 1px solid var(--line); }
+
+    /* Confirmation popups */
+    .modal { width: min(520px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 0; border: none; border-radius: 12px; background: var(--white); color: var(--brown); box-shadow: 0 20px 60px rgba(74,52,42,.3); }
+    .modal::backdrop { background: rgba(74,52,42,.45); }
+    .modal form { display: flex; flex-direction: column; gap: 14px; padding: 24px; }
+    .modal h2 { font-size: 19px; font-weight: 700; line-height: 1.3; }
+    .modal-body { display: flex; flex-direction: column; gap: 12px; }
+    .modal-warn { padding: 10px 12px; border-left: 3px solid var(--error); border-radius: 4px; background: rgba(155,44,44,.06); font-weight: 600; }
+    .modal-list { max-height: 200px; overflow-y: auto; margin: 0; padding: 8px 12px 8px 30px; border: 1px solid var(--line); border-radius: var(--radius); background: #FCFAF7; }
+    .modal-list li { padding: 3px 0; }
+    .modal-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 10px; }
+    .btn-danger { background: var(--error); border-color: var(--error); color: var(--white); }
+    .btn-danger:hover { background: #7f2424; }
+
     .empty { padding: 40px; text-align: center; color: var(--muted); background: var(--white); border: 1px dashed var(--greige); border-radius: var(--radius); }
 
     /* ── Forms (product editor, tags) ── */
@@ -216,9 +257,36 @@
       .home-grid, .editor-grid, .field-row { grid-template-columns: 1fr; }
       .numbers { grid-template-columns: 1fr 1fr; }
       .products-table thead { display: none; }
-      .products-table tr { display: grid; grid-template-columns: 56px 1fr; gap: 4px 12px; padding: 12px; border-top: 1px solid var(--line); }
+      .products-table tr { display: grid; grid-template-columns: 28px 56px 1fr; gap: 4px 12px; padding: 12px; border-top: 1px solid var(--line); }
       .products-table td { border: none; padding: 0; }
-      .products-table td:first-child { grid-row: span 4; }
+      .products-table td:first-child { width: auto; }
+      .products-table td:nth-child(-n+2) { grid-row: span 4; }
+      .toolbar .search { flex-basis: 100%; }
+    }
+
+    /* ── PDF export: printed from the browser ("Save as PDF") ── */
+    #print-root { display: none; }
+    @media print {
+      @page { size: A4; margin: 16mm 16mm 18mm; }
+      body { background: var(--white); font-size: 11pt; }
+      body > :not(#print-root) { display: none !important; }
+      #print-root { display: block; color: var(--brown); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .pr-head { padding: 4mm 0 7mm; margin-bottom: 4mm; border-bottom: 2px solid var(--tan); text-align: center; }
+      .pr-logo { display: block; height: 16mm; margin: 0 auto 3mm; }
+      .pr-brand { font-size: 8.5pt; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--tan); }
+      .pr-head h1 { margin: 2mm 0 1.5mm; font-family: Georgia, 'Times New Roman', serif; font-size: 24pt; font-weight: 400; line-height: 1.2; color: var(--purple); }
+      .pr-date { font-size: 9pt; color: var(--muted); }
+      .pr-item { padding: 7mm 0; border-bottom: 1px solid var(--greige); break-inside: avoid; page-break-inside: avoid; }
+      .pr-item:last-of-type { border-bottom: none; }
+      .pr-item h2 { margin-bottom: 4mm; font-family: Georgia, 'Times New Roman', serif; font-size: 17pt; font-weight: 400; line-height: 1.25; }
+      .pr-photo { display: block; max-width: 100%; max-height: 90mm; margin-bottom: 4mm; border-radius: 2mm; object-fit: contain; }
+      .pr-nophoto { display: flex; align-items: center; justify-content: center; height: 30mm; margin-bottom: 4mm; border: 1px dashed var(--greige); border-radius: 2mm; background: var(--cream); color: var(--muted); font-size: 9.5pt; }
+      .pr-specs { display: grid; grid-template-columns: 28mm 1fr; gap: 1.5mm 4mm; margin-bottom: 3mm; }
+      .pr-specs dt, .pr-label { font-size: 8.5pt; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--tan); }
+      .pr-specs dd { margin: 0; }
+      .pr-price { font-weight: 700; color: var(--purple); }
+      .pr-desc { margin-top: 1mm; line-height: 1.55; }
+      .pr-foot { margin-top: 6mm; padding-top: 3mm; border-top: 1px solid var(--greige); font-size: 8.5pt; color: var(--muted); text-align: center; }
     }
   </style>
 </head>
@@ -287,7 +355,7 @@
               <p class="hint">The things you do most often.</p>
               <div class="actions-grid">
                 <button class="action" type="button" data-go="products/new" data-edit><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><strong>Add a product</strong><span>New item for the shop</span></button>
-                <button class="action" type="button" data-go="products"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg><strong>Mark sold out</strong><span>Change stock status</span></button>
+                <button class="action" type="button" data-go="products"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg><strong>Hide a product</strong><span>Change what the shop shows</span></button>
                 <button class="action" type="button" data-go="blog" data-edit><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg><strong>Write a post</strong><span>Blog or report</span></button>
                 <button class="action" type="button" data-go="impact" data-edit><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7"/></svg><strong>Update numbers</strong><span>Impact page figures</span></button>
               </div>
@@ -315,19 +383,41 @@
       <!-- Products -->
       <section data-screen="products" hidden>
         <h1>Products</h1>
-        <p class="lead">Turn the switch off when something sells out. Use Edit to change a product's details.</p>
+        <p class="lead">Turn the switch off to hide a product from the shop. Use Edit to change a product's details, or tick products to act on several at once.</p>
         <div class="notice"><span>Saving isn't connected yet. Changes are kept in this browser only and do not affect the shop.</span><button class="link-btn" type="button" data-clear-draft hidden>Discard changes</button></div>
         <div class="toolbar">
-          <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><label class="sr-only" for="product-search">Search products</label><input id="product-search" type="search" placeholder="Search by name or tag"></div>
+          <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><label class="sr-only" for="product-search">Search products</label><input id="product-search" type="search" placeholder="Search by name"></div>
+          <div class="ms filter-ms" id="tag-filter">
+            <button class="ms-toggle" type="button" id="tf-toggle" aria-expanded="false" aria-controls="tf-panel" aria-pressed="false" aria-label="Filter by tag: all tags" data-ms-toggle><span class="filter-label" id="tf-text"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="ms-panel" id="tf-panel" hidden data-ms-panel>
+              <label class="sr-only" for="tf-search">Find a tag</label>
+              <input class="input" id="tf-search" type="search" placeholder="Find a tag" autocomplete="off" data-ms-filter>
+              <div class="ms-options" role="group" aria-label="Show products with these tags" data-ms-options></div>
+              <button class="ms-clear" type="button" id="tf-clear">Show all tags</button>
+            </div>
+          </div>
           <div class="seg" role="group" aria-label="Show">
-            <button type="button" data-stock="all" aria-pressed="true">All</button>
-            <button type="button" data-stock="in" aria-pressed="false">In stock</button>
-            <button type="button" data-stock="out" aria-pressed="false">Sold out</button>
+            <button type="button" data-show="all" aria-pressed="true">All</button>
+            <button type="button" data-show="shown" aria-pressed="false">Shown</button>
+            <button type="button" data-show="hidden" aria-pressed="false">Hidden</button>
           </div>
           <button class="btn btn-primary" type="button" data-edit id="add-product"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add a product</button>
+          <div class="menu-wrap" id="batch" hidden>
+            <button class="btn btn-primary" type="button" id="batch-toggle" aria-expanded="false" aria-controls="batch-menu">Batch action <span id="batch-count"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="menu" id="batch-menu" hidden>
+              <button type="button" data-batch="cancel">Cancel</button>
+              <hr>
+              <button class="danger" type="button" data-batch="delete" data-edit>Delete selection</button>
+              <button type="button" data-batch="price" data-edit>Modify price</button>
+              <button type="button" id="export-toggle" aria-expanded="false" aria-controls="export-menu">Export<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+              <div id="export-menu" hidden>
+                <button class="sub" type="button" data-batch="pdf">PDF</button>
+              </div>
+            </div>
+          </div>
         </div>
         <table class="products-table">
-          <thead><tr><th><span class="sr-only">Photo</span></th><th>Product</th><th>Price</th><th>Stock</th><th><span class="sr-only">Actions</span></th></tr></thead>
+          <thead><tr><th><span class="sr-only">Select</span></th><th><span class="sr-only">Photo</span></th><th>Product</th><th>Price</th><th>In the shop</th><th><span class="sr-only">Actions</span></th></tr></thead>
           <tbody id="product-rows"></tbody>
         </table>
         <p class="empty" id="product-empty" hidden>No products match. Try a different word, or choose "All".</p>
@@ -386,13 +476,13 @@
                 <div class="card">
                   <h2>In the shop</h2>
                   <p class="hint">How the product is shown in the shop grid.</p>
-                  <fieldset class="field plain" id="pf-stock-group">
-                    <legend class="label">Availability</legend>
+                  <fieldset class="field plain" id="pf-shown-group">
+                    <legend class="label">Visibility</legend>
                     <div class="choices">
-                      <label class="choice"><input type="radio" id="pf-stock-in" name="stock" value="in" aria-describedby="err-stock">In stock</label>
-                      <label class="choice"><input type="radio" name="stock" value="out" aria-describedby="err-stock">Sold out</label>
+                      <label class="choice"><input type="radio" id="pf-shown-yes" name="shown" value="yes" aria-describedby="err-shown">Shown</label>
+                      <label class="choice"><input type="radio" name="shown" value="no" aria-describedby="err-shown">Hidden</label>
                     </div>
-                    <p class="field-error" id="err-stock" hidden></p>
+                    <p class="field-error" id="err-shown" hidden></p>
                   </fieldset>
                   <fieldset class="field plain" id="pf-new-group">
                     <legend class="label">"New" badge</legend>
@@ -426,11 +516,11 @@
                   <h2 id="tags-label">Tags</h2>
                   <p class="hint">Optional. Tags group products in the shop; a product can have several.</p>
                   <div class="ms">
-                    <button class="ms-toggle" type="button" id="tags-toggle" aria-expanded="false" aria-controls="tags-panel" aria-labelledby="tags-label tags-toggle-text"><span id="tags-toggle-text">Choose tags</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
-                    <div class="ms-panel" id="tags-panel" hidden>
+                    <button class="ms-toggle" type="button" id="tags-toggle" aria-expanded="false" aria-controls="tags-panel" aria-labelledby="tags-label tags-toggle-text" data-ms-toggle><span id="tags-toggle-text">Choose tags</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                    <div class="ms-panel" id="tags-panel" hidden data-ms-panel>
                       <label class="sr-only" for="tags-filter">Find a tag</label>
-                      <input class="input" id="tags-filter" type="search" placeholder="Find a tag" autocomplete="off">
-                      <div class="ms-options" id="tags-options" role="group" aria-labelledby="tags-label"></div>
+                      <input class="input" id="tags-filter" type="search" placeholder="Find a tag" autocomplete="off" data-ms-filter>
+                      <div class="ms-options" id="tags-options" role="group" aria-labelledby="tags-label" data-ms-options></div>
                       <a class="ms-manage" href="/admin/tags" data-link>Add or edit tags</a>
                     </div>
                   </div>
@@ -483,6 +573,21 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-text"></span><button type="button" id="toast-undo">Undo</button></div>
 
+  <!-- Confirmation popup, filled in by openModal() -->
+  <dialog class="modal" id="modal" aria-labelledby="modal-title">
+    <form id="modal-form" novalidate>
+      <h2 id="modal-title"></h2>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-actions">
+        <button class="btn" type="button" id="modal-cancel">Cancel</button>
+        <button class="btn btn-primary" type="submit" id="modal-ok"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- PDF export content; only visible when printing -->
+  <div id="print-root"></div>
+
   <script nonce="{{nonce}}" src="/assets/js/products.js"></script>
   <script nonce="{{nonce}}" src="/assets/js/campaigns.js"></script>
   <script nonce="{{nonce}}">
@@ -505,49 +610,74 @@
        Saving isn't connected yet (D1 for data, R2 for photos), so products and tags changed
        here are kept in this browser's localStorage only; they never reach the shop or other
        admins. It starts from the live catalog, with the shop's collections as the first tags.
-       `changed` holds every product edited or added here, by id. */
+       `changed` holds every product edited or added here, by id; `deleted` the ids of live
+       products deleted here. */
     const DRAFT_KEY = 'pcs-admin-draft';
     const draft = (() => {
       try { return JSON.parse(localStorage.getItem(DRAFT_KEY)) || {}; } catch { return {}; }
     })();
     const tags = Array.isArray(draft.tags) ? draft.tags : COLLECTIONS.map(c => ({ id: c.id, name: c.name }));
     const changed = draft.changed && typeof draft.changed === 'object' ? draft.changed : {};
+    const deleted = new Set(Array.isArray(draft.deleted) ? draft.deleted : []);
+    // Drafts saved before "In stock / Sold out" became "Shown / Hidden".
+    Object.values(changed).forEach(p => {
+      if (!('shown' in p)) p.shown = p.inStock !== false;
+      delete p.inStock;
+    });
     let products = [];
 
+    const isLive = id => PRODUCTS.some(p => p.id === id);
     const fromLive = p => ({
       id: p.id, name: p.name, desc: p.desc || '',
       price: typeof p.price === 'number' ? p.price : null,
       material: p.material || '', colour: p.colour || '', maker: p.maker || '',
       tags: p.collection ? [p.collection] : [],
       img: p.img ? '/' + p.img : '',
-      inStock: true, // Stock status isn't stored anywhere yet, so everything starts as in stock.
+      shown: true, // Shown / hidden isn't stored anywhere yet, so everything starts as shown.
       isNew: Boolean(p.isNew),
     });
     function buildProducts() {
-      const added = Object.values(changed).filter(p => !PRODUCTS.some(live => live.id === p.id));
-      products = [...PRODUCTS.map(p => changed[p.id] || fromLive(p)), ...added];
+      const added = Object.values(changed).filter(p => !isLive(p.id));
+      products = [...PRODUCTS.filter(p => !deleted.has(p.id)).map(p => changed[p.id] || fromLive(p)), ...added];
+      for (const id of picked) if (!products.some(p => p.id === id)) picked.delete(id);
     }
     function hasDraft() {
       try { return localStorage.getItem(DRAFT_KEY) !== null; } catch { return false; }
     }
     function writeDraft() {
       let kept = true;
-      try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ tags, changed })); } catch { kept = false; }
+      try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ tags, changed, deleted: [...deleted] })); } catch { kept = false; }
       document.querySelectorAll('[data-clear-draft]').forEach(b => b.hidden = !canEdit || !hasDraft());
       return kept;
     }
-    function saveProduct(p) {
-      changed[p.id] = p;
+    function saveProducts(list) {
+      list.forEach(p => changed[p.id] = p);
       buildProducts();
       return writeDraft();
     }
+    const saveProduct = p => saveProducts([p]);
+    /* Undo for bulk changes: take a snapshot before, restore it on Undo. */
+    const snapshot = () => JSON.stringify({ tags, changed, deleted: [...deleted] });
+    function restore(snap) {
+      const s = JSON.parse(snap);
+      tags.splice(0, tags.length, ...s.tags);
+      Object.keys(changed).forEach(id => delete changed[id]);
+      Object.assign(changed, s.changed);
+      deleted.clear();
+      s.deleted.forEach(id => deleted.add(id));
+      buildProducts();
+      writeDraft();
+    }
     const savedText = kept => kept ? 'saved in this browser' : 'kept for this visit only (this browser blocks storage)';
-    buildProducts();
 
     const tagName = id => (tags.find(t => t.id === id) || {}).name || '';
     const tagNames = p => p.tags.map(tagName).filter(Boolean).join(', ');
     const priceLabel = p => typeof p.price === 'number' ? formatPrice(p.price) : 'Price TBD';
     const cleanName = s => s.replace(/\s+/g, ' ').trim();
+    const nProducts = n => `${n} product(s)`;
+    const editUrl = id => `/admin/products/${encodeURIComponent(id)}`;
+    const PRICE_PATTERN = /^\d{1,6}(\.\d{1,2})?$/;
+    const validPrice = s => PRICE_PATTERN.test(s) && Number(s) <= 100000;
 
     /* URL-safe id from a name: "Bình gốm" → "binh-gom" */
     function slugify(text) {
@@ -660,47 +790,294 @@
       location.reload();
     }));
 
+    /* ── Confirmation popup ──
+       openModal({ title, bodyHtml, okText, danger, onOk }). onOk runs when the confirm button
+       is pressed; returning false keeps the popup open (e.g. to show an input error). */
+    let modalOk = null;
+    function openModal({ title, bodyHtml, okText, danger = false, onOk }) {
+      $('modal-title').textContent = title;
+      $('modal-body').innerHTML = bodyHtml;
+      $('modal-ok').textContent = okText;
+      $('modal-ok').classList.toggle('btn-danger', danger);
+      $('modal-ok').classList.toggle('btn-primary', !danger);
+      modalOk = onOk;
+      $('modal').showModal();
+      const input = $('modal-body').querySelector('input');
+      (input || $('modal-cancel')).focus();
+    }
+    $('modal-form').addEventListener('submit', e => {
+      e.preventDefault();
+      if (modalOk && modalOk() === false) return;
+      $('modal').close();
+    });
+    $('modal-cancel').addEventListener('click', () => $('modal').close());
+    $('modal').addEventListener('close', () => { modalOk = null; });
+    /* Scrollable list of products, each opening its edit page in a new tab. */
+    const productListHtml = list => `<ul class="modal-list">${list.map(p =>
+      `<li><a href="${editUrl(p.id)}" target="_blank" rel="noopener">${esc(p.name)}</a></li>`).join('')}</ul>`;
+    function modalFieldError(input, text) {
+      const msg = $('modal-error');
+      msg.textContent = text;
+      msg.hidden = !text;
+      if (text) { input.setAttribute('aria-invalid', 'true'); input.focus(); }
+      else input.removeAttribute('aria-invalid');
+    }
+
+    /* ── Multiselect dropdown ──
+       Used for the tag picker in the product editor and the tag filter on Products.
+       `root` holds [data-ms-toggle], [data-ms-panel], [data-ms-filter] and [data-ms-options];
+       `selected` is a Set of tag ids that onChange() is told about. */
+    function multiSelect(root, selected, onChange) {
+      const toggle = root.querySelector('[data-ms-toggle]');
+      const panel = root.querySelector('[data-ms-panel]');
+      const filter = root.querySelector('[data-ms-filter]');
+      const options = root.querySelector('[data-ms-options]');
+      function renderOptions() {
+        const q = filter.value.trim().toLowerCase();
+        const list = tags.filter(t => !q || t.name.toLowerCase().includes(q));
+        options.innerHTML = list.length
+          ? list.map(t => `<label class="ms-option"><input type="checkbox" value="${esc(t.id)}" ${selected.has(t.id) ? 'checked' : ''}>${esc(t.name)}</label>`).join('')
+          : `<p class="ms-empty">${tags.length ? 'No tags match.' : 'No tags yet.'}</p>`;
+      }
+      function setOpen(open) {
+        panel.hidden = !open;
+        toggle.setAttribute('aria-expanded', open);
+        if (!open) return;
+        filter.value = '';
+        renderOptions();
+        filter.focus();
+      }
+      toggle.addEventListener('click', () => setOpen(panel.hidden));
+      filter.addEventListener('input', renderOptions);
+      options.addEventListener('change', e => {
+        if (e.target.checked) selected.add(e.target.value);
+        else selected.delete(e.target.value);
+        onChange();
+      });
+      root.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && !panel.hidden) { e.stopPropagation(); setOpen(false); toggle.focus(); }
+      });
+      document.addEventListener('click', e => { if (!panel.hidden && !root.contains(e.target)) setOpen(false); });
+      return { setOpen, renderOptions, isOpen: () => !panel.hidden };
+    }
+
     /* ── Products screen ── */
-    let stockFilter = 'all';
-    function renderProducts() {
+    let showFilter = 'all';
+    const tagFilter = new Set();
+    const picked = new Set(); // ticked products, by id
+
+    function visibleProducts() {
       const q = $('product-search').value.trim().toLowerCase();
-      const list = products.filter(p =>
-        (stockFilter === 'all' || (stockFilter === 'in') === p.inStock) &&
-        (!q || p.name.toLowerCase().includes(q) || tagNames(p).toLowerCase().includes(q)));
+      return products.filter(p =>
+        (showFilter === 'all' || (showFilter === 'shown') === p.shown) &&
+        (!tagFilter.size || p.tags.some(t => tagFilter.has(t))) &&
+        (!q || p.name.toLowerCase().includes(q)));
+    }
+    function renderProducts() {
+      const list = visibleProducts();
       $('product-rows').innerHTML = list.map(p => `
-        <tr>
+        <tr${picked.has(p.id) ? ' class="selected"' : ''}>
+          <td><input class="check" type="checkbox" data-pick="${esc(p.id)}" ${picked.has(p.id) ? 'checked' : ''} aria-label="Select ${esc(p.name)}"></td>
           <td>${p.img ? `<img class="thumb" src="${esc(p.img)}" alt="" loading="lazy">` : '<span class="thumb" aria-hidden="true"></span>'}</td>
           <td><strong>${esc(p.name)}</strong><br><span class="sub">${esc(tagNames(p) || 'No tags')}</span></td>
           <td>${esc(priceLabel(p))}</td>
-          <td><button class="switch" type="button" role="switch" aria-checked="${p.inStock}" data-id="${esc(p.id)}" ${canEdit ? '' : 'disabled'}><span class="track" aria-hidden="true"></span>${p.inStock ? 'In stock' : 'Sold out'}</button></td>
-          <td><a class="btn" href="/admin/products/${encodeURIComponent(p.id)}" data-link>${canEdit ? 'Edit' : 'View'}<span class="sr-only"> ${esc(p.name)}</span></a></td>
+          <td><button class="switch" type="button" role="switch" aria-checked="${p.shown}" data-id="${esc(p.id)}" ${canEdit ? '' : 'disabled'}><span class="track" aria-hidden="true"></span>${p.shown ? 'Shown' : 'Hidden'}</button></td>
+          <td><a class="btn" href="${editUrl(p.id)}" data-link>${canEdit ? 'Edit' : 'View'}<span class="sr-only"> ${esc(p.name)}</span></a></td>
         </tr>`).join('');
       $('product-empty').hidden = list.length > 0;
-      $('product-rows').querySelectorAll('.switch').forEach(sw => sw.addEventListener('click', () => {
-        const p = products.find(x => x.id === sw.dataset.id);
-        const setStock = inStock => {
-          const kept = saveProduct({ ...p, inStock });
-          renderProducts();
-          return kept;
-        };
-        const kept = setStock(!p.inStock);
-        toast(`${p.name} marked as ${p.inStock ? 'sold out' : 'in stock'}, ${savedText(kept)}.`, () => setStock(p.inStock));
-      }));
+      renderTagFilterLabel();
+      renderBatch();
     }
+    $('product-rows').addEventListener('click', e => {
+      const sw = e.target.closest('.switch');
+      if (!sw) return;
+      const p = products.find(x => x.id === sw.dataset.id);
+      const setShown = shown => { const kept = saveProduct({ ...p, shown }); renderProducts(); return kept; };
+      const kept = setShown(!p.shown);
+      toast(`${p.name} is now ${p.shown ? 'hidden' : 'shown'}, ${savedText(kept)}.`, () => setShown(p.shown));
+    });
+    $('product-rows').addEventListener('change', e => {
+      const id = e.target.dataset.pick;
+      if (!id) return;
+      if (e.target.checked) picked.add(id);
+      else picked.delete(id);
+      e.target.closest('tr').classList.toggle('selected', e.target.checked);
+      renderBatch();
+    });
     $('product-search').addEventListener('input', renderProducts);
-    document.querySelectorAll('[data-stock]').forEach(b => b.addEventListener('click', () => {
-      stockFilter = b.dataset.stock;
-      document.querySelectorAll('[data-stock]').forEach(x => x.setAttribute('aria-pressed', x === b));
+    document.querySelectorAll('[data-show]').forEach(b => b.addEventListener('click', () => {
+      showFilter = b.dataset.show;
+      document.querySelectorAll('[data-show]').forEach(x => x.setAttribute('aria-pressed', x === b));
       renderProducts();
     }));
     $('add-product').addEventListener('click', () => go('/admin/products/new'));
+
+    /* Tag filter: shows products with any of the chosen tags. */
+    const tagFilterMenu = multiSelect($('tag-filter'), tagFilter, renderProducts);
+    function renderTagFilterLabel() {
+      for (const id of tagFilter) if (!tags.some(t => t.id === id)) tagFilter.delete(id);
+      const chosen = tags.filter(t => tagFilter.has(t.id));
+      $('tf-text').innerHTML = chosen.length
+        ? `<span class="name">${esc(chosen[0].name)}</span>${chosen.length > 1 ? `<span class="more">+${chosen.length - 1}</span>` : ''}`
+        : '<span class="name">All tags</span>';
+      const names = chosen.map(t => t.name).join(', ');
+      $('tf-toggle').title = chosen.length ? names : 'Filter by tag';
+      $('tf-toggle').setAttribute('aria-label', `Filter by tag: ${chosen.length ? names : 'all tags'}`);
+      $('tf-toggle').setAttribute('aria-pressed', chosen.length > 0);
+      $('tf-clear').hidden = !chosen.length;
+    }
+    $('tf-clear').addEventListener('click', () => {
+      tagFilter.clear();
+      tagFilterMenu.renderOptions();
+      renderProducts();
+    });
+
+    /* Batch action: replaces "Add a product" while any product is ticked. */
+    const pickedProducts = () => products.filter(p => picked.has(p.id));
+    function setBatchMenu(open) {
+      $('batch-menu').hidden = !open;
+      $('batch-toggle').setAttribute('aria-expanded', open);
+      if (!open) setExportMenu(false);
+    }
+    function setExportMenu(open) {
+      $('export-menu').hidden = !open;
+      $('export-toggle').setAttribute('aria-expanded', open);
+    }
+    function renderBatch() {
+      const n = picked.size;
+      $('batch').hidden = n === 0;
+      $('add-product').hidden = n > 0;
+      $('batch-count').textContent = n ? `(${n})` : '';
+      if (!n) setBatchMenu(false);
+    }
+    function clearPicked() {
+      picked.clear();
+      renderProducts();
+    }
+    $('batch-toggle').addEventListener('click', () => setBatchMenu($('batch-menu').hidden));
+    $('export-toggle').addEventListener('click', () => setExportMenu($('export-menu').hidden));
+    $('batch').addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !$('batch-menu').hidden) { setBatchMenu(false); $('batch-toggle').focus(); }
+    });
+    document.addEventListener('click', e => { if (!$('batch-menu').hidden && !$('batch').contains(e.target)) setBatchMenu(false); });
+    $('batch-menu').addEventListener('click', e => {
+      const action = e.target.closest('[data-batch]')?.dataset.batch;
+      if (!action) return;
+      setBatchMenu(false);
+      if (action === 'cancel') { clearPicked(); $('add-product').focus(); }
+      if (action === 'delete') confirmDelete();
+      if (action === 'price') confirmPrice();
+      if (action === 'pdf') askPdfTitle();
+    });
+
+    function confirmDelete() {
+      const list = pickedProducts();
+      openModal({
+        title: `Delete ${nProducts(list.length)}?`,
+        bodyHtml: `<p>These ${nProducts(list.length)} will be deleted:</p>${productListHtml(list)}`,
+        okText: 'Delete',
+        danger: true,
+        onOk() {
+          const before = snapshot();
+          list.forEach(p => { if (isLive(p.id)) deleted.add(p.id); delete changed[p.id]; });
+          buildProducts();
+          const kept = writeDraft();
+          clearPicked();
+          toast(`Deleted ${nProducts(list.length)}, ${savedText(kept)}.`, () => { restore(before); renderProducts(); });
+        },
+      });
+    }
+
+    function confirmPrice() {
+      const list = pickedProducts();
+      openModal({
+        title: `Modify the price of ${nProducts(list.length)}`,
+        bodyHtml: `
+          <div>
+            <label class="label" for="modal-price">New price (US dollars)</label>
+            <div class="money"><span aria-hidden="true">$</span><input class="input" id="modal-price" inputmode="decimal" maxlength="9" autocomplete="off" aria-describedby="modal-error"></div>
+            <p class="field-error" id="modal-error" hidden></p>
+          </div>
+          <p>The new price will be set for these ${nProducts(list.length)}:</p>${productListHtml(list)}`,
+        okText: 'Change price',
+        onOk() {
+          const input = $('modal-price');
+          const value = input.value.trim();
+          if (!validPrice(value)) { modalFieldError(input, 'Enter a price in US dollars, like 48 or 48.50.'); return false; }
+          const before = snapshot();
+          const kept = saveProducts(list.map(p => ({ ...p, price: Number(value) })));
+          renderProducts();
+          toast(`Set the price of ${nProducts(list.length)} to ${formatPrice(Number(value))}, ${savedText(kept)}.`, () => { restore(before); renderProducts(); });
+        },
+      });
+    }
+
+    /* PDF export: asks for a title, builds a branded print layout and opens the browser's
+       print window, where "Save as PDF" creates the file. */
+    function askPdfTitle() {
+      const list = pickedProducts();
+      openModal({
+        title: `Export ${nProducts(list.length)} to PDF`,
+        bodyHtml: `
+          <div>
+            <label class="label" for="modal-pdf-title">Document title</label>
+            <input class="input" id="modal-pdf-title" maxlength="120" autocomplete="off" aria-describedby="modal-error">
+            <p class="field-error" id="modal-error" hidden></p>
+          </div>
+          <p class="field-note">Your browser's print window will open. Choose "Save as PDF" as the destination.</p>`,
+        okText: 'Export PDF',
+        onOk() {
+          const input = $('modal-pdf-title');
+          const title = cleanName(input.value);
+          if (!title) { modalFieldError(input, 'Enter a title for the PDF.'); return false; }
+          exportPdf(title, list);
+        },
+      });
+    }
+    function exportPdf(title, list) {
+      const date = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+      const value = v => v ? esc(v) : 'To be confirmed';
+      $('print-root').innerHTML = `
+        <header class="pr-head">
+          <img class="pr-logo" src="/assets/images/Vector%20Logo%20Pure%20Community%20support%202-15.svg" alt="">
+          <p class="pr-brand">Pure Community Support</p>
+          <h1>${esc(title)}</h1>
+          <p class="pr-date">${esc(date)}</p>
+        </header>
+        ${list.map(p => `
+          <article class="pr-item">
+            <h2>${esc(p.name)}</h2>
+            ${p.img ? `<img class="pr-photo" src="${esc(p.img)}" alt="">` : '<div class="pr-nophoto">Photo to be added</div>'}
+            <dl class="pr-specs">
+              <dt>Price</dt><dd class="pr-price">${esc(priceLabel(p))}</dd>
+              <dt>Material</dt><dd>${value(p.material)}</dd>
+              <dt>Colour</dt><dd>${value(p.colour)}</dd>
+              <dt>Made by</dt><dd>${value(p.maker)}</dd>
+            </dl>
+            <p class="pr-label">Description</p>
+            <p class="pr-desc">${value(p.desc)}</p>
+          </article>`).join('')}
+        <p class="pr-foot">Pure Community Support · Handmade in Hue, Vietnam · Half of the net profit from every sale supports families in Hue</p>`;
+      // Wait for the photos so they appear in the PDF, then print. The page title becomes the file name.
+      const images = [...$('print-root').querySelectorAll('img')].map(img =>
+        img.complete ? Promise.resolve() : new Promise(done => { img.onload = img.onerror = done; }));
+      Promise.all(images).then(() => {
+        const pageTitle = document.title;
+        document.title = title;
+        window.addEventListener('afterprint', () => {
+          document.title = pageTitle;
+          $('print-root').innerHTML = '';
+        }, { once: true });
+        window.print();
+      });
+    }
 
     /* ── Product editor ──
        Adding and editing use the same form. Adding: every field starts empty and all are
        required except tags and photo (photo becomes required once R2 is connected).
        Editing: name and price are required; the other details can be filled in later. */
     let editor = null; // { path, id, snapshot } while the editor is open
-    let selected = new Set();
+    const selected = new Set(); // tags chosen in the editor
     const photo = { file: null, url: '', original: '' };
     const form = $('product-form');
     const TEXT_FIELDS = ['name', 'desc', 'price', 'maker', 'material', 'colour'];
@@ -708,7 +1085,7 @@
     const val = name => form.elements[name].value.trim();
 
     function formState() {
-      return JSON.stringify([...TEXT_FIELDS.map(val), form.elements.stock.value, form.elements.isnew.value, [...selected].sort(), Boolean(photo.file)]);
+      return JSON.stringify([...TEXT_FIELDS.map(val), form.elements.shown.value, form.elements.isnew.value, [...selected].sort(), Boolean(photo.file)]);
     }
 
     function openEditor(id) {
@@ -731,11 +1108,12 @@
       showErrors([]);
       if (product) {
         TEXT_FIELDS.forEach(name => form.elements[name].value = name === 'price' ? (product.price ?? '') : product[name]);
-        form.elements.stock.value = product.inStock ? 'in' : 'out';
+        form.elements.shown.value = product.shown ? 'yes' : 'no';
         form.elements.isnew.value = product.isNew ? 'yes' : 'no';
       }
-      selected = new Set(product ? product.tags.filter(t => tags.some(x => x.id === t)) : []);
-      setPicker(false);
+      selected.clear();
+      if (product) product.tags.filter(t => tags.some(x => x.id === t)).forEach(t => selected.add(t));
+      tagPicker.setOpen(false);
       renderChips();
       clearPhoto(product ? product.img : '', product ? product.name : '');
 
@@ -752,11 +1130,10 @@
       TEXT_FIELDS.forEach(name => {
         if (required.includes(name) && !val(name)) errors.push({ name, field: `pf-${name}`, text: `Enter ${FIELD_LABELS[name]}.` });
       });
-      const price = val('price');
-      if (price && (!/^\d{1,6}(\.\d{1,2})?$/.test(price) || Number(price) > 100000)) {
+      if (val('price') && !validPrice(val('price'))) {
         errors.push({ name: 'price', field: 'pf-price', text: 'Enter a price in US dollars, like 48 or 48.50.' });
       }
-      if (!form.elements.stock.value) errors.push({ name: 'stock', field: 'pf-stock-in', group: 'pf-stock-group', text: 'Choose whether it’s in stock.' });
+      if (!form.elements.shown.value) errors.push({ name: 'shown', field: 'pf-shown-yes', group: 'pf-shown-group', text: 'Choose whether it’s shown in the shop.' });
       if (!form.elements.isnew.value) errors.push({ name: 'isnew', field: 'pf-new-yes', group: 'pf-new-group', text: 'Choose whether to show the "New" badge.' });
       return errors;
     }
@@ -796,14 +1173,14 @@
 
       const base = isNew ? null : products.find(p => p.id === editor.id);
       const product = {
-        id: base ? base.id : uniqueId(slugify(val('name')), id => id === 'new' || products.some(p => p.id === id)),
+        id: base ? base.id : uniqueId(slugify(val('name')), id => id === 'new' || isLive(id) || id in changed),
         name: cleanName(val('name')),
         desc: val('desc'),
         price: Number(val('price')),
         maker: val('maker'), material: val('material'), colour: val('colour'),
         tags: tags.filter(t => selected.has(t.id)).map(t => t.id),
         img: base ? base.img : '',
-        inStock: form.elements.stock.value === 'in',
+        shown: form.elements.shown.value === 'yes',
         isNew: form.elements.isnew.value === 'yes',
       };
       const kept = saveProduct(product);
@@ -814,47 +1191,19 @@
     });
 
     /* Tags multiselect: choices come from the Tags screen. */
-    function renderOptions() {
-      const q = $('tags-filter').value.trim().toLowerCase();
-      const list = tags.filter(t => !q || t.name.toLowerCase().includes(q));
-      $('tags-options').innerHTML = list.length
-        ? list.map(t => `<label class="ms-option"><input type="checkbox" value="${esc(t.id)}" ${selected.has(t.id) ? 'checked' : ''}>${esc(t.name)}</label>`).join('')
-        : `<p class="ms-empty">${tags.length ? 'No tags match.' : 'No tags yet.'}</p>`;
-    }
+    const tagPicker = multiSelect(document.querySelector('#product-form .ms'), selected, renderChips);
     function renderChips() {
       const chosen = tags.filter(t => selected.has(t.id));
       $('tags-chips').innerHTML = chosen.map(t => `<li>${esc(t.name)}<button type="button" data-remove-tag="${esc(t.id)}" aria-label="Remove ${esc(t.name)}" ${canEdit ? '' : 'disabled'}>×</button></li>`).join('');
       $('tags-toggle-text').textContent = chosen.length ? `${chosen.length} selected` : 'Choose tags';
     }
-    function setPicker(open) {
-      $('tags-panel').hidden = !open;
-      $('tags-toggle').setAttribute('aria-expanded', open);
-      if (open) {
-        $('tags-filter').value = '';
-        renderOptions();
-        $('tags-filter').focus();
-      }
-    }
-    $('tags-toggle').addEventListener('click', () => setPicker($('tags-panel').hidden));
-    $('tags-filter').addEventListener('input', renderOptions);
-    $('tags-options').addEventListener('change', e => {
-      if (e.target.checked) selected.add(e.target.value);
-      else selected.delete(e.target.value);
-      renderChips();
-    });
     $('tags-chips').addEventListener('click', e => {
       const btn = e.target.closest('[data-remove-tag]');
       if (!btn) return;
       selected.delete(btn.dataset.removeTag);
       renderChips();
-      if (!$('tags-panel').hidden) renderOptions();
+      if (tagPicker.isOpen()) tagPicker.renderOptions();
       $('tags-toggle').focus();
-    });
-    document.addEventListener('click', e => {
-      if (!$('tags-panel').hidden && !e.target.closest('.ms')) setPicker(false);
-    });
-    document.querySelector('.ms').addEventListener('keydown', e => {
-      if (e.key === 'Escape' && !$('tags-panel').hidden) { setPicker(false); $('tags-toggle').focus(); }
     });
 
     /* Photo: drag and drop or file picker. Previews only until R2 is connected. */
@@ -909,6 +1258,7 @@
 
     /* ── Tags screen ── */
     let editingTag = null;
+    const productsWithTag = id => products.filter(p => p.tags.includes(id));
     function tagNameError(name, exceptId) {
       if (!name) return 'Enter a tag name.';
       if (tags.some(t => t.id !== exceptId && t.name.toLowerCase() === name.toLowerCase())) return 'There is already a tag with that name.';
@@ -926,12 +1276,15 @@
             </form>
             <p class="field-error" id="err-tag-rename" hidden></p>
           </td></tr>`;
-        const count = products.filter(p => p.tags.includes(t.id)).length;
+        const count = productsWithTag(t.id).length;
         return `
           <tr>
             <td><strong>${esc(t.name)}</strong></td>
             <td>${count} ${count === 1 ? 'product' : 'products'}</td>
-            <td><button class="btn" type="button" data-rename-tag="${esc(t.id)}" ${canEdit ? '' : 'disabled'}>Edit<span class="sr-only"> ${esc(t.name)}</span></button></td>
+            <td>
+              <button class="btn" type="button" data-rename-tag="${esc(t.id)}" ${canEdit ? '' : 'disabled'}>Edit<span class="sr-only"> ${esc(t.name)}</span></button>
+              <button class="btn" type="button" data-delete-tag="${esc(t.id)}" ${canEdit ? '' : 'disabled'}>Delete<span class="sr-only"> ${esc(t.name)}</span></button>
+            </td>
           </tr>`;
       }).join('');
       $('tag-empty').hidden = tags.length > 0;
@@ -961,11 +1314,31 @@
       $('tag-rename').addEventListener('keydown', e => { if (e.key === 'Escape') { editingTag = null; renderTags(); } });
     }
     $('tag-rows').addEventListener('click', e => {
-      const btn = e.target.closest('[data-rename-tag]');
-      if (!btn || !canEdit) return;
-      editingTag = btn.dataset.renameTag;
-      renderTags();
+      if (!canEdit) return;
+      const rename = e.target.closest('[data-rename-tag]');
+      if (rename) { editingTag = rename.dataset.renameTag; renderTags(); }
+      const del = e.target.closest('[data-delete-tag]');
+      if (del) confirmDeleteTag(del.dataset.deleteTag);
     });
+    function confirmDeleteTag(id) {
+      const tag = tags.find(t => t.id === id);
+      const using = productsWithTag(id);
+      openModal({
+        title: `Delete the tag “${tag.name}”?`,
+        bodyHtml: using.length
+          ? `<p class="modal-warn">Deleting this tag will remove it from ${nProducts(using.length)}:</p>${productListHtml(using)}`
+          : '<p>No products use this tag.</p>',
+        okText: 'Delete tag',
+        danger: true,
+        onOk() {
+          const before = snapshot();
+          tags.splice(tags.indexOf(tag), 1);
+          const kept = saveProducts(using.map(p => ({ ...p, tags: p.tags.filter(t => t !== id) })));
+          renderTags();
+          toast(`Deleted the tag “${tag.name}”, ${savedText(kept)}.`, () => { restore(before); renderTags(); });
+        },
+      });
+    }
     $('tag-add-form').addEventListener('submit', e => {
       e.preventDefault();
       if (!canEdit) return;
@@ -999,6 +1372,7 @@
     $('n-running').textContent = CAMPAIGNS.filter(c => c.status === 'running').length;
     $('n-planned').textContent = CAMPAIGNS.filter(c => c.status === 'planned').length;
 
+    buildProducts();
     route();
   </script>
 </body>

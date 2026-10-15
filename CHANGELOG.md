@@ -12,6 +12,15 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.6.1] - 2026-10-15
+### What changed
+- Admin Tags: Delete button on each tag with a confirmation popup; when products use the tag it warns "Deleting this tag will remove it from x product(s):" and lists them (each opens its edit page in a new tab); undo available
+- Admin Products: checkbox on each row; while any are ticked, "Add a product" becomes a right-aligned "Batch action" menu with Cancel, Delete selection, Modify price (both with a confirmation listing the products) and Export → PDF
+- PDF export asks for a document title, then opens the browser's print window ("Save as PDF") with a branded layout: logo, centred title and date, then each product's title, photo, price, material, colour, maker and description
+- Products toolbar (search, tag filter, Shown / Hidden filter, Add a product / Batch action) stays pinned under the top bar while scrolling
+- Search is by name only; new tag filter button (multiselect, long tag names cut off) next to a slightly narrower search bar
+- "In stock / Sold out" renamed to "Shown / Hidden" on the Products screen and in the product editor (Visibility); not yet connected to the shop
+
 ## [0.6.0] - 2026-10-15
 ### What changed
 - Admin: product editor at /admin/products/<id> (Edit) and /admin/products/new (Add a product), with name, description, price, maker, material, colour, availability, "New" badge, photo (drag and drop or file picker, preview only) and a tags multiselect
