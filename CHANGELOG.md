@@ -12,6 +12,15 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.6.0] - 2026-10-15
+### What changed
+- Admin: product editor at /admin/products/<id> (Edit) and /admin/products/new (Add a product), with name, description, price, maker, material, colour, availability, "New" badge, photo (drag and drop or file picker, preview only) and a tags multiselect
+- Adding a product requires every field except tags and photo (photo becomes required once image storage is connected); editing requires name and price
+- Admin: new Tags screen under Shop for adding and renaming tags; tags appear in the product editor's tag list. Starts from the shop's collections
+- Each admin screen now has its own address (/admin/products, /admin/tags, ...), so refresh and the back button work
+- Saving isn't connected yet: product and tag changes are kept in the browser only (with a "Discard changes" button) and do not affect the shop
+- Worker serves the dashboard at the new screen paths and allows blob: images so chosen photos can be previewed
+
 ## [0.5.10] - 2026-10-12
 ### What changed
 - Shop: if the last page would hold less than one row of products, that page is dropped and its products are shared among the earlier pages as evenly as whole numbers allow (e.g. 15, 15, 1 becomes 16, 15); every product is still shown

@@ -10,12 +10,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Admin dashboard (sidebar design, from -temp/admin-v1-sidebar-dashboard.html).
-       Served by worker/index.js at /admin to signed-in users; the Worker fills in the
-       double-brace placeholders. Nothing on this page saves changes yet. -->
+       Served by worker/index.js to signed-in users at /admin and its screen paths
+       (/admin/products, /admin/products/<id>, /admin/products/new, /admin/tags, ...);
+       the Worker fills in the double-brace placeholders. Saving isn't connected yet:
+       product and tag changes are kept in this browser's localStorage only. -->
   <style nonce="{{nonce}}">
     :root {
       --cream: #F5F1EA; --greige: #DAD1C4; --tan: #B2967D; --purple: #652E86; --brown: #4A342A;
-      --muted: #6B4E3C; --white: #ffffff; --line: #E6DFD4;
+      --muted: #6B4E3C; --white: #ffffff; --line: #E6DFD4; --error: #9B2C2C;
       --radius: 8px;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -79,7 +81,8 @@
     .btn-primary:hover { background: #4f2369; }
     .btn:disabled { opacity: .45; cursor: not-allowed; }
     .btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
-    .notice { display: flex; gap: 10px; align-items: center; padding: 12px 16px; margin-bottom: 20px; border-radius: var(--radius); background: rgba(178,150,125,.18); border: 1px solid var(--tan); font-weight: 500; }
+    .notice { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; padding: 12px 16px; margin-bottom: 20px; border-radius: var(--radius); background: rgba(178,150,125,.18); border: 1px solid var(--tan); font-weight: 500; }
+    .notice .link-btn { margin-left: auto; min-height: 36px; padding: 0 4px; border: none; background: none; color: var(--purple); font-weight: 600; text-decoration: underline; }
     .empty-note { padding: 6px 0 2px; color: var(--muted); }
 
     /* ── Home ── */
@@ -113,7 +116,7 @@
     td { padding: 12px 14px; border-top: 1px solid var(--line); vertical-align: middle; }
     tr:hover td { background: #FCFAF7; }
     td .sub { font-size: 13.5px; color: var(--muted); }
-    .thumb { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; background: var(--greige); }
+    .thumb { display: block; width: 48px; height: 48px; border-radius: 6px; object-fit: cover; background: var(--greige); }
     .switch { display: inline-flex; align-items: center; gap: 10px; border: none; background: none; min-height: 44px; font-weight: 600; font-size: 14px; }
     .switch .track { width: 44px; height: 26px; border-radius: 20px; background: var(--greige); position: relative; transition: background .2s; flex-shrink: 0; }
     .switch .track::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .2s; }
@@ -121,6 +124,72 @@
     .switch[aria-checked="true"] .track::after { transform: translateX(18px); }
     .switch:disabled { cursor: not-allowed; opacity: .55; }
     .empty { padding: 40px; text-align: center; color: var(--muted); background: var(--white); border: 1px dashed var(--greige); border-radius: var(--radius); }
+
+    /* ── Forms (product editor, tags) ── */
+    .back { display: inline-flex; align-items: center; min-height: 44px; margin-bottom: 4px; font-weight: 600; text-decoration: none; }
+    .back:hover { text-decoration: underline; }
+    .plain { border: none; min-width: 0; }
+    .editor-grid { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+    .field { margin-bottom: 18px; }
+    .field:last-child { margin-bottom: 0; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+    .label { display: block; padding: 0; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
+    .input { width: 100%; min-height: 44px; padding: 10px 12px; border: 1.5px solid var(--greige); border-radius: var(--radius); background: var(--white); }
+    textarea.input { min-height: 132px; resize: vertical; }
+    .input:hover { border-color: var(--tan); }
+    .input:focus { outline: none; border-color: var(--purple); box-shadow: 0 0 0 3px rgba(101,46,134,.15); }
+    .input[aria-invalid="true"] { border-color: var(--error); }
+    .input:disabled { background: #FAF7F3; cursor: not-allowed; }
+    .money { position: relative; }
+    .money span { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+    .money .input { padding-left: 26px; }
+    .field-note { margin-top: 8px; font-size: 13px; color: var(--muted); }
+    .field-error { margin-top: 6px; font-size: 13.5px; font-weight: 600; color: var(--error); }
+    .choices { display: flex; flex-wrap: wrap; gap: 8px; }
+    .choice { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 14px; border: 1.5px solid var(--greige); border-radius: var(--radius); background: var(--white); font-weight: 500; cursor: pointer; }
+    .choice:has(input:checked) { border-color: var(--purple); background: rgba(101,46,134,.06); }
+    .choice input { width: 18px; height: 18px; accent-color: var(--purple); }
+    .invalid .choice { border-color: var(--error); }
+    .error-summary { padding: 14px 16px; margin-bottom: 20px; border: 1px solid var(--error); border-radius: var(--radius); background: rgba(155,44,44,.06); color: var(--error); }
+    .error-summary ul { margin: 6px 0 0 20px; }
+    .error-summary a { color: var(--error); font-weight: 600; }
+    .form-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+
+    /* Tags multiselect */
+    .ms { position: relative; }
+    .ms-toggle { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; min-height: 44px; padding: 10px 12px; border: 1.5px solid var(--greige); border-radius: var(--radius); background: var(--white); text-align: left; }
+    .ms-toggle:hover:not(:disabled) { border-color: var(--tan); }
+    .ms-toggle:disabled { background: #FAF7F3; cursor: not-allowed; }
+    .ms-toggle svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; transition: transform .2s; }
+    .ms-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+    .ms-panel { position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 10; padding: 8px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 10px 30px rgba(74,52,42,.15); }
+    .ms-panel .input { min-height: 40px; margin-bottom: 6px; }
+    .ms-options { max-height: 240px; overflow-y: auto; }
+    .ms-option { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+    .ms-option:hover { background: var(--cream); }
+    .ms-option input { width: 18px; height: 18px; accent-color: var(--purple); }
+    .ms-empty { padding: 8px; font-size: 14px; color: var(--muted); }
+    .ms-manage { display: block; padding: 10px 8px 4px; margin-top: 6px; border-top: 1px solid var(--line); font-size: 14px; font-weight: 600; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; list-style: none; }
+    .chips li { display: inline-flex; align-items: center; gap: 2px; padding: 3px 3px 3px 12px; border-radius: 20px; background: rgba(101,46,134,.1); color: var(--purple); font-size: 13.5px; font-weight: 600; }
+    .chips button { width: 28px; height: 28px; border: none; border-radius: 50%; background: none; color: inherit; font-size: 17px; line-height: 1; }
+    .chips button:hover { background: rgba(101,46,134,.15); }
+    .chips button:disabled { display: none; }
+
+    /* Photo drop zone */
+    .drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 220px; padding: 20px; border: 2px dashed var(--greige); border-radius: var(--radius); background: #FCFAF7; text-align: center; transition: border-color .2s, background .2s; }
+    .drop.over { border-color: var(--purple); background: rgba(101,46,134,.05); }
+    .drop img { width: 100%; max-height: 260px; object-fit: contain; border-radius: 6px; }
+    .drop svg { width: 32px; height: 32px; stroke: var(--tan); fill: none; stroke-width: 1.6; }
+    .drop small { font-size: 12.5px; color: var(--muted); }
+    .drop-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+
+    /* Tags screen */
+    .tag-add { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tag-add .input { flex: 1; min-width: 200px; }
+    .tags-table td:last-child { text-align: right; white-space: nowrap; }
+    .tag-edit { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .tag-edit .input { flex: 1; min-width: 180px; }
 
     /* ── Sections still to be built ── */
     .placeholder { padding: 32px; background: var(--white); border: 1px dashed var(--greige); border-radius: var(--radius); }
@@ -144,7 +213,7 @@
       .menu-btn { display: inline-block; }
       .me small, .topbar a.site { display: none; }
       .main { padding: 20px 16px 64px; }
-      .home-grid { grid-template-columns: 1fr; }
+      .home-grid, .editor-grid, .field-row { grid-template-columns: 1fr; }
       .numbers { grid-template-columns: 1fr 1fr; }
       .products-table thead { display: none; }
       .products-table tr { display: grid; grid-template-columns: 56px 1fr; gap: 4px 12px; padding: 12px; border-top: 1px solid var(--line); }
@@ -172,6 +241,7 @@
       <div class="nav-group">
         <h2>Shop</h2>
         <button class="nav-item" data-view="products"><svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>Products</button>
+        <button class="nav-item" data-view="tags"><svg viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/></svg>Tags</button>
         <button class="nav-item" data-view="orders"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Orders</button>
       </div>
       <div class="nav-group">
@@ -216,7 +286,7 @@
               <h2>Quick actions</h2>
               <p class="hint">The things you do most often.</p>
               <div class="actions-grid">
-                <button class="action" type="button" data-go="products" data-edit><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><strong>Add a product</strong><span>New item for the shop</span></button>
+                <button class="action" type="button" data-go="products/new" data-edit><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><strong>Add a product</strong><span>New item for the shop</span></button>
                 <button class="action" type="button" data-go="products"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg><strong>Mark sold out</strong><span>Change stock status</span></button>
                 <button class="action" type="button" data-go="blog" data-edit><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg><strong>Write a post</strong><span>Blog or report</span></button>
                 <button class="action" type="button" data-go="impact" data-edit><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7"/></svg><strong>Update numbers</strong><span>Impact page figures</span></button>
@@ -245,10 +315,10 @@
       <!-- Products -->
       <section data-screen="products" hidden>
         <h1>Products</h1>
-        <p class="lead">Turn the switch off when something sells out.</p>
-        <div class="notice">Saving isn't connected yet. Changes on this screen are not kept and do not affect the shop.</div>
+        <p class="lead">Turn the switch off when something sells out. Use Edit to change a product's details.</p>
+        <div class="notice"><span>Saving isn't connected yet. Changes are kept in this browser only and do not affect the shop.</span><button class="link-btn" type="button" data-clear-draft hidden>Discard changes</button></div>
         <div class="toolbar">
-          <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><label class="sr-only" for="product-search">Search products</label><input id="product-search" type="search" placeholder="Search by name or collection"></div>
+          <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><label class="sr-only" for="product-search">Search products</label><input id="product-search" type="search" placeholder="Search by name or tag"></div>
           <div class="seg" role="group" aria-label="Show">
             <button type="button" data-stock="all" aria-pressed="true">All</button>
             <button type="button" data-stock="in" aria-pressed="false">In stock</button>
@@ -261,6 +331,145 @@
           <tbody id="product-rows"></tbody>
         </table>
         <p class="empty" id="product-empty" hidden>No products match. Try a different word, or choose "All".</p>
+      </section>
+
+      <!-- Product editor: /admin/products/<id> to edit, /admin/products/new to add -->
+      <section data-screen="product-edit" hidden>
+        <a class="back" href="/admin/products" data-link>← All products</a>
+        <h1 id="editor-title">Edit product</h1>
+        <p class="lead" id="editor-lead"></p>
+        <div class="notice">Saving isn't connected yet. Saved products are kept in this browser only and do not affect the shop.</div>
+        <div class="error-summary" id="editor-errors" tabindex="-1" role="alert" hidden></div>
+        <form id="product-form" novalidate>
+          <fieldset class="plain" id="product-fields">
+            <legend class="sr-only">Product details</legend>
+            <div class="editor-grid">
+              <div>
+                <div class="card">
+                  <h2>Details</h2>
+                  <p class="hint">What shoppers see on the product page.</p>
+                  <div class="field">
+                    <label class="label" for="pf-name">Name</label>
+                    <input class="input" id="pf-name" name="name" maxlength="120" autocomplete="off" aria-describedby="err-name">
+                    <p class="field-error" id="err-name" hidden></p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="pf-desc">Description</label>
+                    <textarea class="input" id="pf-desc" name="desc" maxlength="1000" rows="5" aria-describedby="err-desc"></textarea>
+                    <p class="field-error" id="err-desc" hidden></p>
+                  </div>
+                  <div class="field-row">
+                    <div class="field">
+                      <label class="label" for="pf-price">Price (US dollars)</label>
+                      <div class="money"><span aria-hidden="true">$</span><input class="input" id="pf-price" name="price" inputmode="decimal" maxlength="9" autocomplete="off" aria-describedby="err-price"></div>
+                      <p class="field-error" id="err-price" hidden></p>
+                    </div>
+                    <div class="field">
+                      <label class="label" for="pf-maker">Made by</label>
+                      <input class="input" id="pf-maker" name="maker" maxlength="80" autocomplete="off" aria-describedby="err-maker">
+                      <p class="field-error" id="err-maker" hidden></p>
+                    </div>
+                  </div>
+                  <div class="field-row">
+                    <div class="field">
+                      <label class="label" for="pf-material">Material</label>
+                      <input class="input" id="pf-material" name="material" maxlength="80" autocomplete="off" aria-describedby="err-material">
+                      <p class="field-error" id="err-material" hidden></p>
+                    </div>
+                    <div class="field">
+                      <label class="label" for="pf-colour">Colour</label>
+                      <input class="input" id="pf-colour" name="colour" maxlength="80" autocomplete="off" aria-describedby="err-colour">
+                      <p class="field-error" id="err-colour" hidden></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <h2>In the shop</h2>
+                  <p class="hint">How the product is shown in the shop grid.</p>
+                  <fieldset class="field plain" id="pf-stock-group">
+                    <legend class="label">Availability</legend>
+                    <div class="choices">
+                      <label class="choice"><input type="radio" id="pf-stock-in" name="stock" value="in" aria-describedby="err-stock">In stock</label>
+                      <label class="choice"><input type="radio" name="stock" value="out" aria-describedby="err-stock">Sold out</label>
+                    </div>
+                    <p class="field-error" id="err-stock" hidden></p>
+                  </fieldset>
+                  <fieldset class="field plain" id="pf-new-group">
+                    <legend class="label">"New" badge</legend>
+                    <div class="choices">
+                      <label class="choice"><input type="radio" id="pf-new-yes" name="isnew" value="yes" aria-describedby="err-isnew">Show</label>
+                      <label class="choice"><input type="radio" name="isnew" value="no" aria-describedby="err-isnew">Don't show</label>
+                    </div>
+                    <p class="field-error" id="err-isnew" hidden></p>
+                  </fieldset>
+                </div>
+              </div>
+              <div>
+                <div class="card">
+                  <h2 id="photo-label">Photo</h2>
+                  <p class="hint">Optional until photo saving is connected.</p>
+                  <div class="drop" id="photo-drop" aria-labelledby="photo-label">
+                    <img id="photo-preview" alt="" hidden>
+                    <svg id="photo-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 7"/></svg>
+                    <strong id="photo-hint">Drag a photo here</strong>
+                    <small>JPEG, PNG or WebP, up to 10 MB</small>
+                    <div class="drop-actions">
+                      <button class="btn" type="button" id="photo-choose">Choose a file</button>
+                      <button class="btn" type="button" id="photo-reset" hidden>Undo photo change</button>
+                    </div>
+                    <input class="sr-only" type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" tabindex="-1" aria-hidden="true">
+                  </div>
+                  <p class="field-error" id="err-photo" role="alert" hidden></p>
+                  <p class="field-note">You can choose a photo to preview it, but it isn't saved until image storage is connected.</p>
+                </div>
+                <div class="card">
+                  <h2 id="tags-label">Tags</h2>
+                  <p class="hint">Optional. Tags group products in the shop; a product can have several.</p>
+                  <div class="ms">
+                    <button class="ms-toggle" type="button" id="tags-toggle" aria-expanded="false" aria-controls="tags-panel" aria-labelledby="tags-label tags-toggle-text"><span id="tags-toggle-text">Choose tags</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+                    <div class="ms-panel" id="tags-panel" hidden>
+                      <label class="sr-only" for="tags-filter">Find a tag</label>
+                      <input class="input" id="tags-filter" type="search" placeholder="Find a tag" autocomplete="off">
+                      <div class="ms-options" id="tags-options" role="group" aria-labelledby="tags-label"></div>
+                      <a class="ms-manage" href="/admin/tags" data-link>Add or edit tags</a>
+                    </div>
+                  </div>
+                  <ul class="chips" id="tags-chips" aria-label="Chosen tags"></ul>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" id="product-save">Save product</button>
+            <a class="btn" href="/admin/products" data-link id="product-cancel">Cancel</a>
+          </div>
+        </form>
+      </section>
+
+      <!-- Tags -->
+      <section data-screen="tags" hidden>
+        <h1>Tags</h1>
+        <p class="lead">Tags group products in the shop, like the collection filters on the shop page. Tags added here appear in every product's tag list.</p>
+        <div class="notice"><span>Saving isn't connected yet. Changes are kept in this browser only and do not affect the shop.</span><button class="link-btn" type="button" data-clear-draft hidden>Discard changes</button></div>
+        <form class="card" id="tag-add-form" novalidate>
+          <h2>Add a tag</h2>
+          <p class="hint">Use a short name shoppers will understand, like "Resort wear".</p>
+          <label class="label" for="tag-new">Tag name</label>
+          <div class="tag-add">
+            <input class="input" id="tag-new" maxlength="40" autocomplete="off" aria-describedby="err-tag-new" data-edit>
+            <button class="btn btn-primary" type="submit" data-edit>Add tag</button>
+          </div>
+          <p class="field-error" id="err-tag-new" hidden></p>
+        </form>
+        <div class="card">
+          <h2>All tags</h2>
+          <p class="hint">Renaming a tag updates every product that uses it.</p>
+          <table class="tags-table">
+            <thead><tr><th>Tag</th><th>Products</th><th><span class="sr-only">Actions</span></th></tr></thead>
+            <tbody id="tag-rows"></tbody>
+          </table>
+          <p class="empty" id="tag-empty" hidden>No tags yet. Add one above.</p>
+        </div>
       </section>
 
       <!-- Sections still to be built -->
@@ -290,13 +499,71 @@
     const PRODUCTS = window.PURE_PRODUCTS || [];
     const COLLECTIONS = window.PURE_COLLECTIONS || [];
     const CAMPAIGNS = window.PURE_CAMPAIGNS || [];
-    const collectionName = id => (COLLECTIONS.find(c => c.id === id) || {}).name || '';
-    const priceLabel = window.PURE_PRICE_LABEL || (() => 'Price TBD');
+    const formatPrice = window.PURE_FORMAT_PRICE || (n => '$' + n);
 
-    // Stock status isn't stored anywhere yet, so everything starts as in stock.
-    const products = PRODUCTS.map(p => ({ id: p.id, name: p.name, coll: collectionName(p.collection), price: priceLabel(p), inStock: true, img: '/' + p.img }));
+    /* ── Working copy ──
+       Saving isn't connected yet (D1 for data, R2 for photos), so products and tags changed
+       here are kept in this browser's localStorage only; they never reach the shop or other
+       admins. It starts from the live catalog, with the shop's collections as the first tags.
+       `changed` holds every product edited or added here, by id. */
+    const DRAFT_KEY = 'pcs-admin-draft';
+    const draft = (() => {
+      try { return JSON.parse(localStorage.getItem(DRAFT_KEY)) || {}; } catch { return {}; }
+    })();
+    const tags = Array.isArray(draft.tags) ? draft.tags : COLLECTIONS.map(c => ({ id: c.id, name: c.name }));
+    const changed = draft.changed && typeof draft.changed === 'object' ? draft.changed : {};
+    let products = [];
 
-    /* Navigation between screens */
+    const fromLive = p => ({
+      id: p.id, name: p.name, desc: p.desc || '',
+      price: typeof p.price === 'number' ? p.price : null,
+      material: p.material || '', colour: p.colour || '', maker: p.maker || '',
+      tags: p.collection ? [p.collection] : [],
+      img: p.img ? '/' + p.img : '',
+      inStock: true, // Stock status isn't stored anywhere yet, so everything starts as in stock.
+      isNew: Boolean(p.isNew),
+    });
+    function buildProducts() {
+      const added = Object.values(changed).filter(p => !PRODUCTS.some(live => live.id === p.id));
+      products = [...PRODUCTS.map(p => changed[p.id] || fromLive(p)), ...added];
+    }
+    function hasDraft() {
+      try { return localStorage.getItem(DRAFT_KEY) !== null; } catch { return false; }
+    }
+    function writeDraft() {
+      let kept = true;
+      try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ tags, changed })); } catch { kept = false; }
+      document.querySelectorAll('[data-clear-draft]').forEach(b => b.hidden = !canEdit || !hasDraft());
+      return kept;
+    }
+    function saveProduct(p) {
+      changed[p.id] = p;
+      buildProducts();
+      return writeDraft();
+    }
+    const savedText = kept => kept ? 'saved in this browser' : 'kept for this visit only (this browser blocks storage)';
+    buildProducts();
+
+    const tagName = id => (tags.find(t => t.id === id) || {}).name || '';
+    const tagNames = p => p.tags.map(tagName).filter(Boolean).join(', ');
+    const priceLabel = p => typeof p.price === 'number' ? formatPrice(p.price) : 'Price TBD';
+    const cleanName = s => s.replace(/\s+/g, ' ').trim();
+
+    /* URL-safe id from a name: "Bình gốm" → "binh-gom" */
+    function slugify(text) {
+      return text.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-+/, '').slice(0, 60).replace(/-+$/, '') || 'item';
+    }
+    function uniqueId(base, taken) {
+      let id = base, n = 2;
+      while (taken(id)) id = `${base}-${n++}`;
+      return id;
+    }
+
+    /* ── Navigation ──
+       Each screen has its own address (/admin/products, /admin/tags, /admin/products/<id>),
+       served by the Worker and switched here without reloading. */
+    const SCREENS = ['home', 'review', 'products', 'tags'];
     const TITLES = {
       orders: ['Orders', 'See new orders and update their status from pending to delivered.', ['A table of orders, newest first', 'One button per order to move it to the next step', 'Viewers can see orders but not change them']],
       campaigns: ['Campaigns & cases', 'Edit the four programmes and add individual cases.', ['A list of campaigns with status badges', 'Cases cannot be submitted until "consent confirmed" is ticked', 'Editors save drafts; super-admins publish']],
@@ -306,27 +573,70 @@
       media: ['Photos & files', 'Every photo and document used on the site.', ['Drag photos in to upload', 'A reminder of the no-photos-of-children rule on every upload']],
       people: ['People & roles', 'Who can sign in, and what they can do.', ['Add someone by email and pick their role', 'Reset passwords and turn accounts off', 'Only super-admins see this section', 'Until then, people are managed in the D1 Console']]
     };
-    function show(view) {
-      if (view === 'people' && !isSuper) view = 'home';
+    const pathFor = view => view === 'home' ? '/admin' : `/admin/${view}`;
+
+    function setCurrent(view) {
       document.querySelectorAll('.nav-item').forEach(b => {
         if (b.dataset.view === view) b.setAttribute('aria-current', 'page');
         else b.removeAttribute('aria-current');
       });
-      const screen = ['home', 'review', 'products'].includes(view) ? view : 'other';
+    }
+    function showScreen(screen) {
       document.querySelectorAll('[data-screen]').forEach(s => s.hidden = s.dataset.screen !== screen);
+      $('sidebar').classList.remove('open');
+      document.querySelector('.menu-btn').setAttribute('aria-expanded', 'false');
+      $('main').focus({ preventScroll: true });
+      window.scrollTo(0, 0);
+    }
+    function show(view) {
+      if ((!SCREENS.includes(view) && !TITLES[view]) || (view === 'people' && !isSuper)) view = 'home';
+      if (location.pathname.replace(/\/+$/, '') !== pathFor(view)) history.replaceState(null, '', pathFor(view));
+      editor = null;
+      setCurrent(view);
+      const screen = SCREENS.includes(view) ? view : 'other';
       if (screen === 'other') {
         const [title, lead, items] = TITLES[view];
         $('other-title').textContent = title;
         $('other-lead').textContent = lead;
         $('other-list').innerHTML = items.map(i => `<li>${esc(i)}</li>`).join('');
       }
-      $('sidebar').classList.remove('open');
-      document.querySelector('.menu-btn').setAttribute('aria-expanded', 'false');
-      $('main').focus({ preventScroll: true });
-      window.scrollTo(0, 0);
+      if (view === 'products') renderProducts();
+      if (view === 'tags') { editingTag = null; renderTags(); }
+      showScreen(screen);
     }
-    document.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', () => show(b.dataset.view)));
-    document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => show(b.dataset.go)));
+    function route() {
+      const [view = 'home', sub] = location.pathname.replace(/\/+$/, '').split('/').slice(2);
+      if (view === 'products' && sub) openEditor(decodeURIComponent(sub));
+      else show(view);
+    }
+
+    /* Leaving the editor with unsaved changes asks first. */
+    function okToLeave() {
+      if (!editor || !canEdit || formState() === editor.snapshot) return true;
+      return confirm('You have unsaved changes. Leave without saving?');
+    }
+    function go(path) {
+      if (!okToLeave()) return;
+      editor = null;
+      if (path !== location.pathname) history.pushState(null, '', path);
+      route();
+    }
+    window.addEventListener('popstate', () => {
+      if (editor && !okToLeave()) { history.pushState(null, '', editor.path); return; }
+      editor = null;
+      route();
+    });
+    window.addEventListener('beforeunload', e => {
+      if (editor && canEdit && formState() !== editor.snapshot) e.preventDefault();
+    });
+    document.addEventListener('click', e => {
+      const link = e.target.closest('a[data-link]');
+      if (!link || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      e.preventDefault();
+      go(link.getAttribute('href'));
+    });
+    document.querySelectorAll('.nav-item').forEach(b => b.addEventListener('click', () => go(pathFor(b.dataset.view))));
+    document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => go('/admin/' + b.dataset.go)));
     document.querySelector('.menu-btn').addEventListener('click', e => {
       const open = $('sidebar').classList.toggle('open');
       e.currentTarget.setAttribute('aria-expanded', open);
@@ -344,29 +654,38 @@
     }
     $('toast-undo').addEventListener('click', () => { if (undoFn) undoFn(); $('toast').classList.remove('show'); });
 
-    /* Products screen */
+    document.querySelectorAll('[data-clear-draft]').forEach(b => b.addEventListener('click', () => {
+      if (!confirm('Discard every product and tag change saved in this browser? This cannot be undone.')) return;
+      try { localStorage.removeItem(DRAFT_KEY); } catch {}
+      location.reload();
+    }));
+
+    /* ── Products screen ── */
     let stockFilter = 'all';
     function renderProducts() {
       const q = $('product-search').value.trim().toLowerCase();
       const list = products.filter(p =>
         (stockFilter === 'all' || (stockFilter === 'in') === p.inStock) &&
-        (!q || p.name.toLowerCase().includes(q) || p.coll.toLowerCase().includes(q)));
+        (!q || p.name.toLowerCase().includes(q) || tagNames(p).toLowerCase().includes(q)));
       $('product-rows').innerHTML = list.map(p => `
         <tr>
-          <td><img class="thumb" src="${esc(p.img)}" alt="" loading="lazy"></td>
-          <td><strong>${esc(p.name)}</strong><br><span class="sub">${esc(p.coll)}</span></td>
-          <td>${esc(p.price)}</td>
+          <td>${p.img ? `<img class="thumb" src="${esc(p.img)}" alt="" loading="lazy">` : '<span class="thumb" aria-hidden="true"></span>'}</td>
+          <td><strong>${esc(p.name)}</strong><br><span class="sub">${esc(tagNames(p) || 'No tags')}</span></td>
+          <td>${esc(priceLabel(p))}</td>
           <td><button class="switch" type="button" role="switch" aria-checked="${p.inStock}" data-id="${esc(p.id)}" ${canEdit ? '' : 'disabled'}><span class="track" aria-hidden="true"></span>${p.inStock ? 'In stock' : 'Sold out'}</button></td>
-          <td><button class="btn" type="button" data-edit-product ${canEdit ? '' : 'disabled'}>Edit</button></td>
+          <td><a class="btn" href="/admin/products/${encodeURIComponent(p.id)}" data-link>${canEdit ? 'Edit' : 'View'}<span class="sr-only"> ${esc(p.name)}</span></a></td>
         </tr>`).join('');
       $('product-empty').hidden = list.length > 0;
       $('product-rows').querySelectorAll('.switch').forEach(sw => sw.addEventListener('click', () => {
         const p = products.find(x => x.id === sw.dataset.id);
-        p.inStock = !p.inStock;
-        renderProducts();
-        toast(`${p.name} marked as ${p.inStock ? 'in stock' : 'sold out'} (not saved yet).`, () => { p.inStock = !p.inStock; renderProducts(); });
+        const setStock = inStock => {
+          const kept = saveProduct({ ...p, inStock });
+          renderProducts();
+          return kept;
+        };
+        const kept = setStock(!p.inStock);
+        toast(`${p.name} marked as ${p.inStock ? 'sold out' : 'in stock'}, ${savedText(kept)}.`, () => setStock(p.inStock));
       }));
-      $('product-rows').querySelectorAll('[data-edit-product]').forEach(b => b.addEventListener('click', () => toast('Editing products isn’t available yet.')));
     }
     $('product-search').addEventListener('input', renderProducts);
     document.querySelectorAll('[data-stock]').forEach(b => b.addEventListener('click', () => {
@@ -374,11 +693,300 @@
       document.querySelectorAll('[data-stock]').forEach(x => x.setAttribute('aria-pressed', x === b));
       renderProducts();
     }));
-    $('add-product').addEventListener('click', () => toast('Adding products isn’t available yet.'));
+    $('add-product').addEventListener('click', () => go('/admin/products/new'));
+
+    /* ── Product editor ──
+       Adding and editing use the same form. Adding: every field starts empty and all are
+       required except tags and photo (photo becomes required once R2 is connected).
+       Editing: name and price are required; the other details can be filled in later. */
+    let editor = null; // { path, id, snapshot } while the editor is open
+    let selected = new Set();
+    const photo = { file: null, url: '', original: '' };
+    const form = $('product-form');
+    const TEXT_FIELDS = ['name', 'desc', 'price', 'maker', 'material', 'colour'];
+    const FIELD_LABELS = { name: 'a name', desc: 'a description', price: 'a price', maker: 'who made it', material: 'the material', colour: 'the colour' };
+    const val = name => form.elements[name].value.trim();
+
+    function formState() {
+      return JSON.stringify([...TEXT_FIELDS.map(val), form.elements.stock.value, form.elements.isnew.value, [...selected].sort(), Boolean(photo.file)]);
+    }
+
+    function openEditor(id) {
+      const isNew = id === 'new';
+      const product = isNew ? null : products.find(p => p.id === id);
+      if ((isNew && !canEdit) || (!isNew && !product)) {
+        show('products');
+        if (!isNew) toast('That product wasn’t found.');
+        return;
+      }
+      setCurrent('products');
+      $('editor-title').textContent = isNew ? 'Add a product' : canEdit ? `Edit ${product.name}` : product.name;
+      $('editor-lead').textContent = !canEdit
+        ? 'You have view-only access, so this product can’t be changed.'
+        : isNew
+          ? 'Fill in every field. Tags are optional, and so is the photo until photo saving is connected.'
+          : 'Name and price are required. Other details can be filled in later.';
+
+      form.reset();
+      showErrors([]);
+      if (product) {
+        TEXT_FIELDS.forEach(name => form.elements[name].value = name === 'price' ? (product.price ?? '') : product[name]);
+        form.elements.stock.value = product.inStock ? 'in' : 'out';
+        form.elements.isnew.value = product.isNew ? 'yes' : 'no';
+      }
+      selected = new Set(product ? product.tags.filter(t => tags.some(x => x.id === t)) : []);
+      setPicker(false);
+      renderChips();
+      clearPhoto(product ? product.img : '', product ? product.name : '');
+
+      $('product-fields').disabled = !canEdit;
+      $('product-save').hidden = !canEdit;
+      $('product-cancel').textContent = canEdit ? 'Cancel' : 'Back to products';
+      editor = { path: location.pathname, id: product ? product.id : null, snapshot: formState() };
+      showScreen('product-edit');
+    }
+
+    function validate(isNew) {
+      const errors = [];
+      const required = isNew ? TEXT_FIELDS : ['name', 'price'];
+      TEXT_FIELDS.forEach(name => {
+        if (required.includes(name) && !val(name)) errors.push({ name, field: `pf-${name}`, text: `Enter ${FIELD_LABELS[name]}.` });
+      });
+      const price = val('price');
+      if (price && (!/^\d{1,6}(\.\d{1,2})?$/.test(price) || Number(price) > 100000)) {
+        errors.push({ name: 'price', field: 'pf-price', text: 'Enter a price in US dollars, like 48 or 48.50.' });
+      }
+      if (!form.elements.stock.value) errors.push({ name: 'stock', field: 'pf-stock-in', group: 'pf-stock-group', text: 'Choose whether it’s in stock.' });
+      if (!form.elements.isnew.value) errors.push({ name: 'isnew', field: 'pf-new-yes', group: 'pf-new-group', text: 'Choose whether to show the "New" badge.' });
+      return errors;
+    }
+
+    function showErrors(errors) {
+      form.querySelectorAll('.field-error').forEach(el => { if (el.id !== 'err-photo') el.hidden = true; });
+      form.querySelectorAll('[aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
+      form.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+      errors.forEach(err => {
+        const msg = $(`err-${err.name}`);
+        msg.textContent = err.text;
+        msg.hidden = false;
+        if (err.group) $(err.group).classList.add('invalid');
+        else $(err.field).setAttribute('aria-invalid', 'true');
+      });
+      const summary = $('editor-errors');
+      summary.hidden = !errors.length;
+      summary.innerHTML = errors.length
+        ? `<strong>Check ${errors.length === 1 ? 'this field' : `these ${errors.length} fields`} before saving:</strong>
+           <ul>${errors.map(err => `<li><a href="#${err.field}" data-focus="${err.field}">${esc(err.text)}</a></li>`).join('')}</ul>`
+        : '';
+    }
+    $('editor-errors').addEventListener('click', e => {
+      const link = e.target.closest('[data-focus]');
+      if (!link) return;
+      e.preventDefault();
+      $(link.dataset.focus).focus();
+    });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!canEdit || !editor) return;
+      const isNew = !editor.id;
+      const errors = validate(isNew);
+      showErrors(errors);
+      if (errors.length) { $('editor-errors').focus(); return; }
+
+      const base = isNew ? null : products.find(p => p.id === editor.id);
+      const product = {
+        id: base ? base.id : uniqueId(slugify(val('name')), id => id === 'new' || products.some(p => p.id === id)),
+        name: cleanName(val('name')),
+        desc: val('desc'),
+        price: Number(val('price')),
+        maker: val('maker'), material: val('material'), colour: val('colour'),
+        tags: tags.filter(t => selected.has(t.id)).map(t => t.id),
+        img: base ? base.img : '',
+        inStock: form.elements.stock.value === 'in',
+        isNew: form.elements.isnew.value === 'yes',
+      };
+      const kept = saveProduct(product);
+      const photoNote = photo.file ? ' The new photo wasn’t kept: photo saving isn’t connected yet.' : '';
+      editor = null;
+      go('/admin/products');
+      toast(`${product.name} ${isNew ? 'added' : 'updated'}, ${savedText(kept)}.${photoNote}`);
+    });
+
+    /* Tags multiselect: choices come from the Tags screen. */
+    function renderOptions() {
+      const q = $('tags-filter').value.trim().toLowerCase();
+      const list = tags.filter(t => !q || t.name.toLowerCase().includes(q));
+      $('tags-options').innerHTML = list.length
+        ? list.map(t => `<label class="ms-option"><input type="checkbox" value="${esc(t.id)}" ${selected.has(t.id) ? 'checked' : ''}>${esc(t.name)}</label>`).join('')
+        : `<p class="ms-empty">${tags.length ? 'No tags match.' : 'No tags yet.'}</p>`;
+    }
+    function renderChips() {
+      const chosen = tags.filter(t => selected.has(t.id));
+      $('tags-chips').innerHTML = chosen.map(t => `<li>${esc(t.name)}<button type="button" data-remove-tag="${esc(t.id)}" aria-label="Remove ${esc(t.name)}" ${canEdit ? '' : 'disabled'}>×</button></li>`).join('');
+      $('tags-toggle-text').textContent = chosen.length ? `${chosen.length} selected` : 'Choose tags';
+    }
+    function setPicker(open) {
+      $('tags-panel').hidden = !open;
+      $('tags-toggle').setAttribute('aria-expanded', open);
+      if (open) {
+        $('tags-filter').value = '';
+        renderOptions();
+        $('tags-filter').focus();
+      }
+    }
+    $('tags-toggle').addEventListener('click', () => setPicker($('tags-panel').hidden));
+    $('tags-filter').addEventListener('input', renderOptions);
+    $('tags-options').addEventListener('change', e => {
+      if (e.target.checked) selected.add(e.target.value);
+      else selected.delete(e.target.value);
+      renderChips();
+    });
+    $('tags-chips').addEventListener('click', e => {
+      const btn = e.target.closest('[data-remove-tag]');
+      if (!btn) return;
+      selected.delete(btn.dataset.removeTag);
+      renderChips();
+      if (!$('tags-panel').hidden) renderOptions();
+      $('tags-toggle').focus();
+    });
+    document.addEventListener('click', e => {
+      if (!$('tags-panel').hidden && !e.target.closest('.ms')) setPicker(false);
+    });
+    document.querySelector('.ms').addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !$('tags-panel').hidden) { setPicker(false); $('tags-toggle').focus(); }
+    });
+
+    /* Photo: drag and drop or file picker. Previews only until R2 is connected. */
+    const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+    const PHOTO_MAX_MB = 10;
+    function showPhoto(src, alt) {
+      $('photo-preview').hidden = !src;
+      if (src) { $('photo-preview').src = src; $('photo-preview').alt = alt; }
+      else $('photo-preview').removeAttribute('src');
+      $('photo-icon').hidden = Boolean(src);
+      $('photo-hint').textContent = src ? 'Drag a photo here to replace it' : 'Drag a photo here';
+      $('photo-choose').textContent = src ? 'Choose a different photo' : 'Choose a file';
+      $('photo-reset').hidden = !photo.file;
+    }
+    function photoError(text) {
+      $('err-photo').textContent = text;
+      $('err-photo').hidden = !text;
+    }
+    function clearPhoto(original, name) {
+      if (photo.url) URL.revokeObjectURL(photo.url);
+      Object.assign(photo, { file: null, url: '', original, name });
+      $('photo-input').value = '';
+      photoError('');
+      showPhoto(original, original ? `Current photo of ${name}` : '');
+    }
+    function pickPhoto(file) {
+      if (!canEdit || !file) return;
+      if (!PHOTO_TYPES.includes(file.type)) return photoError('Choose a JPEG, PNG or WebP image.');
+      if (file.size > PHOTO_MAX_MB * 1024 * 1024) return photoError(`Choose an image under ${PHOTO_MAX_MB} MB.`);
+      photoError('');
+      if (photo.url) URL.revokeObjectURL(photo.url);
+      photo.file = file;
+      photo.url = URL.createObjectURL(file);
+      showPhoto(photo.url, `New photo: ${file.name}`);
+    }
+    $('photo-choose').addEventListener('click', () => $('photo-input').click());
+    $('photo-input').addEventListener('change', e => pickPhoto(e.target.files[0]));
+    $('photo-reset').addEventListener('click', () => clearPhoto(photo.original, photo.name));
+    const drop = $('photo-drop');
+    ['dragenter', 'dragover'].forEach(type => drop.addEventListener(type, e => {
+      e.preventDefault();
+      if (canEdit) drop.classList.add('over');
+    }));
+    drop.addEventListener('dragleave', e => { if (!drop.contains(e.relatedTarget)) drop.classList.remove('over'); });
+    drop.addEventListener('drop', e => {
+      e.preventDefault();
+      drop.classList.remove('over');
+      pickPhoto(e.dataTransfer.files[0]);
+    });
+    // A file dropped anywhere else would make the browser open it and leave the page.
+    ['dragover', 'drop'].forEach(type => window.addEventListener(type, e => e.preventDefault()));
+
+    /* ── Tags screen ── */
+    let editingTag = null;
+    function tagNameError(name, exceptId) {
+      if (!name) return 'Enter a tag name.';
+      if (tags.some(t => t.id !== exceptId && t.name.toLowerCase() === name.toLowerCase())) return 'There is already a tag with that name.';
+      return '';
+    }
+    function renderTags() {
+      $('tag-rows').innerHTML = tags.map(t => {
+        if (t.id === editingTag) return `
+          <tr><td colspan="3">
+            <form class="tag-edit" id="tag-rename-form" novalidate>
+              <label class="sr-only" for="tag-rename">New name for ${esc(t.name)}</label>
+              <input class="input" id="tag-rename" maxlength="40" value="${esc(t.name)}" autocomplete="off" aria-describedby="err-tag-rename">
+              <button class="btn btn-primary" type="submit">Save</button>
+              <button class="btn" type="button" id="tag-rename-cancel">Cancel</button>
+            </form>
+            <p class="field-error" id="err-tag-rename" hidden></p>
+          </td></tr>`;
+        const count = products.filter(p => p.tags.includes(t.id)).length;
+        return `
+          <tr>
+            <td><strong>${esc(t.name)}</strong></td>
+            <td>${count} ${count === 1 ? 'product' : 'products'}</td>
+            <td><button class="btn" type="button" data-rename-tag="${esc(t.id)}" ${canEdit ? '' : 'disabled'}>Edit<span class="sr-only"> ${esc(t.name)}</span></button></td>
+          </tr>`;
+      }).join('');
+      $('tag-empty').hidden = tags.length > 0;
+      if (!editingTag) return;
+      $('tag-rename').focus();
+      $('tag-rename').select();
+      $('tag-rename-form').addEventListener('submit', e => {
+        e.preventDefault();
+        const tag = tags.find(t => t.id === editingTag);
+        const name = cleanName($('tag-rename').value);
+        const error = tagNameError(name, tag.id);
+        if (error) {
+          $('err-tag-rename').textContent = error;
+          $('err-tag-rename').hidden = false;
+          $('tag-rename').setAttribute('aria-invalid', 'true');
+          $('tag-rename').focus();
+          return;
+        }
+        const old = tag.name;
+        tag.name = name;
+        const kept = writeDraft();
+        editingTag = null;
+        renderTags();
+        toast(old === name ? 'No change.' : `Renamed “${old}” to “${name}”, ${savedText(kept)}.`);
+      });
+      $('tag-rename-cancel').addEventListener('click', () => { editingTag = null; renderTags(); });
+      $('tag-rename').addEventListener('keydown', e => { if (e.key === 'Escape') { editingTag = null; renderTags(); } });
+    }
+    $('tag-rows').addEventListener('click', e => {
+      const btn = e.target.closest('[data-rename-tag]');
+      if (!btn || !canEdit) return;
+      editingTag = btn.dataset.renameTag;
+      renderTags();
+    });
+    $('tag-add-form').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!canEdit) return;
+      const input = $('tag-new');
+      const name = cleanName(input.value);
+      const error = tagNameError(name);
+      $('err-tag-new').textContent = error;
+      $('err-tag-new').hidden = !error;
+      if (error) { input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
+      input.removeAttribute('aria-invalid');
+      tags.push({ id: uniqueId(slugify(name), id => tags.some(t => t.id === id)), name });
+      const kept = writeDraft();
+      input.value = '';
+      renderTags();
+      toast(`Tag “${name}” added, ${savedText(kept)}.`);
+    });
 
     /* Role: hide or turn off what this person can't use */
     document.querySelectorAll('[data-super-only]').forEach(el => el.hidden = !isSuper);
     document.querySelectorAll('[data-edit]').forEach(el => el.disabled = !canEdit);
+    document.querySelectorAll('[data-clear-draft]').forEach(b => b.hidden = !canEdit || !hasDraft());
     $('viewer-note').hidden = canEdit;
     $('attention-hint').textContent = isSuper
       ? 'Changes submitted by editors wait here for you to publish or send back.'
@@ -391,7 +999,7 @@
     $('n-running').textContent = CAMPAIGNS.filter(c => c.status === 'running').length;
     $('n-planned').textContent = CAMPAIGNS.filter(c => c.status === 'planned').length;
 
-    renderProducts();
+    route();
   </script>
 </body>
 </html>

@@ -8,7 +8,9 @@
      env.DB      D1 database (purecommunitysupportd1db), tables in schema.sql
 
    Admin routes:
-     GET  /admin           signed-in home (redirects to sign-in when signed out)
+     GET  /admin           signed-in dashboard (redirects to sign-in when signed out)
+     GET  /admin/<screen>  the same dashboard opened at a screen: products, products/<id>,
+                           products/new, tags, review, orders, ... (see ADMIN_SCREEN)
      GET  /admin/login     sign-in page
      POST /admin/login     check email + password, start a session
      POST /admin/logout    end the session
@@ -25,6 +27,9 @@ const MAX_FAILS_PER_EMAIL = 5;
 const MAX_FAILS_PER_IP = 20;
 
 const ROLE_NAMES = { superadmin: 'Super-admin', editor: 'Editor', viewer: 'Viewer' };
+
+/* Dashboard screen paths; the page itself switches between them (admin/home.html). */
+const ADMIN_SCREEN = /^\/admin\/(review|products|tags|orders|campaigns|impact|money|blog|media|people|products\/[a-z0-9-]{1,80})$/;
 
 /* Messages shown on the sign-in page, chosen by ?m=<code>. Only these fixed texts are ever shown. */
 const MESSAGES = {
@@ -88,7 +93,7 @@ async function handleAdmin(request, env, url, path) {
       : redirect('/admin/login');
   }
 
-  if (path === '/admin') {
+  if (path === '/admin' || ADMIN_SCREEN.test(path)) {
     return page(homeTemplate, { name: displayName(user.email), role: ROLE_NAMES[user.role] || user.role, roleKey: user.role });
   }
   return new Response('Not found', { status: 404, headers: BASE_HEADERS });
@@ -208,7 +213,7 @@ function page(template, vars, status = 200) {
       'Content-Type': 'text/html; charset=utf-8',
       'Content-Security-Policy': [
         "default-src 'none'",
-        "img-src 'self'",
+        "img-src 'self' blob:", // blob: previews a photo chosen in the product editor
         `style-src 'nonce-${nonce}' https://fonts.googleapis.com`,
         'font-src https://fonts.gstatic.com',
         `script-src 'nonce-${nonce}'`,
