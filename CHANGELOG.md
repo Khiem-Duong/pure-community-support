@@ -12,6 +12,12 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.6.5] - 2026-10-19
+### What changed
+- Added /favicon.ico (16, 32 and 48px) at the site root, the file DuckDuckGo and Bing look for
+- Added a 96 × 96 PNG favicon for search engines and a 180 × 180 iPhone icon (lotus on cream), rendered from the v1.0 SVGs (assets/images/favicon/)
+- Every public page now lists the .ico, the SVG, the 96px PNG and the iPhone icon
+
 ## [0.6.4] - 2026-10-19
 ### What changed
 - New square favicon (assets/images/favicon/favicon-v1.0.svg): the lotus mark centred in a square so search engines (Google, Bing, DuckDuckGo) can use it; purple by default and white in dark mode, in one file
