@@ -12,6 +12,10 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.7.1] - 2026-10-19
+### What changed
+- Shop: filtering by tag is animated: products that no longer match fade out, products that stay glide to their new place, and newly shown products fade up one after another (skipped for visitors who prefer reduced motion)
+
 ## [0.7.0] - 2026-10-19
 ### What changed
 - Product data moved to the D1 database: new tables products, tags and product_tags (schema.sql), filled once from the old catalog with seed-catalog.sql (run both in the D1 Console)

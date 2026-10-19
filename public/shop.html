@@ -321,6 +321,21 @@
 
     /* ── Product card ────────────────────────── */
     .card { position: relative; }
+    /* Filtering by tag (filterTo()): cards that no longer match fade out, cards that stay
+       glide to their new place, and newly shown cards fade up one after another. */
+    .card.card-leave {
+      opacity: 0;
+      transform: scale(0.94);
+      pointer-events: none;
+      transition: opacity 0.22s var(--ease-soft), transform 0.22s var(--ease-soft);
+    }
+    .card.card-enter {
+      animation: card-enter 0.55s var(--ease-out) backwards;
+      animation-delay: calc(var(--i, 0) * 45ms);
+    }
+    @keyframes card-enter {
+      from { opacity: 0; transform: translateY(18px); }
+    }
     .card-media {
       position: relative;
       aspect-ratio: 4 / 5;
@@ -1233,15 +1248,71 @@
       window.scrollTo({ top: window.scrollY + introEl.getBoundingClientRect().bottom, behavior: 'smooth' });
     }
 
-    chipGroup.addEventListener('click', e => {
-      const chip = e.target.closest('.chip');
-      if (!chip) return;
-      state.collection = chip.dataset.collection;
+    /* ── Filtering by tag, animated ─────────────
+       Cards that no longer match fade out first; then the grid is redrawn, cards that stay
+       glide from their old place to the new one, and newly shown cards fade up in turn.
+       Skipped when the visitor prefers reduced motion. */
+    const LEAVE_MS = 220;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let filterRun = 0; // a newer filter, sort or page change cancels a pending redraw
+    const cardId = el => el.querySelector('.card-link').dataset.id;
+
+    function filterTo(collection) {
+      const run = ++filterRun;
+      state.collection = collection;
       state.page = 1;
       renderChips();
-      render();
+      const current = [...grid.querySelectorAll('.card:not(.card-leave)')];
+      if (reduceMotion.matches || !current.length) { render(); return; }
+
+      // The new filter's first page (the same sums as render()).
+      const list = currentList();
+      const firstPage = new Set(list.slice(0, pageCounts(list.length, gridLayout())[0]).map(p => p.id));
+      const leaving = current.filter(el => !firstPage.has(cardId(el)));
+      leaving.forEach(el => el.classList.add('card-leave'));
+
+      setTimeout(() => {
+        if (run !== filterRun) return;
+        const before = new Map(current.filter(el => !leaving.includes(el)).map(el => [cardId(el), el.getBoundingClientRect()]));
+        render();
+        const moved = [];
+        let entering = 0;
+        grid.querySelectorAll('.card').forEach(el => {
+          const old = before.get(cardId(el));
+          if (!old) {
+            el.style.setProperty('--i', entering++);
+            el.classList.add('card-enter');
+            el.addEventListener('animationend', () => el.classList.remove('card-enter'), { once: true });
+            return;
+          }
+          const now = el.getBoundingClientRect();
+          const dx = old.left - now.left;
+          const dy = old.top - now.top;
+          if (!dx && !dy) return;
+          el.style.transition = 'none';
+          el.style.transform = `translate(${dx}px, ${dy}px)`;
+          moved.push(el);
+        });
+        if (!moved.length) return;
+        void grid.offsetWidth; // apply the starting positions before animating to the new ones
+        moved.forEach(el => {
+          el.style.transition = 'transform 0.5s var(--ease-out)';
+          el.style.transform = '';
+          el.addEventListener('transitionend', function done(e) {
+            if (e.target !== el) return; // hover transitions inside the card end here too
+            el.style.transition = '';
+            el.removeEventListener('transitionend', done);
+          });
+        });
+      }, leaving.length ? LEAVE_MS : 0);
+    }
+
+    chipGroup.addEventListener('click', e => {
+      const chip = e.target.closest('.chip');
+      if (!chip || chip.dataset.collection === state.collection) return;
+      filterTo(chip.dataset.collection);
     });
-    sortSelect.addEventListener('change', () => { state.sort = sortSelect.value; state.page = 1; render(); });
+    sortSelect.addEventListener('change', () => { filterRun++; state.sort = sortSelect.value; state.page = 1; render(); });
 
     /* Window resized: if a different number of columns or rows fits, re-page, keeping the first product shown in view. */
     let resizeFrame = null;
@@ -1256,6 +1327,7 @@
     pager.addEventListener('click', e => {
       const btn = e.target.closest('.page-btn');
       if (!btn || btn.disabled) return;
+      filterRun++;
       state.page = btn.dataset.page ? Number(btn.dataset.page) : state.page + Number(btn.dataset.step);
       render();
       scrollToGrid();
