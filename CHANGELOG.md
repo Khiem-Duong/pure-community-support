@@ -12,6 +12,13 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.6.4] - 2026-10-19
+### What changed
+- New square favicon (assets/images/favicon/favicon-v1.0.svg): the lotus mark centred in a square so search engines (Google, Bing, DuckDuckGo) can use it; purple by default and white in dark mode, in one file
+- Every public page and both admin pages now use it instead of the two non-square logo files (light and dark); the original logo files are unchanged
+- Added apple-touch-icon-v1.0.svg (lotus on cream), the source for a future 180 × 180 PNG iPhone icon; not linked yet
+- Still to do: /favicon.ico and PNG icons (needed by DuckDuckGo and Bing)
+
 ## [0.6.3] - 2026-10-19
 ### What changed
 - Hover effects (card lifts, photo zooms, overlays) no longer start while the page is scrolling: pointer events are switched off during a scroll and for about 150ms after it stops, on mouse and trackpad only. New shared file assets/js/scroll-hover.js (loaded on every page), rule in nav-menu.css
