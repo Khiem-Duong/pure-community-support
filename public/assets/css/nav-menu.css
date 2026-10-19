@@ -13,6 +13,16 @@ body { min-height: 100vh; min-height: 100dvh; }
 body > footer,
 body > .page-end { position: sticky; top: 100vh; }
 
+/* ── No hover effects while scrolling ─────────────────────────
+   scroll-hover.js sets .is-scrolling on <html> while the page scrolls. Pointer
+   events are switched off until scrolling stops, so cards and photos passing
+   under the cursor don't start their hover animations. Mouse and trackpad only;
+   touch scrolling is left alone. */
+@media (hover: hover) {
+  .is-scrolling body,
+  .is-scrolling body * { pointer-events: none !important; }
+}
+
 .nav-item-sub { position: relative; }
 
 .nav-caret {

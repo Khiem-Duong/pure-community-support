@@ -895,72 +895,6 @@
     }
     .artisans-img-item:hover img { transform: scale(1.06); }
 
-    /* ─── Blog ──────────────────────────────────────────────── */
-    .blog-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-      margin-bottom: 48px;
-    }
-    .blog-card {
-      border: 1px solid var(--greige);
-      border-radius: 0;
-      overflow: hidden;
-      background: var(--white);
-      transition:
-        transform var(--transition),
-        box-shadow var(--transition);
-    }
-    .blog-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-md);
-    }
-    .blog-img {
-      aspect-ratio: 16/9;
-      overflow: hidden;
-    }
-    .blog-img img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-    .blog-card:hover .blog-img img { transform: scale(1.06); }
-    .blog-body {
-      padding: 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .blog-meta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-family: var(--font-body);
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-    }
-    .blog-cat  { color: var(--tan); }
-    .blog-date { color: var(--tan); }
-    .blog-sep  { color: var(--greige); }
-    .blog-title {
-      font-family: var(--font-display);
-      font-size: 20px;
-      font-weight: 400;
-      color: var(--brown);
-      line-height: 1.35;
-      transition: color var(--transition);
-    }
-    .blog-card:hover .blog-title { color: var(--purple); }
-    .blog-excerpt {
-      font-family: var(--font-body);
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.65;
-    }
-
     /* ─── Get Involved ──────────────────────────────────────── */
     .get-involved {
       padding: 96px 0;
@@ -1099,7 +1033,6 @@
       .campaign-card    { grid-template-columns: 1fr; }
       .campaign-img     { height: 180px; }
       .artisans-inner   { grid-template-columns: 1fr; }
-      .blog-grid        { grid-template-columns: 1fr; }
       .impact-grid      { grid-template-columns: 1fr 1fr; }
       .footer-top       { grid-template-columns: 1fr; gap: 32px; }
       .stats-head       { padding: 26px 24px 18px; }
@@ -1651,70 +1584,6 @@
   </section>
 
 
-  <!-- ═══ BLOG ══════════════════════════════════════════════ -->
-  <section class="section bg-cream">
-    <div class="container">
-      <div class="section-header">
-        <p class="section-label">Stories &amp; Updates</p>
-        <h2 class="section-title">From the Blog</h2>
-      </div>
-
-      <div class="blog-grid">
-
-        <article class="blog-card">
-          <div class="blog-img">
-            <img src="https://picsum.photos/seed/lotus-bloom/640/360" alt="" loading="lazy">
-          </div>
-          <div class="blog-body">
-            <div class="blog-meta">
-              <span class="blog-cat">Transparency</span>
-              <span class="blog-sep">·</span>
-              <span class="blog-date">June 2026</span>
-            </div>
-            <h3 class="blog-title">Q2 2026 — Where the Profit Went</h3>
-            <p class="blog-excerpt">A full breakdown of revenue, operating costs, and how the community support share was distributed this quarter.</p>
-          </div>
-        </article>
-
-        <article class="blog-card">
-          <div class="blog-img">
-            <img src="https://picsum.photos/seed/hue-craft-story/640/360" alt="" loading="lazy">
-          </div>
-          <div class="blog-body">
-            <div class="blog-meta">
-              <span class="blog-cat">Craft Story</span>
-              <span class="blog-sep">·</span>
-              <span class="blog-date">May 2026</span>
-            </div>
-            <h3 class="blog-title">The Art of the Hue Ceremonial Bell</h3>
-            <p class="blog-excerpt">How a centuries-old tradition of bronze casting survives in the workshops of a single family in central Hue.</p>
-          </div>
-        </article>
-
-        <article class="blog-card">
-          <div class="blog-img">
-            <img src="https://picsum.photos/seed/community-morning/640/360" alt="" loading="lazy">
-          </div>
-          <div class="blog-body">
-            <div class="blog-meta">
-              <span class="blog-cat">Community</span>
-              <span class="blog-sep">·</span>
-              <span class="blog-date">April 2026</span>
-            </div>
-            <h3 class="blog-title">A Decade of Quiet Work, Now Made Official</h3>
-            <p class="blog-excerpt">The story behind Pure Community Support — why Lam and her team decided that ten years of personal effort deserved an official home.</p>
-          </div>
-        </article>
-
-      </div>
-
-      <div class="section-cta">
-        <a href="/blog" class="btn btn-ghost">Read More</a>
-      </div>
-    </div>
-  </section>
-
-
   <!-- ═══ IMAGE DIVIDER 4 ═══════════════════════════════════ -->
   <div class="img-divider" style="height: 260px;">
     <img src="https://picsum.photos/seed/hue-fabric-soft/1600/260" alt="" role="presentation" loading="lazy">
@@ -1771,7 +1640,6 @@
               <li><a href="/about"   class="footer-link">About</a></li>
               <li><a href="/cases"   class="footer-link">Campaigns</a></li>
               <li><a href="/impact"  class="footer-link">Impact</a></li>
-              <li><a href="/blog"    class="footer-link">Blog</a></li>
               <li><a href="/get-involved" class="footer-link">Get Involved</a></li>
             </ul>
           </div>
@@ -1880,6 +1748,7 @@
     }, { passive: true });
     scrollBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   </script>
+  <script src="assets/js/scroll-hover.js"></script>
   <script src="assets/js/order-list.js"></script>
 </body>
 </html>

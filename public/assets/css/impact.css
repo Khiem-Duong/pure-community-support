@@ -696,10 +696,11 @@ html.js .split-bar.in .split-bar-seg { flex-basis: 50%; }
   grid-template-columns: repeat(3, 1fr);
   gap: 28px 20px;
 }
+/* Hover effects only when a card links to a recap (cards are plain <article>s until recaps are published). */
 .report-card { display: block; transition: transform 0.45s var(--ease-out); }
-.report-card:hover { transform: translateY(-6px); }
-.report-card:hover .frame > .ph,
-.report-card:hover .frame > img { transform: scale(1.06); }
+a.report-card:hover { transform: translateY(-6px); }
+a.report-card:hover .frame > .ph,
+a.report-card:hover .frame > img { transform: scale(1.06); }
 .report-card .frame { margin-bottom: 18px; }
 .report-card .frame::after {
   content: '';
@@ -709,7 +710,7 @@ html.js .split-bar.in .split-bar-seg { flex-basis: 50%; }
   background: rgba(101,46,134,0);
   transition: background 0.4s ease;
 }
-.report-card:hover .frame::after { background: rgba(101,46,134,0.14); }
+a.report-card:hover .frame::after { background: rgba(101,46,134,0.14); }
 .report-kind {
   font-size: 9px;
   font-weight: 700;
@@ -728,7 +729,7 @@ html.js .split-bar.in .split-bar-seg { flex-basis: 50%; }
   display: inline;
   transition: background-size 0.45s var(--ease-out), color 0.3s ease;
 }
-.report-card:hover h3 { background-size: 100% 1px; color: var(--purple); }
+a.report-card:hover h3 { background-size: 100% 1px; color: var(--purple); }
 .report-card p { font-size: 14px; color: var(--muted); margin-top: 8px; }
 
 .annual {

@@ -12,6 +12,13 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.6.3] - 2026-10-19
+### What changed
+- Hover effects (card lifts, photo zooms, overlays) no longer start while the page is scrolling: pointer events are switched off during a scroll and for about 150ms after it stops, on mouse and trackpad only. New shared file assets/js/scroll-hover.js (loaded on every page), rule in nav-menu.css
+- Removed the blog from the public site until it exists: home page "From the Blog" section and its styles, and the footer "Blog" link on every page
+- Reports page: recap cards and "Read the full recap" no longer link to /blog (cards are plain until recaps are published; their hover effects only apply when they are links)
+- About, Impact and Reports text no longer refers to the blog (recaps are described as published on the Reports page)
+
 ## [0.6.2] - 2026-10-15
 ### What changed
 - Admin: the sidebar stays in view under the top bar while the page scrolls (wider than 900px), and scrolls on its own if taller than the window; the phone menu is unchanged
