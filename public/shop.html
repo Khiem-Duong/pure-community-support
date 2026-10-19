@@ -1093,9 +1093,12 @@
     });
 
     /* ── Catalog data ───────────────────────────
-       Products live in assets/js/products.js (shared with item.html). */
-    const COLLECTIONS = window.PURE_COLLECTIONS;
-    const PRODUCTS = window.PURE_PRODUCTS;
+       Products come from the D1 database through PURE_LOAD_CATALOG() (assets/js/products.js,
+       shared with item.html); products switched to Hidden in the admin are never included.
+       The filter chips are the tags used by at least one product. */
+    let COLLECTIONS = [];
+    let PRODUCTS = [];
+    let loaded = false;
 
     const MIN_PER_PAGE = 12; // products per page on ordinary screens
     const MIN_ROWS = 2;      // the minimum, not a cap: taller windows get as many rows as fit
@@ -1112,7 +1115,7 @@
     const sortSelect = document.getElementById('sort-select');
 
     function currentList() {
-      let list = PRODUCTS.filter(p => state.collection === 'all' || p.collection === state.collection);
+      let list = PRODUCTS.filter(p => state.collection === 'all' || p.tags.includes(state.collection));
       if (state.sort === 'az') list = [...list].sort((a, b) => a.name.localeCompare(b.name));
       if (state.sort === 'za') list = [...list].sort((a, b) => b.name.localeCompare(a.name));
       return list;
@@ -1120,7 +1123,7 @@
 
     function renderChips() {
       const chips = [{ id: 'all', name: 'All' }, ...COLLECTIONS].map(c => {
-        const count = c.id === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.collection === c.id).length;
+        const count = c.id === 'all' ? PRODUCTS.length : PRODUCTS.filter(p => p.tags.includes(c.id)).length;
         const active = state.collection === c.id;
         return `<button class="chip${active ? ' active' : ''}" type="button" data-collection="${c.id}" aria-pressed="${active}"><span>${esc(c.name)}<span class="chip-count">${count}</span></span></button>`;
       }).join('');
@@ -1202,6 +1205,7 @@
 
     /* keepIndex: stay on whichever page holds this product (used when the layout changes). */
     function render(isRetry, keepIndex) {
+      if (!loaded) return;
       const list = currentList();
       layout = gridLayout();
       const counts = pageCounts(list.length, layout);
@@ -1367,14 +1371,24 @@
       if (e.key === 'ArrowLeft') step(-1);
     });
 
-    const requested = new URLSearchParams(location.search).get('collection');
-    if (COLLECTIONS.some(c => c.id === requested)) state.collection = requested;
+    resultCount.textContent = 'Loading products…';
+    window.PURE_LOAD_CATALOG().then(catalog => {
+      PRODUCTS = catalog.products;
+      COLLECTIONS = catalog.collections;
+      loaded = true;
 
-    renderChips();
-    render();
+      const requested = new URLSearchParams(location.search).get('collection');
+      if (COLLECTIONS.some(c => c.id === requested)) state.collection = requested;
 
-    const hashMatch = location.hash.match(/^#item-(.+)$/);
-    if (hashMatch && PRODUCTS.some(p => p.id === hashMatch[1])) openQuickView(hashMatch[1]);
+      renderChips();
+      render();
+
+      const hashMatch = location.hash.match(/^#item-(.+)$/);
+      if (hashMatch && PRODUCTS.some(p => p.id === hashMatch[1])) openQuickView(hashMatch[1]);
+    }).catch(() => {
+      resultCount.textContent = '';
+      grid.innerHTML = '<p class="empty-state">The products couldn’t be loaded. Please refresh the page to try again.</p>';
+    });
 
     /* Scroll to top */
     const scrollBtn = document.getElementById('scroll-top');

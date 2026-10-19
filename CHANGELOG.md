@@ -12,6 +12,16 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.7.0] - 2026-10-19
+### What changed
+- Product data moved to the D1 database: new tables products, tags and product_tags (schema.sql), filled once from the old catalog with seed-catalog.sql (run both in the D1 Console)
+- Shown / Hidden in the admin now controls the shop: hidden products are left out of the shop grid, quick view, related items and order lists, and their item pages show "This item isn't available"; changes appear within about a minute
+- Admin: adding and editing products, the Shown / Hidden switch, batch delete and batch price change, and adding, renaming and deleting tags now save to D1 for everyone (undo kept for the switch, delete and price change); the "kept in this browser only" notices and "Discard changes" buttons are gone
+- Admin: optional Vietnamese fields (name, description, material, colour) in the product editor and a Vietnamese name for tags; saved in D1, not shown on the website yet
+- New Worker routes (worker/catalog.js): public GET /api/products (Shown products only, cached for a minute) and signed-in /admin/api routes that check role, request origin and every field; wrangler.jsonc sends /api/* to the Worker
+- Shop, item and order list pages load products from /api/products and show a "please refresh" message if it fails (order lists are kept); the shop's filter chips are now built from tags, and a product appears under each of its tags
+- assets/js/products.js now only lists photos by product id until R2 is connected; products without a photo show the lotus placeholder
+
 ## [0.6.7] - 2026-10-19
 ### What changed
 - Added site.webmanifest (name "Pure Community Support", short name "Pure", cream background and theme colour) with 192 and 512px app icons (lotus on cream, app-icon-v1.1-*.png) for Android "Add to Home screen"

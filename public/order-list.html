@@ -606,9 +606,12 @@
     document.querySelectorAll('[data-reveal]').forEach(el => revealObserver.observe(el));
 
     /* ── Order list ─────────────────────────── */
+    /* Products come from the D1 database through PURE_LOAD_CATALOG() (assets/js/products.js).
+       Items that are no longer in the shop (deleted, or switched to Hidden in the admin) are
+       dropped from the list once the catalog has loaded. */
     const Order = window.PureOrder;
-    const PRODUCTS = window.PURE_PRODUCTS;
-    const COLLECTIONS = window.PURE_COLLECTIONS;
+    let PRODUCTS = [];
+    let COLLECTIONS = [];
     const money = window.PURE_FORMAT_PRICE;
     const $ = id => document.getElementById(id);
     const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
@@ -786,10 +789,20 @@
       showToast('Order list cleared.', () => Order.replace(snapshot));
     });
 
-    /* Undo, or another tab, changed the list */
-    Order.onChange(() => { if (!busy) render(); });
+    window.PURE_LOAD_CATALOG().then(catalog => {
+      PRODUCTS = catalog.products;
+      COLLECTIONS = catalog.collections;
 
-    render();
+      /* Undo, or another tab, changed the list */
+      Order.onChange(() => { if (!busy) render(); });
+
+      render();
+    }).catch(() => {
+      // Keep the visitor's list as it is: without the catalog nothing can be checked or shown.
+      $('ol-empty').querySelector('h2').textContent = 'Your order list couldn’t be loaded';
+      $('ol-empty').querySelector('p').textContent = 'Your items are still saved. Please refresh the page to try again.';
+      $('ol-empty').hidden = false;
+    });
   </script>
 
 </body>

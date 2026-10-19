@@ -44,3 +44,49 @@ CREATE TABLE IF NOT EXISTS login_attempts (
 );
 CREATE INDEX IF NOT EXISTS idx_attempts_email ON login_attempts(email, created_at);
 CREATE INDEX IF NOT EXISTS idx_attempts_ip    ON login_attempts(ip, created_at);
+
+/* ── Shop ──────────────────────────────────────
+   Product data for the shop, edited in /admin (Products, Tags). All of it is public.
+   Photos are not stored here: until R2 is connected, the shop takes each product's photo
+   from assets/js/products.js by product id. The *_vi columns stay empty until the
+   Vietnamese version is built (TODO); pages fall back to the English text. */
+
+/* Tags, edited on the admin Tags screen; a product can have several.
+   Replaces the shop's single "collection" per product. */
+CREATE TABLE IF NOT EXISTS tags (
+  id         TEXT    PRIMARY KEY CHECK (length(id) BETWEEN 1 AND 80),  /* slug, e.g. "resort" */
+  name       TEXT    NOT NULL UNIQUE COLLATE NOCASE CHECK (length(name) BETWEEN 1 AND 60),
+  name_vi    TEXT,
+  sort_order INTEGER NOT NULL DEFAULT 0
+);
+
+/* Products. "shown" is the admin's Shown / Hidden switch: hidden products are left out
+   of the shop grid, quick view, item pages and new order list additions. */
+CREATE TABLE IF NOT EXISTS products (
+  id             TEXT    PRIMARY KEY CHECK (length(id) BETWEEN 1 AND 80),  /* slug, used in /shop/<id> */
+  name           TEXT    NOT NULL CHECK (length(name) BETWEEN 1 AND 200),
+  name_vi        TEXT,
+  description    TEXT,
+  description_vi TEXT,
+  price_cents    INTEGER CHECK (price_cents BETWEEN 0 AND 10000000),       /* USD cents; NULL shows "Price TBD" */
+  maker          TEXT,
+  material       TEXT,
+  material_vi    TEXT,
+  colour         TEXT,
+  colour_vi      TEXT,
+  shown          INTEGER NOT NULL DEFAULT 1 CHECK (shown IN (0, 1)),      /* 1 = Shown, 0 = Hidden */
+  is_new         INTEGER NOT NULL DEFAULT 0 CHECK (is_new IN (0, 1)),     /* "New" badge */
+  sort_order     INTEGER NOT NULL DEFAULT 0,                              /* shop order, lowest first */
+  created_at     TEXT    NOT NULL DEFAULT (datetime('now')),
+  updated_at     TEXT    NOT NULL DEFAULT (datetime('now')),
+  updated_by     INTEGER REFERENCES users(id) ON DELETE SET NULL
+);
+CREATE INDEX IF NOT EXISTS idx_products_shown ON products(shown, sort_order);
+
+/* Which tags each product has. Deleting a product or a tag removes its rows here. */
+CREATE TABLE IF NOT EXISTS product_tags (
+  product_id TEXT NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  tag_id     TEXT NOT NULL REFERENCES tags(id)     ON DELETE CASCADE,
+  PRIMARY KEY (product_id, tag_id)
+);
+CREATE INDEX IF NOT EXISTS idx_product_tags_tag ON product_tags(tag_id);

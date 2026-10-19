@@ -83,7 +83,6 @@
     .btn:disabled { opacity: .45; cursor: not-allowed; }
     .btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; }
     .notice { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; padding: 12px 16px; margin-bottom: 20px; border-radius: var(--radius); background: rgba(178,150,125,.18); border: 1px solid var(--tan); font-weight: 500; }
-    .notice .link-btn { margin-left: auto; min-height: 36px; padding: 0 4px; border: none; background: none; color: var(--purple); font-weight: 600; text-decoration: underline; }
     .empty-note { padding: 6px 0 2px; color: var(--muted); }
 
     /* ── Home ── */
@@ -227,8 +226,6 @@
     .drop-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
 
     /* Tags screen */
-    .tag-add { display: flex; flex-wrap: wrap; gap: 10px; }
-    .tag-add .input { flex: 1; min-width: 200px; }
     .tags-table td:last-child { text-align: right; white-space: nowrap; }
     .tag-edit { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .tag-edit .input { flex: 1; min-width: 180px; }
@@ -385,7 +382,8 @@
       <section data-screen="products" hidden>
         <h1>Products</h1>
         <p class="lead">Turn the switch off to hide a product from the shop. Use Edit to change a product's details, or tick products to act on several at once.</p>
-        <div class="notice"><span>Saving isn't connected yet. Changes are kept in this browser only and do not affect the shop.</span><button class="link-btn" type="button" data-clear-draft hidden>Discard changes</button></div>
+        <div class="notice">Changes are saved for everyone straight away and reach the shop within about a minute. Hidden products don't appear anywhere in the shop.</div>
+        <div class="error-summary" role="alert" data-catalog-error hidden></div>
         <div class="toolbar">
           <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><label class="sr-only" for="product-search">Search products</label><input id="product-search" type="search" placeholder="Search by name"></div>
           <div class="ms filter-ms" id="tag-filter">
@@ -429,7 +427,7 @@
         <a class="back" href="/admin/products" data-link>← All products</a>
         <h1 id="editor-title">Edit product</h1>
         <p class="lead" id="editor-lead"></p>
-        <div class="notice">Saving isn't connected yet. Saved products are kept in this browser only and do not affect the shop.</div>
+        <div class="notice">Saving updates the shop within about a minute. Photos aren't saved yet: photo storage isn't connected.</div>
         <div class="error-summary" id="editor-errors" tabindex="-1" role="alert" hidden></div>
         <form id="product-form" novalidate>
           <fieldset class="plain" id="product-fields">
@@ -471,6 +469,28 @@
                       <label class="label" for="pf-colour">Colour</label>
                       <input class="input" id="pf-colour" name="colour" maxlength="80" autocomplete="off" aria-describedby="err-colour">
                       <p class="field-error" id="err-colour" hidden></p>
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <h2>Vietnamese</h2>
+                  <p class="hint">Optional for now. Saved with the product, but not shown on the website until the Vietnamese pages are built.</p>
+                  <div class="field">
+                    <label class="label" for="pf-name-vi">Name in Vietnamese</label>
+                    <input class="input" id="pf-name-vi" name="nameVi" lang="vi" maxlength="120" autocomplete="off">
+                  </div>
+                  <div class="field">
+                    <label class="label" for="pf-desc-vi">Description in Vietnamese</label>
+                    <textarea class="input" id="pf-desc-vi" name="descVi" lang="vi" maxlength="1000" rows="5"></textarea>
+                  </div>
+                  <div class="field-row">
+                    <div class="field">
+                      <label class="label" for="pf-material-vi">Material in Vietnamese</label>
+                      <input class="input" id="pf-material-vi" name="materialVi" lang="vi" maxlength="80" autocomplete="off">
+                    </div>
+                    <div class="field">
+                      <label class="label" for="pf-colour-vi">Colour in Vietnamese</label>
+                      <input class="input" id="pf-colour-vi" name="colourVi" lang="vi" maxlength="80" autocomplete="off">
                     </div>
                   </div>
                 </div>
@@ -541,16 +561,24 @@
       <section data-screen="tags" hidden>
         <h1>Tags</h1>
         <p class="lead">Tags group products in the shop, like the collection filters on the shop page. Tags added here appear in every product's tag list.</p>
-        <div class="notice"><span>Saving isn't connected yet. Changes are kept in this browser only and do not affect the shop.</span><button class="link-btn" type="button" data-clear-draft hidden>Discard changes</button></div>
+        <div class="notice">Changes are saved for everyone straight away and reach the shop within about a minute.</div>
+        <div class="error-summary" role="alert" data-catalog-error hidden></div>
         <form class="card" id="tag-add-form" novalidate>
           <h2>Add a tag</h2>
           <p class="hint">Use a short name shoppers will understand, like "Resort wear".</p>
-          <label class="label" for="tag-new">Tag name</label>
-          <div class="tag-add">
-            <input class="input" id="tag-new" maxlength="40" autocomplete="off" aria-describedby="err-tag-new" data-edit>
-            <button class="btn btn-primary" type="submit" data-edit>Add tag</button>
+          <div class="field-row">
+            <div class="field">
+              <label class="label" for="tag-new">Tag name</label>
+              <input class="input" id="tag-new" maxlength="40" autocomplete="off" aria-describedby="err-tag-new" data-edit>
+              <p class="field-error" id="err-tag-new" hidden></p>
+            </div>
+            <div class="field">
+              <label class="label" for="tag-new-vi">Name in Vietnamese</label>
+              <input class="input" id="tag-new-vi" lang="vi" maxlength="40" autocomplete="off" aria-describedby="tag-vi-note" data-edit>
+            </div>
           </div>
-          <p class="field-error" id="err-tag-new" hidden></p>
+          <p class="field-note" id="tag-vi-note">The Vietnamese name is optional for now and isn't shown on the website yet.</p>
+          <div class="form-actions"><button class="btn btn-primary" type="submit" data-edit>Add tag</button></div>
         </form>
         <div class="card">
           <h2>All tags</h2>
@@ -601,75 +629,61 @@
     const isSuper = ROLE === 'superadmin';
     const canEdit = ROLE !== 'viewer';
 
-    /* Live site data */
-    const PRODUCTS = window.PURE_PRODUCTS || [];
-    const COLLECTIONS = window.PURE_COLLECTIONS || [];
+    /* Site data */
+    const PHOTOS = window.PURE_PHOTOS || {};
     const CAMPAIGNS = window.PURE_CAMPAIGNS || [];
     const formatPrice = window.PURE_FORMAT_PRICE || (n => '$' + n);
 
-    /* ── Working copy ──
-       Saving isn't connected yet (D1 for data, R2 for photos), so products and tags changed
-       here are kept in this browser's localStorage only; they never reach the shop or other
-       admins. It starts from the live catalog, with the shop's collections as the first tags.
-       `changed` holds every product edited or added here, by id; `deleted` the ids of live
-       products deleted here. */
-    const DRAFT_KEY = 'pcs-admin-draft';
-    const draft = (() => {
-      try { return JSON.parse(localStorage.getItem(DRAFT_KEY)) || {}; } catch { return {}; }
-    })();
-    const tags = Array.isArray(draft.tags) ? draft.tags : COLLECTIONS.map(c => ({ id: c.id, name: c.name }));
-    const changed = draft.changed && typeof draft.changed === 'object' ? draft.changed : {};
-    const deleted = new Set(Array.isArray(draft.deleted) ? draft.deleted : []);
-    // Drafts saved before "In stock / Sold out" became "Shown / Hidden".
-    Object.values(changed).forEach(p => {
-      if (!('shown' in p)) p.shown = p.inStock !== false;
-      delete p.inStock;
-    });
+    /* ── Catalog ──
+       Products and tags live in the D1 database and are changed through the Worker's
+       /admin/api (see worker/catalog.js). Every change answers with the whole updated catalog,
+       so this page always matches the database; the shop catches up within about a minute.
+       Photos aren't stored yet (R2): each product's photo comes from assets/js/products.js. */
     let products = [];
+    const tags = [];
+    let catalogState = 'loading'; // loading | ready | failed
 
-    const isLive = id => PRODUCTS.some(p => p.id === id);
-    const fromLive = p => ({
-      id: p.id, name: p.name, desc: p.desc || '',
-      price: typeof p.price === 'number' ? p.price : null,
-      material: p.material || '', colour: p.colour || '', maker: p.maker || '',
-      tags: p.collection ? [p.collection] : [],
-      img: p.img ? '/' + p.img : '',
-      shown: true, // Shown / hidden isn't stored anywhere yet, so everything starts as shown.
-      isNew: Boolean(p.isNew),
-    });
-    function buildProducts() {
-      const added = Object.values(changed).filter(p => !isLive(p.id));
-      products = [...PRODUCTS.filter(p => !deleted.has(p.id)).map(p => changed[p.id] || fromLive(p)), ...added];
+    function applyCatalog(catalog) {
+      products = catalog.products.map(p => ({ ...p, img: PHOTOS[p.id] ? '/' + PHOTOS[p.id].img : '' }));
+      tags.splice(0, tags.length, ...catalog.tags);
       for (const id of picked) if (!products.some(p => p.id === id)) picked.delete(id);
+      catalogState = 'ready';
+      $('n-products').textContent = products.length;
     }
-    function hasDraft() {
-      try { return localStorage.getItem(DRAFT_KEY) !== null; } catch { return false; }
+
+    /* Calls /admin/api. Resolves to the answer (and applies its catalog); rejects with a message to show. */
+    async function api(method, path, body) {
+      let res;
+      try {
+        res = await fetch(`/admin/api/${path}`, {
+          method,
+          headers: body ? { 'Content-Type': 'application/json' } : {},
+          body: body ? JSON.stringify(body) : undefined,
+        });
+      } catch {
+        throw new Error('Couldn’t reach the server. Check your connection and try again.');
+      }
+      if (res.status === 401) throw new Error('Your session has ended. Sign in again in a new tab, then try again here.');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
+      if (data.catalog) applyCatalog(data.catalog);
+      return data;
     }
-    function writeDraft() {
-      let kept = true;
-      try { localStorage.setItem(DRAFT_KEY, JSON.stringify({ tags, changed, deleted: [...deleted] })); } catch { kept = false; }
-      document.querySelectorAll('[data-clear-draft]').forEach(b => b.hidden = !canEdit || !hasDraft());
-      return kept;
+    /* A change from a button: its error is shown as a toast. Resolves to the answer, or null. */
+    async function change(method, path, body) {
+      try {
+        return await api(method, path, body);
+      } catch (err) {
+        toast(err.message);
+        return null;
+      }
     }
-    function saveProducts(list) {
-      list.forEach(p => changed[p.id] = p);
-      buildProducts();
-      return writeDraft();
+    function showCatalogError(text) {
+      document.querySelectorAll('[data-catalog-error]').forEach(el => {
+        el.textContent = text;
+        el.hidden = !text;
+      });
     }
-    const saveProduct = p => saveProducts([p]);
-    /* Undo for bulk changes: take a snapshot before, restore it on Undo. */
-    const snapshot = () => JSON.stringify({ tags, changed, deleted: [...deleted] });
-    function restore(snap) {
-      const s = JSON.parse(snap);
-      tags.splice(0, tags.length, ...s.tags);
-      Object.keys(changed).forEach(id => delete changed[id]);
-      Object.assign(changed, s.changed);
-      deleted.clear();
-      s.deleted.forEach(id => deleted.add(id));
-      buildProducts();
-      writeDraft();
-    }
-    const savedText = kept => kept ? 'saved in this browser' : 'kept for this visit only (this browser blocks storage)';
 
     const tagName = id => (tags.find(t => t.id === id) || {}).name || '';
     const tagNames = p => p.tags.map(tagName).filter(Boolean).join(', ');
@@ -679,17 +693,6 @@
     const editUrl = id => `/admin/products/${encodeURIComponent(id)}`;
     const PRICE_PATTERN = /^\d{1,6}(\.\d{1,2})?$/;
     const validPrice = s => PRICE_PATTERN.test(s) && Number(s) <= 100000;
-
-    /* URL-safe id from a name: "Bình gốm" → "binh-gom" */
-    function slugify(text) {
-      return text.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-').replace(/^-+/, '').slice(0, 60).replace(/-+$/, '') || 'item';
-    }
-    function uniqueId(base, taken) {
-      let id = base, n = 2;
-      while (taken(id)) id = `${base}-${n++}`;
-      return id;
-    }
 
     /* ── Navigation ──
        Each screen has its own address (/admin/products, /admin/tags, /admin/products/<id>),
@@ -737,7 +740,12 @@
     }
     function route() {
       const [view = 'home', sub] = location.pathname.replace(/\/+$/, '').split('/').slice(2);
-      if (view === 'products' && sub) openEditor(decodeURIComponent(sub));
+      if (view === 'products' && sub && catalogState === 'loading') {
+        // The editor opens once the catalog has loaded (route() runs again then).
+        setCurrent('products');
+        renderProducts();
+        showScreen('products');
+      } else if (view === 'products' && sub) openEditor(decodeURIComponent(sub));
       else show(view);
     }
 
@@ -784,12 +792,6 @@
       toastTimer = setTimeout(() => $('toast').classList.remove('show'), 6000);
     }
     $('toast-undo').addEventListener('click', () => { if (undoFn) undoFn(); $('toast').classList.remove('show'); });
-
-    document.querySelectorAll('[data-clear-draft]').forEach(b => b.addEventListener('click', () => {
-      if (!confirm('Discard every product and tag change saved in this browser? This cannot be undone.')) return;
-      try { localStorage.removeItem(DRAFT_KEY); } catch {}
-      location.reload();
-    }));
 
     /* ── Confirmation popup ──
        openModal({ title, bodyHtml, okText, danger, onOk }). onOk runs when the confirm button
@@ -885,17 +887,28 @@
           <td><button class="switch" type="button" role="switch" aria-checked="${p.shown}" data-id="${esc(p.id)}" ${canEdit ? '' : 'disabled'}><span class="track" aria-hidden="true"></span>${p.shown ? 'Shown' : 'Hidden'}</button></td>
           <td><a class="btn" href="${editUrl(p.id)}" data-link>${canEdit ? 'Edit' : 'View'}<span class="sr-only"> ${esc(p.name)}</span></a></td>
         </tr>`).join('');
-      $('product-empty').hidden = list.length > 0;
+      const empty = $('product-empty');
+      empty.hidden = list.length > 0 || catalogState === 'failed';
+      empty.textContent = catalogState === 'loading' ? 'Loading products…'
+        : products.length ? 'No products match. Try a different word, or choose "All".'
+        : 'No products yet. Use "Add a product" to add the first one.';
       renderTagFilterLabel();
       renderBatch();
     }
-    $('product-rows').addEventListener('click', e => {
+    $('product-rows').addEventListener('click', async e => {
       const sw = e.target.closest('.switch');
-      if (!sw) return;
+      if (!sw || sw.disabled) return;
       const p = products.find(x => x.id === sw.dataset.id);
-      const setShown = shown => { const kept = saveProduct({ ...p, shown }); renderProducts(); return kept; };
-      const kept = setShown(!p.shown);
-      toast(`${p.name} is now ${p.shown ? 'hidden' : 'shown'}, ${savedText(kept)}.`, () => setShown(p.shown));
+      if (!p) return;
+      const setShown = async shown => {
+        sw.disabled = true;
+        const done = await change('PATCH', `products/${encodeURIComponent(p.id)}`, { shown });
+        renderProducts();
+        return done;
+      };
+      if (await setShown(!p.shown)) {
+        toast(`${p.name} is now ${p.shown ? 'hidden from' : 'shown in'} the shop.`, () => setShown(p.shown));
+      }
     });
     $('product-rows').addEventListener('change', e => {
       const id = e.target.dataset.pick;
@@ -978,13 +991,10 @@
         bodyHtml: `<p>These ${nProducts(list.length)} will be deleted:</p>${productListHtml(list)}`,
         okText: 'Delete',
         danger: true,
-        onOk() {
-          const before = snapshot();
-          list.forEach(p => { if (isLive(p.id)) deleted.add(p.id); delete changed[p.id]; });
-          buildProducts();
-          const kept = writeDraft();
+        async onOk() {
+          if (!await change('POST', 'products/batch', { action: 'delete', ids: list.map(p => p.id) })) return;
           clearPicked();
-          toast(`Deleted ${nProducts(list.length)}, ${savedText(kept)}.`, () => { restore(before); renderProducts(); });
+          toast(`Deleted ${nProducts(list.length)}.`, () => restoreProducts(list, `Restored ${nProducts(list.length)}.`));
         },
       });
     }
@@ -1005,12 +1015,20 @@
           const input = $('modal-price');
           const value = input.value.trim();
           if (!validPrice(value)) { modalFieldError(input, 'Enter a price in US dollars, like 48 or 48.50.'); return false; }
-          const before = snapshot();
-          const kept = saveProducts(list.map(p => ({ ...p, price: Number(value) })));
-          renderProducts();
-          toast(`Set the price of ${nProducts(list.length)} to ${formatPrice(Number(value))}, ${savedText(kept)}.`, () => { restore(before); renderProducts(); });
+          (async () => {
+            if (!await change('POST', 'products/batch', { action: 'price', ids: list.map(p => p.id), price: Number(value) })) return;
+            renderProducts();
+            toast(`Set the price of ${nProducts(list.length)} to ${formatPrice(Number(value))}.`, () => restoreProducts(list, 'Prices changed back.'));
+          })();
         },
       });
+    }
+
+    /* Undo for Delete selection and Modify price: puts the products back as they were. */
+    async function restoreProducts(list, doneText) {
+      if (!await change('POST', 'products/batch', { action: 'restore', products: list })) return;
+      renderProducts();
+      toast(doneText);
     }
 
     /* PDF export: asks for a title, builds a branded print layout and opens the browser's
@@ -1082,11 +1100,12 @@
     const photo = { file: null, url: '', original: '' };
     const form = $('product-form');
     const TEXT_FIELDS = ['name', 'desc', 'price', 'maker', 'material', 'colour'];
+    const VI_FIELDS = ['nameVi', 'descVi', 'materialVi', 'colourVi']; // optional; not on the website yet
     const FIELD_LABELS = { name: 'a name', desc: 'a description', price: 'a price', maker: 'who made it', material: 'the material', colour: 'the colour' };
     const val = name => form.elements[name].value.trim();
 
     function formState() {
-      return JSON.stringify([...TEXT_FIELDS.map(val), form.elements.shown.value, form.elements.isnew.value, [...selected].sort(), Boolean(photo.file)]);
+      return JSON.stringify([...TEXT_FIELDS.map(val), ...VI_FIELDS.map(val), form.elements.shown.value, form.elements.isnew.value, [...selected].sort(), Boolean(photo.file)]);
     }
 
     function openEditor(id) {
@@ -1109,6 +1128,7 @@
       showErrors([]);
       if (product) {
         TEXT_FIELDS.forEach(name => form.elements[name].value = name === 'price' ? (product.price ?? '') : product[name]);
+        VI_FIELDS.forEach(name => form.elements[name].value = product[name]);
         form.elements.shown.value = product.shown ? 'yes' : 'no';
         form.elements.isnew.value = product.isNew ? 'yes' : 'no';
       }
@@ -1164,31 +1184,47 @@
       $(link.dataset.focus).focus();
     });
 
-    form.addEventListener('submit', e => {
+    let saving = false;
+    form.addEventListener('submit', async e => {
       e.preventDefault();
-      if (!canEdit || !editor) return;
+      if (!canEdit || !editor || saving) return;
       const isNew = !editor.id;
       const errors = validate(isNew);
       showErrors(errors);
       if (errors.length) { $('editor-errors').focus(); return; }
 
-      const base = isNew ? null : products.find(p => p.id === editor.id);
       const product = {
-        id: base ? base.id : uniqueId(slugify(val('name')), id => id === 'new' || isLive(id) || id in changed),
         name: cleanName(val('name')),
+        nameVi: cleanName(val('nameVi')),
         desc: val('desc'),
+        descVi: val('descVi'),
         price: Number(val('price')),
-        maker: val('maker'), material: val('material'), colour: val('colour'),
+        maker: val('maker'),
+        material: val('material'),
+        materialVi: val('materialVi'),
+        colour: val('colour'),
+        colourVi: val('colourVi'),
         tags: tags.filter(t => selected.has(t.id)).map(t => t.id),
-        img: base ? base.img : '',
         shown: form.elements.shown.value === 'yes',
         isNew: form.elements.isnew.value === 'yes',
       };
-      const kept = saveProduct(product);
+      saving = true;
+      $('product-save').disabled = true;
+      $('product-save').textContent = 'Saving…';
+      try {
+        await api(isNew ? 'POST' : 'PUT', isNew ? 'products' : `products/${encodeURIComponent(editor.id)}`, product);
+      } catch (err) {
+        toast(err.message);
+        return;
+      } finally {
+        saving = false;
+        $('product-save').disabled = false;
+        $('product-save').textContent = 'Save product';
+      }
       const photoNote = photo.file ? ' The new photo wasn’t kept: photo saving isn’t connected yet.' : '';
       editor = null;
       go('/admin/products');
-      toast(`${product.name} ${isNew ? 'added' : 'updated'}, ${savedText(kept)}.${photoNote}`);
+      toast(`${product.name} ${isNew ? 'added' : 'saved'}. The shop shows the change within about a minute.${photoNote}`);
     });
 
     /* Tags multiselect: choices come from the Tags screen. */
@@ -1265,6 +1301,12 @@
       if (tags.some(t => t.id !== exceptId && t.name.toLowerCase() === name.toLowerCase())) return 'There is already a tag with that name.';
       return '';
     }
+    function tagFieldError(input, msg, text) {
+      msg.textContent = text;
+      msg.hidden = !text;
+      if (text) { input.setAttribute('aria-invalid', 'true'); input.focus(); }
+      else input.removeAttribute('aria-invalid');
+    }
     function renderTags() {
       $('tag-rows').innerHTML = tags.map(t => {
         if (t.id === editingTag) return `
@@ -1272,6 +1314,8 @@
             <form class="tag-edit" id="tag-rename-form" novalidate>
               <label class="sr-only" for="tag-rename">New name for ${esc(t.name)}</label>
               <input class="input" id="tag-rename" maxlength="40" value="${esc(t.name)}" autocomplete="off" aria-describedby="err-tag-rename">
+              <label class="sr-only" for="tag-rename-vi">Name in Vietnamese</label>
+              <input class="input" id="tag-rename-vi" lang="vi" maxlength="40" value="${esc(t.nameVi)}" placeholder="Name in Vietnamese (optional)" autocomplete="off">
               <button class="btn btn-primary" type="submit">Save</button>
               <button class="btn" type="button" id="tag-rename-cancel">Cancel</button>
             </form>
@@ -1280,7 +1324,7 @@
         const count = productsWithTag(t.id).length;
         return `
           <tr>
-            <td><strong>${esc(t.name)}</strong></td>
+            <td><strong>${esc(t.name)}</strong>${t.nameVi ? `<br><span class="sub" lang="vi">${esc(t.nameVi)}</span>` : ''}</td>
             <td>${count} ${count === 1 ? 'product' : 'products'}</td>
             <td>
               <button class="btn" type="button" data-rename-tag="${esc(t.id)}" ${canEdit ? '' : 'disabled'}>Edit<span class="sr-only"> ${esc(t.name)}</span></button>
@@ -1288,31 +1332,37 @@
             </td>
           </tr>`;
       }).join('');
-      $('tag-empty').hidden = tags.length > 0;
+      const empty = $('tag-empty');
+      empty.hidden = tags.length > 0 || catalogState === 'failed';
+      empty.textContent = catalogState === 'loading' ? 'Loading tags…' : 'No tags yet. Add one above.';
       if (!editingTag) return;
       $('tag-rename').focus();
       $('tag-rename').select();
-      $('tag-rename-form').addEventListener('submit', e => {
+      $('tag-rename-form').addEventListener('submit', async e => {
         e.preventDefault();
         const tag = tags.find(t => t.id === editingTag);
-        const name = cleanName($('tag-rename').value);
+        const input = $('tag-rename');
+        const name = cleanName(input.value);
+        const nameVi = cleanName($('tag-rename-vi').value);
         const error = tagNameError(name, tag.id);
-        if (error) {
-          $('err-tag-rename').textContent = error;
-          $('err-tag-rename').hidden = false;
-          $('tag-rename').setAttribute('aria-invalid', 'true');
-          $('tag-rename').focus();
+        tagFieldError(input, $('err-tag-rename'), error);
+        if (error) return;
+        if (name === tag.name && nameVi === tag.nameVi) { editingTag = null; renderTags(); toast('No change.'); return; }
+        const button = e.currentTarget.querySelector('[type="submit"]');
+        button.disabled = true;
+        try {
+          await api('PUT', `tags/${encodeURIComponent(tag.id)}`, { name, nameVi });
+        } catch (err) {
+          button.disabled = false;
+          tagFieldError(input, $('err-tag-rename'), err.message);
           return;
         }
-        const old = tag.name;
-        tag.name = name;
-        const kept = writeDraft();
         editingTag = null;
         renderTags();
-        toast(old === name ? 'No change.' : `Renamed “${old}” to “${name}”, ${savedText(kept)}.`);
+        toast(name === tag.name ? `Saved the Vietnamese name of “${name}”.` : `Renamed “${tag.name}” to “${name}”.`);
       });
       $('tag-rename-cancel').addEventListener('click', () => { editingTag = null; renderTags(); });
-      $('tag-rename').addEventListener('keydown', e => { if (e.key === 'Escape') { editingTag = null; renderTags(); } });
+      $('tag-rename-form').addEventListener('keydown', e => { if (e.key === 'Escape') { editingTag = null; renderTags(); } });
     }
     $('tag-rows').addEventListener('click', e => {
       if (!canEdit) return;
@@ -1331,36 +1381,41 @@
           : '<p>No products use this tag.</p>',
         okText: 'Delete tag',
         danger: true,
-        onOk() {
-          const before = snapshot();
-          tags.splice(tags.indexOf(tag), 1);
-          const kept = saveProducts(using.map(p => ({ ...p, tags: p.tags.filter(t => t !== id) })));
+        async onOk() {
+          if (!await change('DELETE', `tags/${encodeURIComponent(id)}`)) return;
           renderTags();
-          toast(`Deleted the tag “${tag.name}”, ${savedText(kept)}.`, () => { restore(before); renderTags(); });
+          toast(`Deleted the tag “${tag.name}”.`);
         },
       });
     }
-    $('tag-add-form').addEventListener('submit', e => {
+    let addingTag = false;
+    $('tag-add-form').addEventListener('submit', async e => {
       e.preventDefault();
-      if (!canEdit) return;
+      if (!canEdit || addingTag) return;
       const input = $('tag-new');
       const name = cleanName(input.value);
+      const nameVi = cleanName($('tag-new-vi').value);
       const error = tagNameError(name);
-      $('err-tag-new').textContent = error;
-      $('err-tag-new').hidden = !error;
-      if (error) { input.setAttribute('aria-invalid', 'true'); input.focus(); return; }
-      input.removeAttribute('aria-invalid');
-      tags.push({ id: uniqueId(slugify(name), id => tags.some(t => t.id === id)), name });
-      const kept = writeDraft();
+      tagFieldError(input, $('err-tag-new'), error);
+      if (error) return;
+      addingTag = true;
+      try {
+        await api('POST', 'tags', { name, nameVi });
+      } catch (err) {
+        tagFieldError(input, $('err-tag-new'), err.message);
+        return;
+      } finally {
+        addingTag = false;
+      }
       input.value = '';
+      $('tag-new-vi').value = '';
       renderTags();
-      toast(`Tag “${name}” added, ${savedText(kept)}.`);
+      toast(`Tag “${name}” added.`);
     });
 
     /* Role: hide or turn off what this person can't use */
     document.querySelectorAll('[data-super-only]').forEach(el => el.hidden = !isSuper);
     document.querySelectorAll('[data-edit]').forEach(el => el.disabled = !canEdit);
-    document.querySelectorAll('[data-clear-draft]').forEach(b => b.hidden = !canEdit || !hasDraft());
     $('viewer-note').hidden = canEdit;
     $('attention-hint').textContent = isSuper
       ? 'Changes submitted by editors wait here for you to publish or send back.'
@@ -1369,12 +1424,17 @@
     /* Home */
     const h = new Date().getHours();
     $('greeting').textContent = `${h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'}, ${NAME}`;
-    $('n-products').textContent = PRODUCTS.length;
     $('n-running').textContent = CAMPAIGNS.filter(c => c.status === 'running').length;
     $('n-planned').textContent = CAMPAIGNS.filter(c => c.status === 'planned').length;
 
-    buildProducts();
     route();
+    api('GET', 'catalog').catch(err => {
+      catalogState = 'failed';
+      showCatalogError(`The products and tags couldn’t be loaded. ${err.message}`);
+    }).finally(() => {
+      // Screens opened while loading show the catalog now (and the editor can open).
+      if (/^\/admin\/(products|tags)(\/|$)/.test(location.pathname)) route();
+    });
   </script>
 </body>
 </html>

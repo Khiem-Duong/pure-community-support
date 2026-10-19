@@ -10,7 +10,8 @@
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
-    "run_worker_first": ["/admin", "/admin/*"]
+    // The Worker answers these itself: the admin, and /api/products (the shop catalog from D1).
+    "run_worker_first": ["/admin", "/admin/*", "/api/*"]
   },
   "d1_databases": [
     { "binding": "DB", "database_name": "purecommunitysupportd1db", "database_id": "6c909377-7eb8-455e-a44a-9f5c1fbb5da5" }

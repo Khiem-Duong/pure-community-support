@@ -1,11 +1,14 @@
 /* Pure Community Support — Cloudflare Worker.
 
-   Only requests matching "run_worker_first" in wrangler.jsonc (/admin, /admin/*)
+   Only requests matching "run_worker_first" in wrangler.jsonc (/admin, /admin/*, /api/*)
    reach this script; every other page is served straight from ./public.
 
    Bindings (set in wrangler.jsonc, available on `env`):
      env.ASSETS  the site files in ./public
      env.DB      D1 database (purecommunitysupportd1db), tables in schema.sql
+
+   Public routes:
+     GET  /api/products    the shop catalog: Shown products and their tags (cached ~1 minute)
 
    Admin routes:
      GET  /admin           signed-in dashboard (redirects to sign-in when signed out)
@@ -14,9 +17,22 @@
      GET  /admin/login     sign-in page
      POST /admin/login     check email + password, start a session
      POST /admin/logout    end the session
-     GET  /admin/db-check  D1 connection check (remove once sign-in is confirmed working) */
+     GET  /admin/db-check  D1 connection check (remove once sign-in is confirmed working)
+
+   Admin data API (signed in; changes need an editor or super-admin, and a same-origin JSON request).
+   Every change answers with the whole updated catalog, { catalog: { products, tags } }:
+     GET    /admin/api/catalog          every product (Shown and Hidden) and tag
+     POST   /admin/api/products         add a product (its id is made from the name)
+     PUT    /admin/api/products/<id>    save a product
+     PATCH  /admin/api/products/<id>    switch Shown / Hidden: { shown }
+     POST   /admin/api/products/batch   { action: 'delete', ids } | { action: 'price', ids, price }
+                                        | { action: 'restore', products } (undo)
+     POST   /admin/api/tags             add a tag
+     PUT    /admin/api/tags/<id>        rename a tag
+     DELETE /admin/api/tags/<id>        delete a tag (and remove it from its products) */
 
 import { DUMMY_HASH, newSessionToken, sha256Hex, verifyPassword } from './auth.js';
+import { adminApi, publicProducts } from './catalog.js';
 import loginTemplate from '../admin/login.html';
 import homeTemplate from '../admin/home.html';
 
@@ -48,15 +64,24 @@ const BASE_HEADERS = {
 };
 
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, '') || '/';
 
-    // Anything outside /admin: serve the normal site file.
+    if (path === '/api/products') {
+      try {
+        return await publicProducts(request, env, ctx, url);
+      } catch (err) {
+        console.error('catalog error:', err);
+        return Response.json({ error: 'The catalog is temporarily unavailable.' }, { status: 503, headers: BASE_HEADERS });
+      }
+    }
+
+    // Anything else outside /admin: serve the normal site file.
     if (path !== '/admin' && !path.startsWith('/admin/')) return env.ASSETS.fetch(request);
 
     try {
-      return await handleAdmin(request, env, url, path);
+      return await handleAdmin(request, env, ctx, url, path);
     } catch (err) {
       console.error('admin error:', err);
       return page(loginTemplate, { messageHtml: messageHtml('unavailable') }, 500);
@@ -64,7 +89,7 @@ export default {
   },
 };
 
-async function handleAdmin(request, env, url, path) {
+async function handleAdmin(request, env, ctx, url, path) {
   const method = request.method;
 
   if (path === '/admin/db-check') {
@@ -87,11 +112,15 @@ async function handleAdmin(request, env, url, path) {
 
   // Everything else under /admin needs a signed-in user.
   const user = await currentUser(request, env);
+  const isApi = path.startsWith('/admin/api/');
+  if (!user && isApi) return Response.json({ error: 'signed-out' }, { status: 401, headers: BASE_HEADERS });
   if (!user) {
     return getCookie(request, SESSION_COOKIE)
       ? redirect('/admin/login?m=expired', { 'Set-Cookie': sessionCookie('', 0) })
       : redirect('/admin/login');
   }
+
+  if (isApi) return adminApi(request, env, ctx, url, path, user);
 
   if (path === '/admin' || ADMIN_SCREEN.test(path)) {
     return page(homeTemplate, { name: displayName(user.email), role: ROLE_NAMES[user.role] || user.role, roleKey: user.role });
@@ -214,6 +243,7 @@ function page(template, vars, status = 200) {
       'Content-Security-Policy': [
         "default-src 'none'",
         "img-src 'self' blob:", // blob: previews a photo chosen in the product editor
+        "connect-src 'self'",   // the dashboard saves products and tags through /admin/api
         `style-src 'nonce-${nonce}' https://fonts.googleapis.com`,
         'font-src https://fonts.gstatic.com',
         `script-src 'nonce-${nonce}'`,

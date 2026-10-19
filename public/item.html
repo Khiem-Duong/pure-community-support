@@ -628,100 +628,117 @@
       navToggle.setAttribute('aria-expanded', isOpen);
     });
 
-    /* ── Render the item from assets/js/products.js ── */
-    const COLLECTIONS = window.PURE_COLLECTIONS;
-    const PRODUCTS = window.PURE_PRODUCTS;
+    /* ── Render the item ──
+       Products come from the D1 database through PURE_LOAD_CATALOG() (assets/js/products.js).
+       A product switched to Hidden in the admin isn't in the catalog, so it shows "not available". */
     const $ = id => document.getElementById(id);
     const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-    const collectionName = id => (COLLECTIONS.find(c => c.id === id) || {}).name || '';
 
     // /shop/<id> on the live site; item.html?id=<id> also works for local previews.
     const pathId = location.pathname.replace(/\/+$/, '').split('/').pop();
     const itemId = new URLSearchParams(location.search).get('id') || pathId;
-    const item = PRODUCTS.find(p => p.id === itemId);
 
     function setMeta(selector, attr, value) {
       const el = document.querySelector(selector);
       if (el) el.setAttribute(attr, value);
     }
 
-    if (!item) {
-      $('product').hidden = true;
-      $('related').hidden = true;
-      document.querySelector('.breadcrumb').hidden = true;
-      $('not-found').hidden = false;
-      document.title = 'Item not found — Pure Community Support';
-    } else {
-      const coll = collectionName(item.collection);
-      const summary = item.desc || 'Handmade in Hue. Full details for this piece are coming soon.';
+    function showItem(PRODUCTS, COLLECTIONS) {
+      const collectionName = id => (COLLECTIONS.find(c => c.id === id) || {}).name || '';
+      const item = PRODUCTS.find(p => p.id === itemId);
 
-      document.title = `${item.name} — Hue Traditional Handicrafts | Pure Community Support`;
-      setMeta('meta[name="description"]', 'content', `${item.name} from the ${coll} collection. ${summary} Half of every sale's net profit supports families in Hue, Vietnam.`);
-      setMeta('meta[property="og:title"]', 'content', `${item.name} — Pure Community Support`);
-      setMeta('meta[property="og:description"]', 'content', summary);
-      setMeta('link[rel="canonical"]', 'href', `https://purecommunitysupport.com/en/shop/${item.id}`);
-
-      $('crumb-collection').textContent = coll;
-      $('crumb-collection').href = `/shop?collection=${item.collection}`;
-      $('crumb-current').textContent = item.name;
-
-      const img = $('item-img');
-      img.src = item.img;
-      img.alt = item.credit ? `${item.name} (placeholder photo)` : item.name;
-      if (item.pos) img.style.objectPosition = item.pos;
-      $('item-badge').hidden = !item.isNew;
-      $('item-credit').innerHTML = item.credit
-        ? `Placeholder photo: <a href="${item.credit.url}" target="_blank" rel="noopener">${esc(item.credit.author)}</a>, ${esc(item.credit.license)}`
-        : '';
-
-      $('item-collection').textContent = coll;
-      $('item-name').textContent = item.name;
-      const price = $('item-price');
-      const hasPrice = typeof item.price === 'number';
-      price.textContent = window.PURE_PRICE_LABEL(item);
-      price.classList.toggle('tbd', !hasPrice);
-      $('item-price-note').textContent = hasPrice ? 'Placeholder price' : 'Pricing to be confirmed';
-      $('item-desc').textContent = item.desc
-        ? item.desc
-        : 'Description coming soon. Final details, materials and pricing for this piece are being confirmed.';
-      $('item-material').textContent = item.material || 'TBD';
-      $('item-colour').textContent = item.colour || 'TBD';
-      $('item-collection-spec').textContent = coll;
-      $('item-maker').textContent = item.maker || 'Hue artisan (TBD)';
-      $('item-maker-strip').textContent = item.maker || 'Hue artisan';
-      window.PureOrder.bindAdd($('item-order')).setProduct(item);
-
-      /* More from the same collection */
-      const siblings = PRODUCTS.filter(p => p.collection === item.collection && p.id !== item.id);
-      if (!siblings.length) {
+      if (!item) {
+        $('product').hidden = true;
         $('related').hidden = true;
+        document.querySelector('.breadcrumb').hidden = true;
+        $('not-found').hidden = false;
+        document.title = 'Item not found — Pure Community Support';
       } else {
-        $('related-heading').textContent = `More in ${coll}`;
-        const total = siblings.length + 1;
-        $('related-all').innerHTML = `View all ${total} <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
-        $('related-all').href = `/shop?collection=${item.collection}`;
-        $('related-grid').innerHTML = siblings.slice(0, 4).map(p => `
-          <article class="card" role="listitem">
-            <a href="/shop/${p.id}" aria-label="View ${esc(p.name)}">
-              <div class="card-media">
-                <img src="${p.img}" alt="${esc(p.name)}${p.credit ? ' (placeholder photo)' : ''}" loading="lazy"${p.pos ? ` style="object-position:${p.pos};"` : ''}>
-                <div class="card-veil" aria-hidden="true"></div>
-                ${p.isNew ? '<span class="card-badge">New</span>' : ''}
-                <div class="card-cta" aria-hidden="true">
-                  <span>View product</span>
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        const coll = collectionName(item.collection);
+        // A product without tags has no collection: leave that step out of the breadcrumb.
+        $('crumb-collection').hidden = !coll;
+        $('crumb-collection').nextElementSibling.hidden = !coll;
+        const summary = item.desc || 'Handmade in Hue. Full details for this piece are coming soon.';
+
+        document.title = `${item.name} — Hue Traditional Handicrafts | Pure Community Support`;
+        setMeta('meta[name="description"]', 'content', `${item.name}${coll ? ` from the ${coll} collection` : ''}. ${summary} Half of every sale's net profit supports families in Hue, Vietnam.`);
+        setMeta('meta[property="og:title"]', 'content', `${item.name} — Pure Community Support`);
+        setMeta('meta[property="og:description"]', 'content', summary);
+        setMeta('link[rel="canonical"]', 'href', `https://purecommunitysupport.com/en/shop/${item.id}`);
+
+        $('crumb-collection').textContent = coll;
+        $('crumb-collection').href = `/shop?collection=${item.collection}`;
+        $('crumb-current').textContent = item.name;
+
+        const img = $('item-img');
+        img.src = item.img;
+        img.alt = item.credit ? `${item.name} (placeholder photo)` : item.name;
+        if (item.pos) img.style.objectPosition = item.pos;
+        $('item-badge').hidden = !item.isNew;
+        $('item-credit').innerHTML = item.credit
+          ? `Placeholder photo: <a href="${item.credit.url}" target="_blank" rel="noopener">${esc(item.credit.author)}</a>, ${esc(item.credit.license)}`
+          : '';
+
+        $('item-collection').textContent = coll;
+        $('item-name').textContent = item.name;
+        const price = $('item-price');
+        const hasPrice = typeof item.price === 'number';
+        price.textContent = window.PURE_PRICE_LABEL(item);
+        price.classList.toggle('tbd', !hasPrice);
+        $('item-price-note').textContent = hasPrice ? 'Placeholder price' : 'Pricing to be confirmed';
+        $('item-desc').textContent = item.desc
+          ? item.desc
+          : 'Description coming soon. Final details, materials and pricing for this piece are being confirmed.';
+        $('item-material').textContent = item.material || 'TBD';
+        $('item-colour').textContent = item.colour || 'TBD';
+        $('item-collection-spec').textContent = coll;
+        $('item-maker').textContent = item.maker || 'Hue artisan (TBD)';
+        $('item-maker-strip').textContent = item.maker || 'Hue artisan';
+        window.PureOrder.bindAdd($('item-order')).setProduct(item);
+
+        /* More from the same collection */
+        const siblings = item.collection ? PRODUCTS.filter(p => p.tags.includes(item.collection) && p.id !== item.id) : [];
+        if (!siblings.length) {
+          $('related').hidden = true;
+        } else {
+          $('related-heading').textContent = `More in ${coll}`;
+          const total = siblings.length + 1;
+          $('related-all').innerHTML = `View all ${total} <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
+          $('related-all').href = `/shop?collection=${item.collection}`;
+          $('related-grid').innerHTML = siblings.slice(0, 4).map(p => `
+            <article class="card" role="listitem">
+              <a href="/shop/${p.id}" aria-label="View ${esc(p.name)}">
+                <div class="card-media">
+                  <img src="${p.img}" alt="${esc(p.name)}${p.credit ? ' (placeholder photo)' : ''}" loading="lazy"${p.pos ? ` style="object-position:${p.pos};"` : ''}>
+                  <div class="card-veil" aria-hidden="true"></div>
+                  ${p.isNew ? '<span class="card-badge">New</span>' : ''}
+                  <div class="card-cta" aria-hidden="true">
+                    <span>View product</span>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </div>
                 </div>
-              </div>
-              <p class="card-cat">${esc(coll)}</p>
-              <h3>${esc(p.name)}</h3>
-              <div class="card-foot">
-                <span class="card-price">${esc(window.PURE_PRICE_LABEL(p))}</span>
-                <span class="card-artisan">${esc(p.maker || 'Hue artisan')}</span>
-              </div>
-            </a>
-          </article>`).join('');
+                <p class="card-cat">${esc(coll)}</p>
+                <h3>${esc(p.name)}</h3>
+                <div class="card-foot">
+                  <span class="card-price">${esc(window.PURE_PRICE_LABEL(p))}</span>
+                  <span class="card-artisan">${esc(p.maker || 'Hue artisan')}</span>
+                </div>
+              </a>
+            </article>`).join('');
+        }
       }
     }
+
+    window.PURE_LOAD_CATALOG()
+      .then(catalog => showItem(catalog.products, catalog.collections))
+      .catch(() => {
+        $('product').hidden = true;
+        $('related').hidden = true;
+        document.querySelector('.breadcrumb').hidden = true;
+        document.querySelector('#not-found h1').textContent = 'This item couldn’t be loaded';
+        document.querySelector('#not-found p').textContent = 'Please refresh the page to try again.';
+        $('not-found').hidden = false;
+      });
 
     /* Scroll to top */
     const scrollBtn = document.getElementById('scroll-top');
