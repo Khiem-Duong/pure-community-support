@@ -12,6 +12,11 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.6.7] - 2026-10-19
+### What changed
+- Added site.webmanifest (name "Pure Community Support", short name "Pure", cream background and theme colour) with 192 and 512px app icons (lotus on cream, app-icon-v1.1-*.png) for Android "Add to Home screen"
+- Every public page now links the manifest, gives the iPhone icon its size (180 × 180) and sets the iPhone home-screen title to "Pure"
+
 ## [0.6.6] - 2026-10-19
 ### What changed
 - Favicons v1.1: the lotus now fills the full width of the square (aspect ratio kept, centred vertically) instead of sitting inside extra space; new favicon-v1.1.svg, favicon-v1.1-96.png, apple-touch-icon-v1.1.svg and apple-touch-icon-v1.1.png (v1.0 files kept)
