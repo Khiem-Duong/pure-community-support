@@ -12,6 +12,11 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.6.6] - 2026-10-19
+### What changed
+- Favicons v1.1: the lotus now fills the full width of the square (aspect ratio kept, centred vertically) instead of sitting inside extra space; new favicon-v1.1.svg, favicon-v1.1-96.png, apple-touch-icon-v1.1.svg and apple-touch-icon-v1.1.png (v1.0 files kept)
+- /favicon.ico rebuilt from v1.1; every public and admin page now uses the v1.1 icons
+
 ## [0.6.5] - 2026-10-19
 ### What changed
 - Added /favicon.ico (16, 32 and 48px) at the site root, the file DuckDuckGo and Bing look for
