@@ -218,12 +218,25 @@
     .chips button:disabled { display: none; }
 
     /* Photo drop zone */
-    .drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 220px; padding: 20px; border: 2px dashed var(--greige); border-radius: var(--radius); background: #FCFAF7; text-align: center; transition: border-color .2s, background .2s; }
+    .drop { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 170px; padding: 20px; border: 2px dashed var(--greige); border-radius: var(--radius); background: #FCFAF7; text-align: center; transition: border-color .2s, background .2s; }
     .drop.over { border-color: var(--purple); background: rgba(101,46,134,.05); }
-    .drop img { width: 100%; max-height: 260px; object-fit: contain; border-radius: 6px; }
     .drop svg { width: 32px; height: 32px; stroke: var(--tan); fill: none; stroke-width: 1.6; }
     .drop small { font-size: 12.5px; color: var(--muted); }
     .drop-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .photo-thumbs { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); gap: 8px; margin-top: 12px; list-style: none; }
+    .photo-thumb { position: relative; display: block; aspect-ratio: 1; border: 1.5px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--cream); }
+    .photo-thumb:hover { border-color: var(--purple); }
+    .photo-thumb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+    .photo-main { position: absolute; left: 4px; bottom: 4px; padding: 1px 7px; border-radius: 10px; background: var(--purple); color: var(--white); font-size: 11px; font-weight: 700; }
+
+    /* Photo preview popup */
+    .viewer { width: min(760px, calc(100vw - 32px)); }
+    .viewer-inner { display: flex; flex-direction: column; gap: 14px; padding: 24px; }
+    .viewer-img { display: block; width: 100%; min-height: 160px; max-height: calc(100dvh - 300px); object-fit: contain; border-radius: var(--radius); background: var(--cream); }
+    .viewer-name { font-size: 13.5px; color: var(--muted); overflow-wrap: anywhere; }
+    #viewer-close { margin-left: auto; }
+    .btn-danger-outline { border-color: var(--error); color: var(--error); }
+    .btn-danger-outline:hover { background: rgba(155,44,44,.06); }
 
     /* Tags screen */
     .tags-table td:last-child { text-align: right; white-space: nowrap; }
@@ -517,21 +530,20 @@
               </div>
               <div>
                 <div class="card">
-                  <h2 id="photo-label">Photo</h2>
-                  <p class="hint">Optional until photo saving is connected.</p>
+                  <h2 id="photo-label">Photos</h2>
+                  <p class="hint">Optional until photo saving is connected. The first photo is the main one in the shop.</p>
                   <div class="drop" id="photo-drop" aria-labelledby="photo-label">
-                    <img id="photo-preview" alt="" hidden>
-                    <svg id="photo-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 7"/></svg>
-                    <strong id="photo-hint">Drag a photo here</strong>
-                    <small>JPEG, PNG or WebP, up to 10 MB</small>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 7"/></svg>
+                    <strong id="photo-hint">Drag photos here</strong>
+                    <small>JPEG, PNG or WebP, up to 10 MB each and 8 photos in all</small>
                     <div class="drop-actions">
-                      <button class="btn" type="button" id="photo-choose">Choose a file</button>
-                      <button class="btn" type="button" id="photo-reset" hidden>Undo photo change</button>
+                      <button class="btn" type="button" id="photo-choose">Choose files</button>
                     </div>
-                    <input class="sr-only" type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" tabindex="-1" aria-hidden="true">
+                    <input class="sr-only" type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" multiple tabindex="-1" aria-hidden="true">
                   </div>
                   <p class="field-error" id="err-photo" role="alert" hidden></p>
-                  <p class="field-note">You can choose a photo to preview it, but it isn't saved until image storage is connected.</p>
+                  <ul class="photo-thumbs" id="photo-thumbs" aria-label="Photos added" hidden></ul>
+                  <p class="field-note">Select a photo to preview or delete it. Photos aren't saved until image storage is connected.</p>
                 </div>
                 <div class="card">
                   <h2 id="tags-label">Tags</h2>
@@ -612,6 +624,26 @@
         <button class="btn btn-primary" type="submit" id="modal-ok"></button>
       </div>
     </form>
+  </dialog>
+
+  <!-- Photo preview, opened from a photo in the product editor -->
+  <dialog class="modal viewer" id="viewer" aria-labelledby="viewer-title">
+    <div class="viewer-inner">
+      <h2 id="viewer-title"></h2>
+      <img class="viewer-img" id="viewer-img" alt="">
+      <p class="viewer-name" id="viewer-name"></p>
+      <div class="modal-actions" id="viewer-actions">
+        <button class="btn btn-danger-outline" type="button" id="viewer-delete">Delete photo</button>
+        <button class="btn btn-primary" type="button" id="viewer-close">Close</button>
+      </div>
+      <div class="modal-body" id="viewer-confirm" hidden>
+        <p class="modal-warn" id="viewer-confirm-text"></p>
+        <div class="modal-actions">
+          <button class="btn" type="button" id="viewer-keep">Keep photo</button>
+          <button class="btn btn-danger" type="button" id="viewer-confirm-delete">Delete photo</button>
+        </div>
+      </div>
+    </div>
   </dialog>
 
   <!-- PDF export content; only visible when printing -->
@@ -1093,11 +1125,11 @@
 
     /* ── Product editor ──
        Adding and editing use the same form. Adding: every field starts empty and all are
-       required except tags and photo (photo becomes required once R2 is connected).
+       required except tags and photos (photos become required once R2 is connected).
        Editing: name and price are required; the other details can be filled in later. */
-    let editor = null; // { path, id, snapshot } while the editor is open
+    let editor = null; // { path, id, snapshot, photos } while the editor is open
     const selected = new Set(); // tags chosen in the editor
-    const photo = { file: null, url: '', original: '' };
+    let photos = []; // { src, name, file? } in order, the first being the main photo; file is set for new ones
     const form = $('product-form');
     const TEXT_FIELDS = ['name', 'desc', 'price', 'maker', 'material', 'colour'];
     const VI_FIELDS = ['nameVi', 'descVi', 'materialVi', 'colourVi']; // optional; not on the website yet
@@ -1105,8 +1137,9 @@
     const val = name => form.elements[name].value.trim();
 
     function formState() {
-      return JSON.stringify([...TEXT_FIELDS.map(val), ...VI_FIELDS.map(val), form.elements.shown.value, form.elements.isnew.value, [...selected].sort(), Boolean(photo.file)]);
+      return JSON.stringify([...TEXT_FIELDS.map(val), ...VI_FIELDS.map(val), form.elements.shown.value, form.elements.isnew.value, [...selected].sort(), photoState()]);
     }
+    const photoState = () => photos.map(p => p.src).join('\n');
 
     function openEditor(id) {
       const isNew = id === 'new';
@@ -1121,7 +1154,7 @@
       $('editor-lead').textContent = !canEdit
         ? 'You have view-only access, so this product can’t be changed.'
         : isNew
-          ? 'Fill in every field. Tags are optional, and so is the photo until photo saving is connected.'
+          ? 'Fill in every field. Tags are optional, and so are photos until photo saving is connected.'
           : 'Name and price are required. Other details can be filled in later.';
 
       form.reset();
@@ -1136,12 +1169,12 @@
       if (product) product.tags.filter(t => tags.some(x => x.id === t)).forEach(t => selected.add(t));
       tagPicker.setOpen(false);
       renderChips();
-      clearPhoto(product ? product.img : '', product ? product.name : '');
+      resetPhotos(product);
 
       $('product-fields').disabled = !canEdit;
       $('product-save').hidden = !canEdit;
       $('product-cancel').textContent = canEdit ? 'Cancel' : 'Back to products';
-      editor = { path: location.pathname, id: product ? product.id : null, snapshot: formState() };
+      editor = { path: location.pathname, id: product ? product.id : null, snapshot: formState(), photos: photoState() };
       showScreen('product-edit');
     }
 
@@ -1221,7 +1254,7 @@
         $('product-save').disabled = false;
         $('product-save').textContent = 'Save product';
       }
-      const photoNote = photo.file ? ' The new photo wasn’t kept: photo saving isn’t connected yet.' : '';
+      const photoNote = photoState() !== editor.photos ? ' Photo changes weren’t kept: photo saving isn’t connected yet.' : '';
       editor = null;
       go('/admin/products');
       toast(`${product.name} ${isNew ? 'added' : 'saved'}. The shop shows the change within about a minute.${photoNote}`);
@@ -1243,42 +1276,103 @@
       $('tags-toggle').focus();
     });
 
-    /* Photo: drag and drop or file picker. Previews only until R2 is connected. */
+    /* Photos: drag and drop or file picker, shown as thumbnails. Selecting one opens a
+       preview with a delete button. Kept in this page only until R2 is connected. */
     const PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
     const PHOTO_MAX_MB = 10;
-    function showPhoto(src, alt) {
-      $('photo-preview').hidden = !src;
-      if (src) { $('photo-preview').src = src; $('photo-preview').alt = alt; }
-      else $('photo-preview').removeAttribute('src');
-      $('photo-icon').hidden = Boolean(src);
-      $('photo-hint').textContent = src ? 'Drag a photo here to replace it' : 'Drag a photo here';
-      $('photo-choose').textContent = src ? 'Choose a different photo' : 'Choose a file';
-      $('photo-reset').hidden = !photo.file;
-    }
+    const PHOTO_MAX = 8;
     function photoError(text) {
       $('err-photo').textContent = text;
       $('err-photo').hidden = !text;
     }
-    function clearPhoto(original, name) {
-      if (photo.url) URL.revokeObjectURL(photo.url);
-      Object.assign(photo, { file: null, url: '', original, name });
+    function resetPhotos(product) {
+      photos.forEach(p => { if (p.file) URL.revokeObjectURL(p.src); });
+      photos = product && product.img ? [{ src: product.img, name: `Current photo of ${product.name}` }] : [];
       $('photo-input').value = '';
       photoError('');
-      showPhoto(original, original ? `Current photo of ${name}` : '');
+      renderPhotos();
     }
-    function pickPhoto(file) {
-      if (!canEdit || !file) return;
-      if (!PHOTO_TYPES.includes(file.type)) return photoError('Choose a JPEG, PNG or WebP image.');
-      if (file.size > PHOTO_MAX_MB * 1024 * 1024) return photoError(`Choose an image under ${PHOTO_MAX_MB} MB.`);
-      photoError('');
-      if (photo.url) URL.revokeObjectURL(photo.url);
-      photo.file = file;
-      photo.url = URL.createObjectURL(file);
-      showPhoto(photo.url, `New photo: ${file.name}`);
+    function renderPhotos() {
+      // Links rather than buttons, so view-only users can still preview (the form's fieldset disables buttons).
+      $('photo-thumbs').innerHTML = photos.map((p, i) => `<li><a class="photo-thumb" href="${esc(p.src)}" data-photo="${i}" aria-label="Preview photo ${i + 1} of ${photos.length}${i === 0 ? ', the main photo' : ''}"><img src="${esc(p.src)}" alt="">${i === 0 ? '<span class="photo-main" aria-hidden="true">Main</span>' : ''}</a></li>`).join('');
+      $('photo-thumbs').hidden = !photos.length;
+      const full = photos.length >= PHOTO_MAX;
+      $('photo-hint').textContent = full ? `${PHOTO_MAX} photos added, the most a product can have` : photos.length ? 'Drag more photos here' : 'Drag photos here';
+      $('photo-choose').disabled = full;
+    }
+    function addPhotos(fileList) {
+      const files = [...(fileList || [])];
+      if (!canEdit || !files.length) return;
+      const problems = [];
+      let overLimit = 0;
+      files.forEach(file => {
+        if (!PHOTO_TYPES.includes(file.type)) problems.push(`${file.name} isn’t a JPEG, PNG or WebP image.`);
+        else if (file.size > PHOTO_MAX_MB * 1024 * 1024) problems.push(`${file.name} is over ${PHOTO_MAX_MB} MB.`);
+        else if (photos.length >= PHOTO_MAX) overLimit++;
+        else photos.push({ src: URL.createObjectURL(file), name: file.name, file });
+      });
+      if (overLimit) problems.push(`${overLimit === 1 ? '1 photo wasn’t' : `${overLimit} photos weren’t`} added: a product can have up to ${PHOTO_MAX}.`);
+      $('photo-input').value = '';
+      photoError(problems.join(' '));
+      renderPhotos();
     }
     $('photo-choose').addEventListener('click', () => $('photo-input').click());
-    $('photo-input').addEventListener('change', e => pickPhoto(e.target.files[0]));
-    $('photo-reset').addEventListener('click', () => clearPhoto(photo.original, photo.name));
+    $('photo-input').addEventListener('change', e => addPhotos(e.target.files));
+    $('photo-thumbs').addEventListener('click', e => {
+      const thumb = e.target.closest('[data-photo]');
+      if (!thumb) return;
+      e.preventDefault();
+      openViewer(Number(thumb.dataset.photo));
+    });
+
+    let viewing = -1; // index in photos of the photo being previewed
+    const sizeText = bytes => bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
+    function openViewer(i) {
+      const p = photos[i];
+      if (!p) return;
+      viewing = i;
+      $('viewer-title').textContent = `Photo ${i + 1} of ${photos.length}${i === 0 ? ' (main photo)' : ''}`;
+      $('viewer-img').src = p.src;
+      $('viewer-img').alt = p.file ? `New photo: ${p.name}` : p.name;
+      $('viewer-name').textContent = p.file ? `${p.name}, ${sizeText(p.file.size)}. Not saved yet.` : 'The photo currently in the shop.';
+      $('viewer-delete').hidden = !canEdit;
+      viewerConfirm(false);
+      $('viewer').showModal();
+      $('viewer-close').focus();
+    }
+    function viewerConfirm(on) {
+      $('viewer-actions').hidden = on;
+      $('viewer-confirm').hidden = !on;
+      if (!on) return;
+      $('viewer-confirm-text').textContent = photos[viewing].file
+        ? 'Delete this photo? It hasn’t been saved, so it will be gone.'
+        : 'Delete this photo from the product?';
+      $('viewer-keep').focus();
+    }
+    $('viewer-close').addEventListener('click', () => $('viewer').close());
+    $('viewer-delete').addEventListener('click', () => viewerConfirm(true));
+    $('viewer-keep').addEventListener('click', () => { viewerConfirm(false); $('viewer-delete').focus(); });
+    $('viewer-confirm-delete').addEventListener('click', () => {
+      if (!canEdit) return;
+      const [gone] = photos.splice(viewing, 1);
+      $('viewer').close();
+      if (gone.file) URL.revokeObjectURL(gone.src);
+      photoError('');
+      renderPhotos();
+      // Focus the photo that took its place, or the one before it, or the file button.
+      const next = $('photo-thumbs').querySelector(`[data-photo="${Math.min(viewing, photos.length - 1)}"]`);
+      (next || $('photo-choose')).focus();
+      toast('Photo deleted.');
+    });
+    // Escape while confirming goes back to the preview instead of closing it.
+    $('viewer').addEventListener('cancel', e => {
+      if ($('viewer-confirm').hidden) return;
+      e.preventDefault();
+      viewerConfirm(false);
+      $('viewer-delete').focus();
+    });
+    $('viewer').addEventListener('close', () => $('viewer-img').removeAttribute('src'));
+
     const drop = $('photo-drop');
     ['dragenter', 'dragover'].forEach(type => drop.addEventListener(type, e => {
       e.preventDefault();
@@ -1288,7 +1382,7 @@
     drop.addEventListener('drop', e => {
       e.preventDefault();
       drop.classList.remove('over');
-      pickPhoto(e.dataTransfer.files[0]);
+      addPhotos(e.dataTransfer.files);
     });
     // A file dropped anywhere else would make the browser open it and leave the page.
     ['dragover', 'drop'].forEach(type => window.addEventListener(type, e => e.preventDefault()));

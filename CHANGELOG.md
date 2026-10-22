@@ -12,6 +12,12 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.7.2] - 2026-10-22
+### What changed
+- Admin product editor (add and edit): several photos can be dropped or chosen at once, up to 8 per product, and appear as thumbnails with the first marked "Main"
+- Admin: selecting a thumbnail opens a preview popup with a "Delete photo" button that asks for confirmation; view-only users can preview but not delete
+- Photos still aren't saved (image storage isn't connected yet); saving a product with photo changes says so
+
 ## [0.7.1] - 2026-10-19
 ### What changed
 - Shop: filtering by tag is animated: products that no longer match fade out, products that stay glide to their new place, and newly shown products fade up one after another (skipped for visitors who prefer reduced motion)
