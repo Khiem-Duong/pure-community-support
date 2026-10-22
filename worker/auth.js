@@ -7,9 +7,14 @@
 const ITERATIONS = 100000; // the most Workers allow for PBKDF2
 const encoder = new TextEncoder();
 
-/* Length rules for passwords chosen in the admin (People & roles, first sign-in). */
-export const PASSWORD_MIN = 12;
+/* Rules for passwords chosen in the admin (People & roles, first sign-in): 8 to 200 characters
+   with at least one number and one capital letter. admin/home.html, admin/login.html and
+   scripts/hash-password.mjs follow the same rules. */
+export const PASSWORD_MIN = 8;
 export const PASSWORD_MAX = 200;
+export const PASSWORD_RULES = `at least ${PASSWORD_MIN} characters, including a number and a capital letter`;
+export const passwordOk = password =>
+  password.length >= PASSWORD_MIN && password.length <= PASSWORD_MAX && /\d/.test(password) && /\p{Lu}/u.test(password);
 
 const toBase64 = bytes => btoa(String.fromCharCode(...bytes));
 const fromBase64 = text => Uint8Array.from(atob(text), ch => ch.charCodeAt(0));

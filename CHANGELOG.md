@@ -12,6 +12,12 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.7.5] - 2026-10-22
+### What changed
+- Password rules: at least 8 characters, including a number and a capital letter (was at least 12 characters); applied by the Worker, the admin's People & roles form, the "Create your password" page and scripts/hash-password.mjs. Existing passwords keep working
+- People & roles: every password field now has a confirmation field with its own show / hide button; saving stops if the two don't match
+- "Create your password" page: the second field is now called "Confirm password", and the rules and a mismatch are shown before sending
+
 ## [0.7.4] - 2026-10-22
 ### What changed
 - Admin: People & roles screen (super-admins only, also checked by the Worker): a list of managers, each with Edit and Delete; super-admin accounts stay in the D1 Console

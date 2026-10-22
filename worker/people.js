@@ -15,7 +15,7 @@
 
 import { PAGES, parsePermissions } from './access.js';
 import { ApiError, bad, json, oneLine, readJson } from './api.js';
-import { PASSWORD_MAX, PASSWORD_MIN, hashPassword } from './auth.js';
+import { PASSWORD_MAX, PASSWORD_RULES, hashPassword, passwordOk } from './auth.js';
 
 const MANAGER_ROLES = new Set(['editor', 'viewer', 'custom']);
 const EMAIL_MAX = 254;
@@ -93,8 +93,8 @@ function cleanRole(body) {
 /* The password as typed (spaces count), hashed; only the hash is stored. */
 async function cleanPassword(value) {
   if (typeof value !== 'string') throw bad('The password must be text.');
-  if (value.length < PASSWORD_MIN) throw bad(`Use at least ${PASSWORD_MIN} characters for the password.`);
   if (value.length > PASSWORD_MAX) throw bad(`The password is too long (up to ${PASSWORD_MAX} characters).`);
+  if (!passwordOk(value)) throw bad(`Use ${PASSWORD_RULES} for the password.`);
   return hashPassword(value);
 }
 

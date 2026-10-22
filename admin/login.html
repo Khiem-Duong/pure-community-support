@@ -221,13 +221,13 @@
         <div class="field">
           <label for="new-password">New password</label>
           <div class="password-wrap">
-            <input id="new-password" name="password" type="password" autocomplete="new-password" minlength="12" maxlength="200" aria-describedby="new-password-note" required>
+            <input id="new-password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="200" aria-describedby="new-password-note" required>
             <button class="toggle" type="button" aria-controls="new-password" aria-pressed="false">Show</button>
           </div>
-          <p class="note" id="new-password-note">At least 12 characters.</p>
+          <p class="note" id="new-password-note">At least 8 characters, including a number and a capital letter.</p>
         </div>
         <div class="field">
-          <label for="repeat-password">Repeat the password</label>
+          <label for="repeat-password">Confirm password</label>
           <div class="password-wrap">
             <input id="repeat-password" name="repeat" type="password" autocomplete="new-password" maxlength="200" required>
             <button class="toggle" type="button" aria-controls="repeat-password" aria-pressed="false">Show</button>
@@ -258,6 +258,22 @@
       toggle.setAttribute('aria-pressed', String(show));
       input.focus();
     }));
+    /* New password: same rules as the Worker (worker/auth.js), checked here first so mistakes show
+       straight away; the Worker checks again. */
+    const newPassword = document.getElementById('new-password');
+    const confirmPassword = document.getElementById('repeat-password');
+    function checkNewPassword() {
+      const value = newPassword.value;
+      newPassword.setCustomValidity(value.length >= 8 && /\d/.test(value) && /\p{Lu}/u.test(value)
+        ? '' : 'Use at least 8 characters, including a number and a capital letter.');
+      confirmPassword.setCustomValidity(confirmPassword.value === value ? '' : 'The two passwords don’t match.');
+    }
+    [newPassword, confirmPassword].forEach(input => input.addEventListener('input', checkNewPassword));
+    document.getElementById('setup-form').addEventListener('submit', e => {
+      checkNewPassword();
+      if (!e.currentTarget.checkValidity()) { e.preventDefault(); e.stopImmediatePropagation(); e.currentTarget.reportValidity(); }
+    });
+
     document.querySelectorAll('form').forEach(form => form.addEventListener('submit', () => {
       const submit = form.querySelector('.submit');
       if (!submit) return;

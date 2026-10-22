@@ -275,6 +275,7 @@
     .eye { position: absolute; top: 50%; right: 4px; transform: translateY(-50%); display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: none; border-radius: 6px; background: none; color: var(--muted); }
     .eye:hover { background: var(--cream); color: var(--brown); }
     .eye svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .confirm-label { margin-top: 16px; }
     .pw-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-top: 8px; }
     .pw-stars { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 18px; letter-spacing: .15em; }
     .pw-unset { color: var(--muted); }
@@ -711,12 +712,21 @@
               <div class="password-field">
                 <input class="input" id="mf-password" type="password" maxlength="200" autocomplete="new-password" autocapitalize="none" spellcheck="false" aria-describedby="mf-password-note err-password">
                 <button class="eye" type="button" id="mf-eye" aria-controls="mf-password" aria-pressed="false" aria-label="Show password">
-                  <svg viewBox="0 0 24 24" id="mf-eye-show" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                  <svg viewBox="0 0 24 24" id="mf-eye-hide" aria-hidden="true" hidden><path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.4 2 12 2 12s3.6 7 10 7a10 10 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" data-eye="show"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" data-eye="hide" hidden><path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.4 2 12 2 12s3.6 7 10 7a10 10 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
                 </button>
               </div>
               <p class="field-note" id="mf-password-note"></p>
               <p class="field-error" id="err-password" hidden></p>
+              <label class="label confirm-label" for="mf-password2" id="mf-password2-label">Confirm password</label>
+              <div class="password-field">
+                <input class="input" id="mf-password2" type="password" maxlength="200" autocomplete="new-password" autocapitalize="none" spellcheck="false" aria-describedby="err-password2">
+                <button class="eye" type="button" id="mf-eye2" aria-controls="mf-password2" aria-pressed="false" aria-label="Show password">
+                  <svg viewBox="0 0 24 24" aria-hidden="true" data-eye="show"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg viewBox="0 0 24 24" aria-hidden="true" data-eye="hide" hidden><path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.4 2 12 2 12s3.6 7 10 7a10 10 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+                </button>
+              </div>
+              <p class="field-error" id="err-password2" hidden></p>
               <button class="link-btn" type="button" id="mf-pw-keep" hidden>Keep the current password</button>
             </div>
           </div>
@@ -1711,7 +1721,9 @@
     ];
     const ROLE_LABELS = { editor: 'Editor', viewer: 'Viewer', custom: 'Custom' };
     const LEVEL_LABELS = { view: 'View only', edit: 'Can edit' };
-    const PASSWORD_MIN = 12;
+    // Same rules as the Worker (worker/auth.js), which checks again.
+    const PASSWORD_RULES = 'at least 8 characters, including a number and a capital letter';
+    const passwordOk = pw => pw.length >= 8 && /\d/.test(pw) && /\p{Lu}/u.test(pw);
     let people = []; // { id, email, role, permissions, oneTime, lastLogin }; oneTime: hasn't replaced the one-time password yet
     let peopleState = isSuper ? 'loading' : 'idle'; // loading | ready | failed
     let personEditor = null; // { path, id, snapshot } while adding (id null) or editing a manager
@@ -1794,7 +1806,7 @@
     function personState() {
       const role = personForm.elements.role.value;
       return JSON.stringify([role, $('mf-email').value.trim(), role === 'custom' ? MANAGER_PAGES.map(pg => customAccess[pg.id] || '') : [],
-        personForm.elements.pwmode.value, editingPassword, $('mf-password').value]);
+        personForm.elements.pwmode.value, editingPassword, $('mf-password').value, $('mf-password2').value]);
     }
     function openPerson(sub) {
       const isNew = sub === 'new';
@@ -1824,7 +1836,7 @@
       $('mf-pw-current').hidden = isNew;
       $('person-save').textContent = isNew ? 'Add Manager' : 'Save changes';
       editingPassword = false;
-      setPasswordVisible(false);
+      hidePasswords();
       personEditor = { path: location.pathname, id: person ? person.id : null, oneTime: Boolean(person && person.oneTime), snapshot: '' };
       renderAccess();
       renderPasswordField();
@@ -1871,27 +1883,33 @@
       const oneTime = isNew ? mode === 'first' : personEditor.oneTime;
       $('mf-pw-field').hidden = isNew ? !mode : !editingPassword;
       $('mf-pw-row').hidden = !isNew && editingPassword;
-      $('mf-password-label').textContent = `${isNew ? '' : 'New '}${oneTime ? 'one-time password' : 'password'}`.replace(/^./, ch => ch.toUpperCase());
+      const label = `${isNew ? '' : 'new '}${oneTime ? 'one-time password' : 'password'}`;
+      $('mf-password-label').textContent = label.replace(/^./, ch => ch.toUpperCase());
+      $('mf-password2-label').textContent = `Confirm ${label}`;
+      const rules = PASSWORD_RULES.replace(/^./, ch => ch.toUpperCase());
       $('mf-password-note').textContent = oneTime
-        ? `At least ${PASSWORD_MIN} characters. Give it to them privately; it works for their first sign-in only, then they create their own.`
-        : `At least ${PASSWORD_MIN} characters. It can’t be shown again after saving, so give it to them privately.`;
+        ? `${rules}. Give it to them privately; it works for their first sign-in only, then they create their own.`
+        : `${rules}. It can’t be shown again after saving, so give it to them privately.`;
       $('mf-pw-keep').hidden = isNew;
     }
-    function setPasswordVisible(on) {
-      $('mf-password').type = on ? 'text' : 'password';
-      $('mf-eye').setAttribute('aria-pressed', on);
-      $('mf-eye').setAttribute('aria-label', on ? 'Hide password' : 'Show password');
-      $('mf-eye-show').toggleAttribute('hidden', on);
-      $('mf-eye-hide').toggleAttribute('hidden', !on);
+    /* Each password box has its own show / hide (eye) button; both start hidden. */
+    function setPasswordVisible(eye, on) {
+      $(eye.getAttribute('aria-controls')).type = on ? 'text' : 'password';
+      eye.setAttribute('aria-pressed', on);
+      eye.setAttribute('aria-label', on ? 'Hide password' : 'Show password');
+      eye.querySelector('[data-eye="show"]').toggleAttribute('hidden', on);
+      eye.querySelector('[data-eye="hide"]').toggleAttribute('hidden', !on);
     }
+    const hidePasswords = () => [$('mf-eye'), $('mf-eye2')].forEach(eye => setPasswordVisible(eye, false));
     personForm.addEventListener('change', e => {
       if (e.target.name === 'role') renderAccess();
       if (e.target.name === 'pwmode') renderPasswordField();
     });
-    $('mf-eye').addEventListener('click', () => {
-      setPasswordVisible($('mf-password').type === 'password');
-      $('mf-password').focus();
-    });
+    [$('mf-eye'), $('mf-eye2')].forEach(eye => eye.addEventListener('click', () => {
+      const input = $(eye.getAttribute('aria-controls'));
+      setPasswordVisible(eye, input.type === 'password');
+      input.focus();
+    }));
     $('mf-pw-edit').addEventListener('click', () => {
       editingPassword = true;
       renderPasswordField();
@@ -1899,10 +1917,12 @@
     });
     $('mf-pw-keep').addEventListener('click', () => {
       editingPassword = false;
-      $('mf-password').value = '';
-      setPasswordVisible(false);
-      $('err-password').hidden = true;
-      $('mf-password').removeAttribute('aria-invalid');
+      $('mf-password').value = $('mf-password2').value = '';
+      hidePasswords();
+      ['password', 'password2'].forEach(name => {
+        $(`err-${name}`).hidden = true;
+        $(`mf-${name}`).removeAttribute('aria-invalid');
+      });
       renderPasswordField();
       $('mf-pw-edit').focus();
     });
@@ -1921,8 +1941,10 @@
         else if (people.some(p => p.email.toLowerCase() === email)) errors.push({ name: 'email', field: 'mf-email', text: 'There is already a manager with that email.' });
         if (!f.pwmode.value) errors.push({ name: 'pwmode', field: 'mf-pw-first', group: 'mf-pw-mode-group', text: 'Choose a password mode.' });
       }
-      if (!$('mf-pw-field').hidden && $('mf-password').value.length < PASSWORD_MIN) {
-        errors.push({ name: 'password', field: 'mf-password', text: `Use at least ${PASSWORD_MIN} characters for the password.` });
+      if (!$('mf-pw-field').hidden) {
+        const password = $('mf-password').value;
+        if (!passwordOk(password)) errors.push({ name: 'password', field: 'mf-password', text: `Use ${PASSWORD_RULES} for the password.` });
+        if ($('mf-password2').value !== password) errors.push({ name: 'password2', field: 'mf-password2', text: 'The two passwords don’t match.' });
       }
       return errors;
     }

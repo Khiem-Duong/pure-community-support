@@ -39,7 +39,7 @@
      DELETE /admin/api/tags/<id>        delete a tag (and remove it from its products) */
 
 import { accessMap } from './access.js';
-import { DUMMY_HASH, PASSWORD_MAX, PASSWORD_MIN, hashPassword, newSessionToken, sha256Hex, verifyPassword } from './auth.js';
+import { DUMMY_HASH, PASSWORD_RULES, hashPassword, newSessionToken, passwordOk, sha256Hex, verifyPassword } from './auth.js';
 import { adminApi, publicProducts } from './catalog.js';
 import { peopleApi } from './people.js';
 import loginTemplate from '../admin/login.html';
@@ -63,7 +63,7 @@ const MESSAGES = {
   expired:     { kind: 'info',  text: 'Your session has ended. Please sign in again.' },
   out:         { kind: 'info',  text: 'You have been signed out.' },
   unavailable: { kind: 'error', text: 'Sign-in is temporarily unavailable. Please try again later.' },
-  short:       { kind: 'error', text: `Use ${PASSWORD_MIN} to ${PASSWORD_MAX} characters for your password.` },
+  weak:        { kind: 'error', text: `Use ${PASSWORD_RULES} for your password.` },
   mismatch:    { kind: 'error', text: 'The two passwords don’t match. Please type them again.' },
   same:        { kind: 'error', text: 'Choose a new password, different from the one-time password.' },
 };
@@ -193,7 +193,7 @@ async function setUpPassword(request, env, url, user) {
 
   const form = await request.formData();
   const password = String(form.get('password') || '');
-  if (password.length < PASSWORD_MIN || password.length > PASSWORD_MAX) return redirect('/admin/setup?m=short');
+  if (!passwordOk(password)) return redirect('/admin/setup?m=weak');
   if (password !== String(form.get('repeat') || '')) return redirect('/admin/setup?m=mismatch');
   const row = await env.DB.prepare('SELECT password_hash FROM users WHERE id = ?').bind(user.id).first();
   if (await verifyPassword(password, row.password_hash)) return redirect('/admin/setup?m=same');

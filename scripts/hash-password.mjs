@@ -10,7 +10,7 @@
 import { pbkdf2Sync, randomBytes } from 'node:crypto';
 
 const ITERATIONS = 100000; // must not exceed the Workers PBKDF2 limit (100,000)
-const MIN_LENGTH = 12;
+const MIN_LENGTH = 8; // plus a number and a capital letter, the same rules as worker/auth.js
 
 function readHidden(prompt) {
   return new Promise(resolve => {
@@ -47,8 +47,8 @@ function readHidden(prompt) {
 }
 
 const password = await readHidden('Password: ');
-if (password.length < MIN_LENGTH) {
-  console.error(`Use at least ${MIN_LENGTH} characters.`);
+if (password.length < MIN_LENGTH || !/\d/.test(password) || !/\p{Lu}/u.test(password)) {
+  console.error(`Use at least ${MIN_LENGTH} characters, including a number and a capital letter.`);
   process.exit(1);
 }
 if (password !== await readHidden('Repeat password: ')) {
