@@ -12,6 +12,11 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.7.3] - 2026-10-22
+### What changed
+- Admin product editor: when "Save product" is pressed, each newly added photo is converted to WebP (quality 85%) with its longest side at most 1920 pixels; smaller photos keep their size, the aspect ratio is kept, the camera's rotation is applied and its metadata (such as location) is removed
+- The converted photos aren't stored yet (R2 isn't connected); the save message says how many were converted and their total size. Browsers that can't make WebP (Safari) are asked to use Chrome, Edge or Firefox when saving new photos
+
 ## [0.7.2] - 2026-10-22
 ### What changed
 - Admin product editor (add and edit): several photos can be dropped or chosen at once, up to 8 per product, and appear as thumbnails with the first marked "Main"

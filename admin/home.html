@@ -1243,10 +1243,15 @@
       };
       saving = true;
       $('product-save').disabled = true;
-      $('product-save').textContent = 'Saving…';
+      let converted;
       try {
+        if (photos.some(p => p.file && !p.webp)) $('product-save').textContent = 'Preparing photos…';
+        converted = await preparePhotos();
+        // TODO(R2): upload each converted photo (p.webp.blob) here and send their keys with the product.
+        $('product-save').textContent = 'Saving…';
         await api(isNew ? 'POST' : 'PUT', isNew ? 'products' : `products/${encodeURIComponent(editor.id)}`, product);
       } catch (err) {
+        if (err instanceof PhotoError) photoError(err.message);
         toast(err.message);
         return;
       } finally {
@@ -1254,7 +1259,10 @@
         $('product-save').disabled = false;
         $('product-save').textContent = 'Save product';
       }
-      const photoNote = photoState() !== editor.photos ? ' Photo changes weren’t kept: photo saving isn’t connected yet.' : '';
+      const convertedSize = converted.reduce((sum, p) => sum + p.webp.blob.size, 0);
+      const photoNote = converted.length
+        ? ` ${converted.length === 1 ? '1 photo was' : `${converted.length} photos were`} converted to WebP (${sizeText(convertedSize)}) but not kept: photo saving isn’t connected yet.`
+        : photoState() !== editor.photos ? ' Photo changes weren’t kept: photo saving isn’t connected yet.' : '';
       editor = null;
       go('/admin/products');
       toast(`${product.name} ${isNew ? 'added' : 'saved'}. The shop shows the change within about a minute.${photoNote}`);
@@ -1324,6 +1332,40 @@
       e.preventDefault();
       openViewer(Number(thumb.dataset.photo));
     });
+
+    /* On save, each new photo is converted to WebP with its longest side at most PHOTO_MAX_SIDE
+       pixels; smaller photos keep their size (never enlarged). The aspect ratio is kept, and
+       re-encoding also drops the camera's metadata, such as location. The result is kept on the
+       photo (p.webp) so a retry after a failed save doesn't convert it again. */
+    const PHOTO_MAX_SIDE = 1920;
+    const WEBP_QUALITY = 0.85;
+    class PhotoError extends Error {}
+    async function toWebp(file) {
+      let bitmap;
+      try {
+        bitmap = await createImageBitmap(file); // applies the photo's rotation from the camera
+      } catch {
+        throw new PhotoError(`${file.name} couldn’t be read as an image. Delete it and choose it again.`);
+      }
+      const scale = Math.min(1, PHOTO_MAX_SIDE / Math.max(bitmap.width, bitmap.height));
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+      canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+      const ctx = canvas.getContext('2d');
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      bitmap.close();
+      const blob = await new Promise(done => canvas.toBlob(done, 'image/webp', WEBP_QUALITY));
+      const { width, height } = canvas;
+      canvas.width = canvas.height = 0; // frees the canvas memory
+      // Browsers that can't make WebP (such as Safari) return a PNG instead.
+      if (!blob || blob.type !== 'image/webp') throw new PhotoError('This browser can’t convert photos to WebP. Save the product in Chrome, Edge or Firefox.');
+      return { blob, width, height };
+    }
+    async function preparePhotos() {
+      for (const p of photos) if (p.file && !p.webp) p.webp = await toWebp(p.file);
+      return photos.filter(p => p.webp);
+    }
 
     let viewing = -1; // index in photos of the photo being previewed
     const sizeText = bytes => bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
