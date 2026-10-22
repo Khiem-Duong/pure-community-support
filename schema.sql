@@ -12,13 +12,19 @@
      2. In the D1 Console, run the INSERT the script prints, with your email.
    Never put a plain password, or a hash, into a file in this repo. */
 
-/* People who can sign in to /admin. Roles follow spec §7.1.
-   The admin shows the part of the email before the @ as the person's display name. */
+/* People who can sign in to /admin. Roles follow spec §7.1, plus "custom" (worker/access.js).
+   Super-admins add editors, viewers and custom accounts on the admin's People & roles screen.
+   The admin shows the part of the email before the @ as the person's display name.
+   A database made before 0.7.4 is brought up to date with migrate-0.7.4.sql. */
 CREATE TABLE IF NOT EXISTS users (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
-  email         TEXT    NOT NULL UNIQUE COLLATE NOCASE,
-  role          TEXT    NOT NULL CHECK (role IN ('superadmin', 'editor', 'viewer')),
+  email         TEXT    NOT NULL UNIQUE COLLATE NOCASE,   /* used to sign in; doesn't have to be a real address */
+  role          TEXT    NOT NULL CHECK (role IN ('superadmin', 'editor', 'viewer', 'custom')),
+  permissions   TEXT,                        /* custom only: pages and access, e.g. {"products":"edit","tags":"view"} */
   password_hash TEXT    NOT NULL,            /* pbkdf2$<iterations>$<salt>$<hash> */
+  must_change_password INTEGER NOT NULL DEFAULT 0 CHECK (must_change_password IN (0, 1)),
+                                             /* 1 = the password is a one-time password: after signing in
+                                                with it they must create their own before anything else */
   active        INTEGER NOT NULL DEFAULT 1,  /* 0 = cannot sign in */
   created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
   last_login_at TEXT

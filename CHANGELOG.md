@@ -12,6 +12,19 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.7.4] - 2026-10-22
+### What changed
+- Admin: People & roles screen (super-admins only, also checked by the Worker): a list of managers, each with Edit and Delete; super-admin accounts stay in the D1 Console
+- Add Manager: role (Editor, Viewer or Custom), email (any text, used to sign in) and password mode, either "Created at first sign-in" with a one-time password or a preselected password, with a show / hide button; asks yes / no before adding
+- Edit manager: change the role, and "Edit Password" turns the starred password into a new password field (signs them out everywhere); the email is read only
+- Delete manager: a yes / no question, then typing DELETEUSER
+- Custom role: a switch for each admin page and, for each page switched on, View only or Can edit; the Worker enforces it for Products and Tags, and the sidebar, quick actions and buttons follow it
+- First sign-in with a one-time password leads to a "Create your password" page; nothing else in the admin opens until it's done, and the one-time password then stops working
+- Sign-in page: the email field accepts any text (emails don't have to be real addresses)
+- Removed the "Blog posts" and "Photos & files" screens and the "Write a post" quick action from the admin panel
+- Database: users table gains the "custom" role, a permissions column and a must_change_password flag (schema.sql); existing databases are updated once with migrate-0.7.4.sql in the D1 Console
+- New Worker files: worker/people.js (managers API), worker/access.js (who can open and change each page), worker/api.js (shared API helpers)
+
 ## [0.7.3] - 2026-10-22
 ### What changed
 - Admin product editor: when "Save product" is pressed, each newly added photo is converted to WebP (quality 85%) with its longest side at most 1920 pixels; smaller photos keep their size, the aspect ratio is kept, the camera's rotation is applied and its metadata (such as location) is removed

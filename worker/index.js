@@ -13,14 +13,21 @@
    Admin routes:
      GET  /admin           signed-in dashboard (redirects to sign-in when signed out)
      GET  /admin/<screen>  the same dashboard opened at a screen: products, products/<id>,
-                           products/new, tags, review, orders, ... (see ADMIN_SCREEN)
+                           products/new, tags, review, orders, people, people/<id>, people/new, ...
+                           (see ADMIN_SCREEN); the page hides screens the person can't open
      GET  /admin/login     sign-in page
-     POST /admin/login     check email + password, start a session
+     POST /admin/login     check email + password, start a session; someone who signed in with a
+                           one-time password (users.must_change_password) goes to /admin/setup
+     GET  /admin/setup     first sign-in: create their own password (same page as sign-in, in
+                           setup mode); until they do, every other admin page sends them here
+     POST /admin/setup     save that password; the one-time password stops working
      POST /admin/logout    end the session
      GET  /admin/db-check  D1 connection check (remove once sign-in is confirmed working)
 
-   Admin data API (signed in; changes need an editor or super-admin, and a same-origin JSON request).
-   Every change answers with the whole updated catalog, { catalog: { products, tags } }:
+   Managers API (super-admins only): /admin/api/people, see worker/people.js.
+
+   Admin data API (signed in; changes need edit access to Products or Tags (worker/access.js), and a
+   same-origin JSON request). Every change answers with the whole updated catalog, { catalog: { products, tags } }:
      GET    /admin/api/catalog          every product (Shown and Hidden) and tag
      POST   /admin/api/products         add a product (its id is made from the name)
      PUT    /admin/api/products/<id>    save a product
@@ -31,8 +38,10 @@
      PUT    /admin/api/tags/<id>        rename a tag
      DELETE /admin/api/tags/<id>        delete a tag (and remove it from its products) */
 
-import { DUMMY_HASH, newSessionToken, sha256Hex, verifyPassword } from './auth.js';
+import { accessMap } from './access.js';
+import { DUMMY_HASH, PASSWORD_MAX, PASSWORD_MIN, hashPassword, newSessionToken, sha256Hex, verifyPassword } from './auth.js';
 import { adminApi, publicProducts } from './catalog.js';
+import { peopleApi } from './people.js';
 import loginTemplate from '../admin/login.html';
 import homeTemplate from '../admin/home.html';
 
@@ -42,10 +51,10 @@ const LOCK_WINDOW = '-15 minutes';
 const MAX_FAILS_PER_EMAIL = 5;
 const MAX_FAILS_PER_IP = 20;
 
-const ROLE_NAMES = { superadmin: 'Super-admin', editor: 'Editor', viewer: 'Viewer' };
+const ROLE_NAMES = { superadmin: 'Super-admin', editor: 'Editor', viewer: 'Viewer', custom: 'Custom' };
 
 /* Dashboard screen paths; the page itself switches between them (admin/home.html). */
-const ADMIN_SCREEN = /^\/admin\/(review|products|tags|orders|campaigns|impact|money|blog|media|people|products\/[a-z0-9-]{1,80})$/;
+const ADMIN_SCREEN = /^\/admin\/(review|products|tags|orders|campaigns|impact|money|people|products\/[a-z0-9-]{1,80}|people\/(new|\d{1,10}))$/;
 
 /* Messages shown on the sign-in page, chosen by ?m=<code>. Only these fixed texts are ever shown. */
 const MESSAGES = {
@@ -54,6 +63,9 @@ const MESSAGES = {
   expired:     { kind: 'info',  text: 'Your session has ended. Please sign in again.' },
   out:         { kind: 'info',  text: 'You have been signed out.' },
   unavailable: { kind: 'error', text: 'Sign-in is temporarily unavailable. Please try again later.' },
+  short:       { kind: 'error', text: `Use ${PASSWORD_MIN} to ${PASSWORD_MAX} characters for your password.` },
+  mismatch:    { kind: 'error', text: 'The two passwords don’t match. Please type them again.' },
+  same:        { kind: 'error', text: 'Choose a new password, different from the one-time password.' },
 };
 
 const BASE_HEADERS = {
@@ -104,6 +116,14 @@ async function handleAdmin(request, env, ctx, url, path) {
     return page(loginTemplate, { messageHtml: messageHtml(url.searchParams.get('m')) });
   }
 
+  if (path === '/admin/setup') {
+    const user = await currentUser(request, env);
+    if (!user) return redirect('/admin/login');
+    if (!user.must_change_password) return redirect('/admin');
+    if (method === 'POST') return setUpPassword(request, env, url, user);
+    return page(loginTemplate, { mode: 'setup', email: user.email, messageHtml: messageHtml(url.searchParams.get('m')) });
+  }
+
   if (path === '/admin/logout') {
     if (method !== 'POST') return redirect('/admin');
     if (!sameOrigin(request, url)) return forbidden();
@@ -120,10 +140,24 @@ async function handleAdmin(request, env, ctx, url, path) {
       : redirect('/admin/login');
   }
 
-  if (isApi) return adminApi(request, env, ctx, url, path, user);
+  // Signed in with a one-time password: nothing else until they've created their own.
+  if (user.must_change_password) {
+    if (isApi) return Response.json({ error: 'Create your own password first: reload this page.' }, { status: 403, headers: BASE_HEADERS });
+    return redirect('/admin/setup');
+  }
+
+  if (isApi) {
+    if (path === '/admin/api/people' || path.startsWith('/admin/api/people/')) return peopleApi(request, env, url, path, user);
+    return adminApi(request, env, ctx, url, path, user);
+  }
 
   if (path === '/admin' || ADMIN_SCREEN.test(path)) {
-    return page(homeTemplate, { name: displayName(user.email), role: ROLE_NAMES[user.role] || user.role, roleKey: user.role });
+    return page(homeTemplate, {
+      name: displayName(user.email),
+      role: ROLE_NAMES[user.role] || user.role,
+      roleKey: user.role,
+      access: JSON.stringify(accessMap(user)),
+    });
   }
   return new Response('Not found', { status: 404, headers: BASE_HEADERS });
 }
@@ -138,17 +172,10 @@ async function signIn(request, env, url) {
   const password = String(form.get('password') || '');
   const ip = request.headers.get('CF-Connecting-IP') || '';
   if (!email || !password) return redirect('/admin/login?m=invalid');
-
-  // Pause sign-in after repeated failures for this email or from this address.
-  const fails = await env.DB.prepare(`
-    SELECT
-      (SELECT COUNT(*) FROM login_attempts WHERE email = ?1 AND success = 0 AND created_at > datetime('now', ?3)) AS by_email,
-      (SELECT COUNT(*) FROM login_attempts WHERE ip    = ?2 AND success = 0 AND created_at > datetime('now', ?3)) AS by_ip
-  `).bind(email, ip, LOCK_WINDOW).first();
-  if (fails.by_email >= MAX_FAILS_PER_EMAIL || fails.by_ip >= MAX_FAILS_PER_IP) return redirect('/admin/login?m=locked');
+  if (await tooManyFails(env, email, ip)) return redirect('/admin/login?m=locked');
 
   const user = await env.DB
-    .prepare('SELECT id, password_hash FROM users WHERE email = ? AND active = 1')
+    .prepare('SELECT id, password_hash, must_change_password FROM users WHERE email = ? AND active = 1')
     .bind(email)
     .first();
   const passwordOk = await verifyPassword(password, user ? user.password_hash : DUMMY_HASH);
@@ -156,18 +183,52 @@ async function signIn(request, env, url) {
 
   await env.DB.prepare('INSERT INTO login_attempts (email, ip, success) VALUES (?, ?, ?)').bind(email, ip, ok ? 1 : 0).run();
   if (!ok) return redirect('/admin/login?m=invalid');
+  return startSession(env, user.id, user.must_change_password ? '/admin/setup' : '/admin');
+}
 
+/* First sign-in: replaces the one-time password with their own. Their other sessions end,
+   so anyone else who used the one-time password is signed out. */
+async function setUpPassword(request, env, url, user) {
+  if (!sameOrigin(request, url)) return forbidden();
+
+  const form = await request.formData();
+  const password = String(form.get('password') || '');
+  if (password.length < PASSWORD_MIN || password.length > PASSWORD_MAX) return redirect('/admin/setup?m=short');
+  if (password !== String(form.get('repeat') || '')) return redirect('/admin/setup?m=mismatch');
+  const row = await env.DB.prepare('SELECT password_hash FROM users WHERE id = ?').bind(user.id).first();
+  if (await verifyPassword(password, row.password_hash)) return redirect('/admin/setup?m=same');
+
+  await env.DB.batch([
+    env.DB.prepare('UPDATE users SET password_hash = ?2, must_change_password = 0 WHERE id = ?1')
+      .bind(user.id, await hashPassword(password)),
+    env.DB.prepare('DELETE FROM sessions WHERE user_id = ? AND token_hash != ?')
+      .bind(user.id, await sha256Hex(getCookie(request, SESSION_COOKIE))),
+  ]);
+  return redirect('/admin');
+}
+
+/* Sign-in pauses after repeated failures for this email or from this address. */
+async function tooManyFails(env, email, ip) {
+  const fails = await env.DB.prepare(`
+    SELECT
+      (SELECT COUNT(*) FROM login_attempts WHERE email = ?1 AND success = 0 AND created_at > datetime('now', ?3)) AS by_email,
+      (SELECT COUNT(*) FROM login_attempts WHERE ip    = ?2 AND success = 0 AND created_at > datetime('now', ?3)) AS by_ip
+  `).bind(email, ip, LOCK_WINDOW).first();
+  return fails.by_email >= MAX_FAILS_PER_EMAIL || fails.by_ip >= MAX_FAILS_PER_IP;
+}
+
+async function startSession(env, userId, location) {
   const token = newSessionToken();
   await env.DB.batch([
     env.DB.prepare(`INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, datetime('now', ?))`)
-      .bind(await sha256Hex(token), user.id, `+${SESSION_HOURS} hours`),
-    env.DB.prepare(`UPDATE users SET last_login_at = datetime('now') WHERE id = ?`).bind(user.id),
+      .bind(await sha256Hex(token), userId, `+${SESSION_HOURS} hours`),
+    env.DB.prepare(`UPDATE users SET last_login_at = datetime('now') WHERE id = ?`).bind(userId),
     // Housekeeping: drop expired sessions and old attempts.
     env.DB.prepare(`DELETE FROM sessions WHERE expires_at <= datetime('now')`),
     env.DB.prepare(`DELETE FROM login_attempts WHERE created_at < datetime('now', '-30 days')`),
   ]);
 
-  return redirect('/admin', { 'Set-Cookie': sessionCookie(token, SESSION_HOURS * 3600) });
+  return redirect(location, { 'Set-Cookie': sessionCookie(token, SESSION_HOURS * 3600) });
 }
 
 async function signOut(request, env) {
@@ -180,7 +241,7 @@ async function currentUser(request, env) {
   const token = getCookie(request, SESSION_COOKIE);
   if (!token) return null;
   return env.DB.prepare(`
-    SELECT u.id, u.email, u.role
+    SELECT u.id, u.email, u.role, u.permissions, u.must_change_password
     FROM sessions s JOIN users u ON u.id = s.user_id
     WHERE s.token_hash = ? AND s.expires_at > datetime('now') AND u.active = 1
   `).bind(await sha256Hex(token)).first();

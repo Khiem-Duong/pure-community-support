@@ -7,28 +7,13 @@
    Photos are not handled here: until R2 is connected they are listed in public/assets/js/products.js.
    Prices are stored as whole US cents (price_cents) and sent to pages as dollars (price). */
 
-const API_HEADERS = {
-  'Cache-Control': 'no-store',
-  'X-Content-Type-Options': 'nosniff',
-  'Referrer-Policy': 'same-origin',
-};
+import { canEdit, canView } from './access.js';
+import { API_HEADERS, ApiError, bad, json, oneLine, readJson } from './api.js';
+
 const PUBLIC_MAX_AGE = 60;     // seconds browsers and Cloudflare may reuse /api/products
-const MAX_BODY = 256 * 1024;   // largest JSON body accepted from the admin
 const MAX_BATCH = 200;         // most products one batch action can change
 const ID_PATTERN = /^[a-z0-9-]{1,80}$/;
 const RESERVED_IDS = new Set(['new', 'batch']); // would clash with /admin/products/new and /admin/api/products/batch
-const EDIT_ROLES = new Set(['superadmin', 'editor']);
-
-const json = (data, status = 200, headers = API_HEADERS) => Response.json(data, { status, headers });
-
-/* An error whose message is safe to show in the admin. */
-class ApiError extends Error {
-  constructor(status, message) {
-    super(message);
-    this.status = status;
-  }
-}
-const bad = message => new ApiError(400, message);
 
 /* Every product's tag ids, in tag order. */
 const LINKS_SQL = `
@@ -113,13 +98,18 @@ async function adminRoute(request, env, ctx, url, path, user) {
   const id = rawId === undefined ? undefined : decodeId(rawId);
 
   if (method === 'GET') {
-    if (kind === 'catalog' && id === undefined) return json({ catalog: await adminCatalog(env) });
-    throw new ApiError(404, 'Not found');
+    if (kind !== 'catalog' || id !== undefined) throw new ApiError(404, 'Not found');
+    // Products shows tag names and Tags shows product counts, so either page needs the whole catalog.
+    if (!canView(user, 'products') && !canView(user, 'tags')) throw new ApiError(403, 'Your account can’t open Products or Tags.');
+    return json({ catalog: await adminCatalog(env) });
   }
 
-  // Every change: a same-origin request from an editor or super-admin.
+  // Every change: a same-origin request from someone who can edit that page.
   if (request.headers.get('Origin') !== url.origin) throw new ApiError(403, 'Forbidden');
-  if (!EDIT_ROLES.has(user.role)) throw new ApiError(403, 'Your account has view-only access.');
+  if (kind !== 'products' && kind !== 'tags') throw new ApiError(404, 'Not found');
+  if (!canEdit(user, kind)) {
+    throw new ApiError(403, canView(user, kind) ? 'Your account has view-only access to this page.' : 'Your account can’t open this page.');
+  }
   const body = method === 'DELETE' ? {} : await readJson(request);
 
   let answer = {};
@@ -142,17 +132,6 @@ function decodeId(raw) {
   try { id = decodeURIComponent(raw); } catch { throw new ApiError(404, 'Not found'); }
   if (!ID_PATTERN.test(id)) throw new ApiError(404, 'Not found');
   return id;
-}
-
-async function readJson(request) {
-  if (!(request.headers.get('Content-Type') || '').startsWith('application/json')) throw new ApiError(415, 'Send JSON.');
-  if (Number(request.headers.get('Content-Length') || 0) > MAX_BODY) throw new ApiError(413, 'That request is too large.');
-  const text = await request.text();
-  if (text.length > MAX_BODY) throw new ApiError(413, 'That request is too large.');
-  let data;
-  try { data = JSON.parse(text); } catch { throw bad('That request could not be read.'); }
-  if (!data || typeof data !== 'object' || Array.isArray(data)) throw bad('That request could not be read.');
-  return data;
 }
 
 /* Everything the admin shows: every product (Shown and Hidden) with its Vietnamese fields, and every tag. */
@@ -186,8 +165,6 @@ async function adminCatalog(env) {
 }
 
 /* ── Checking what the admin sends ──────────── */
-
-const oneLine = s => s.replace(/\s+/g, ' ').trim();
 
 /* Optional text field: trimmed, empty becomes null. */
 function text(body, key, label, max, { required = false, single = false } = {}) {

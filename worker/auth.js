@@ -7,6 +7,10 @@
 const ITERATIONS = 100000; // the most Workers allow for PBKDF2
 const encoder = new TextEncoder();
 
+/* Length rules for passwords chosen in the admin (People & roles, first sign-in). */
+export const PASSWORD_MIN = 12;
+export const PASSWORD_MAX = 200;
+
 const toBase64 = bytes => btoa(String.fromCharCode(...bytes));
 const fromBase64 = text => Uint8Array.from(atob(text), ch => ch.charCodeAt(0));
 
@@ -39,6 +43,13 @@ export async function verifyPassword(password, stored) {
     return false;
   }
   return timingSafeEqual(await derive(password, salt, iterations), expected);
+}
+
+/* New hash for a password, in the stored format above. */
+export async function hashPassword(password) {
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const hash = await derive(password, salt, ITERATIONS);
+  return `pbkdf2$${ITERATIONS}$${toBase64(salt)}$${toBase64(hash)}`;
 }
 
 /* Random session token for the cookie (base64url, 256 bits). */

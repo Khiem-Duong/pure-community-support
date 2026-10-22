@@ -11,9 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Admin dashboard (sidebar design, from -temp/admin-v1-sidebar-dashboard.html).
        Served by worker/index.js to signed-in users at /admin and its screen paths
-       (/admin/products, /admin/products/<id>, /admin/products/new, /admin/tags, ...);
-       the Worker fills in the double-brace placeholders. Saving isn't connected yet:
-       product and tag changes are kept in this browser's localStorage only. -->
+       (/admin/products, /admin/products/<id>, /admin/products/new, /admin/tags, /admin/people, ...);
+       the Worker fills in the double-brace placeholders, including data-access: the pages this
+       person can open, each 'view' or 'edit' (worker/access.js). -->
   <style nonce="{{nonce}}">
     :root {
       --cream: #F5F1EA; --greige: #DAD1C4; --tan: #B2967D; --purple: #652E86; --brown: #4A342A;
@@ -243,6 +243,49 @@
     .tag-edit { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
     .tag-edit .input { flex: 1; min-width: 180px; }
 
+    /* ── People & roles ── */
+    .page-head { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 4px 24px; }
+    .page-head .btn { margin-bottom: 20px; }
+    .people-list { display: flex; flex-direction: column; gap: 10px; list-style: none; }
+    .person { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 20px; padding: 16px 20px; background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); }
+    .person:hover { border-color: var(--greige); }
+    .person-info { display: flex; flex-direction: column; min-width: 0; }
+    .person-email { font-size: 15.5px; overflow-wrap: anywhere; }
+    .person-meta { font-size: 13.5px; color: var(--muted); }
+    .person-actions { display: flex; gap: 8px; margin-left: auto; }
+    .person-form { max-width: 680px; }
+    .card-title { display: block; padding: 0; margin-bottom: 4px; font-size: 17px; font-weight: 700; }
+    .options { display: grid; gap: 8px; }
+    .option { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border: 1.5px solid var(--greige); border-radius: var(--radius); background: var(--white); cursor: pointer; }
+    .option:hover { border-color: var(--tan); }
+    .option:has(input:checked) { border-color: var(--purple); background: rgba(101,46,134,.06); }
+    .option input { flex-shrink: 0; width: 18px; height: 18px; margin-top: 2px; accent-color: var(--purple); }
+    .option strong { display: block; font-size: 15px; }
+    .option small { display: block; font-size: 13.5px; color: var(--muted); }
+    .invalid .option { border-color: var(--error); }
+    .custom-access { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+    .custom-access h3 { margin-bottom: 2px; font-size: 15px; font-weight: 700; }
+    .access-list { list-style: none; border: 1.5px solid var(--line); border-radius: var(--radius); }
+    .invalid .access-list { border-color: var(--error); }
+    .access-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 16px; min-height: 58px; padding: 6px 8px 6px 14px; }
+    .access-row + .access-row { border-top: 1px solid var(--line); }
+    .access-off { padding: 0 12px; font-size: 13.5px; color: var(--muted); }
+    .password-field { position: relative; }
+    .password-field .input { padding-right: 52px; }
+    .eye { position: absolute; top: 50%; right: 4px; transform: translateY(-50%); display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border: none; border-radius: 6px; background: none; color: var(--muted); }
+    .eye:hover { background: var(--cream); color: var(--brown); }
+    .eye svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.8; }
+    .pw-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-top: 8px; }
+    .pw-stars { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 18px; letter-spacing: .15em; }
+    .pw-unset { color: var(--muted); }
+    .link-btn { min-height: 44px; padding: 8px 0; border: none; background: none; color: var(--purple); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+    .input[readonly] { background: #FAF7F3; color: var(--muted); }
+    .input[readonly]:hover { border-color: var(--greige); }
+    .modal-summary { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: #FCFAF7; }
+    .modal-summary dt { font-weight: 600; color: var(--muted); }
+    .modal-summary dd { overflow-wrap: anywhere; }
+    .modal-summary ul { padding-left: 18px; }
+
     /* ── Sections still to be built ── */
     .placeholder { padding: 32px; background: var(--white); border: 1px dashed var(--greige); border-radius: var(--radius); }
     .placeholder ul { margin: 12px 0 0 20px; color: var(--muted); }
@@ -301,7 +344,7 @@
     }
   </style>
 </head>
-<body data-role="{{roleKey}}" data-name="{{name}}">
+<body data-role="{{roleKey}}" data-name="{{name}}" data-access="{{access}}">
   <header class="topbar">
     <button class="menu-btn" type="button" aria-expanded="false" aria-controls="sidebar">Menu</button>
     <div class="brand">Pure <span>· Admin</span></div>
@@ -330,11 +373,6 @@
         <button class="nav-item" data-view="money"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M12 12h9"/></svg>Profit split</button>
       </div>
       <div class="nav-group">
-        <h2>Stories</h2>
-        <button class="nav-item" data-view="blog"><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>Blog posts</button>
-        <button class="nav-item" data-view="media"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M21 17l-5-5-8 7"/></svg>Photos &amp; files</button>
-      </div>
-      <div class="nav-group" data-super-only>
         <h2>Settings</h2>
         <button class="nav-item" data-view="people"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20a7 7 0 0 1 14 0"/><path d="M16 4a3.5 3.5 0 0 1 0 7M22 20a7 7 0 0 0-4-6.3"/></svg>People &amp; roles</button>
       </div>
@@ -361,14 +399,13 @@
             </div>
           </div>
           <div>
-            <div class="card">
+            <div class="card" id="quick-actions">
               <h2>Quick actions</h2>
               <p class="hint">The things you do most often.</p>
               <div class="actions-grid">
-                <button class="action" type="button" data-go="products/new" data-edit><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><strong>Add a product</strong><span>New item for the shop</span></button>
+                <button class="action" type="button" data-go="products/new" data-edit="products"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><strong>Add a product</strong><span>New item for the shop</span></button>
                 <button class="action" type="button" data-go="products"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg><strong>Hide a product</strong><span>Change what the shop shows</span></button>
-                <button class="action" type="button" data-go="blog" data-edit><svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg><strong>Write a post</strong><span>Blog or report</span></button>
-                <button class="action" type="button" data-go="impact" data-edit><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7"/></svg><strong>Update numbers</strong><span>Impact page figures</span></button>
+                <button class="action" type="button" data-go="impact" data-edit="impact"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7"/></svg><strong>Update numbers</strong><span>Impact page figures</span></button>
               </div>
             </div>
             <div class="card">
@@ -387,7 +424,7 @@
       <!-- Review -->
       <section data-screen="review" hidden>
         <h1>Waiting for review</h1>
-        <p class="lead">Editors' changes to campaigns, cases, blog posts and impact numbers appear here before they go live.</p>
+        <p class="lead">Editors' changes to campaigns, cases and impact numbers appear here before they go live.</p>
         <p class="empty">Nothing is waiting for review.</p>
       </section>
 
@@ -413,14 +450,14 @@
             <button type="button" data-show="shown" aria-pressed="false">Shown</button>
             <button type="button" data-show="hidden" aria-pressed="false">Hidden</button>
           </div>
-          <button class="btn btn-primary" type="button" data-edit id="add-product"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add a product</button>
+          <button class="btn btn-primary" type="button" data-edit="products" id="add-product"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add a product</button>
           <div class="menu-wrap" id="batch" hidden>
             <button class="btn btn-primary" type="button" id="batch-toggle" aria-expanded="false" aria-controls="batch-menu">Batch action <span id="batch-count"></span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
             <div class="menu" id="batch-menu" hidden>
               <button type="button" data-batch="cancel">Cancel</button>
               <hr>
-              <button class="danger" type="button" data-batch="delete" data-edit>Delete selection</button>
-              <button type="button" data-batch="price" data-edit>Modify price</button>
+              <button class="danger" type="button" data-batch="delete" data-edit="products">Delete selection</button>
+              <button type="button" data-batch="price" data-edit="products">Modify price</button>
               <button type="button" id="export-toggle" aria-expanded="false" aria-controls="export-menu">Export<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
               <div id="export-menu" hidden>
                 <button class="sub" type="button" data-batch="pdf">PDF</button>
@@ -541,7 +578,7 @@
                     </div>
                     <input class="sr-only" type="file" id="photo-input" accept="image/jpeg,image/png,image/webp" multiple tabindex="-1" aria-hidden="true">
                   </div>
-                  <p class="field-error" id="err-photo" role="alert" hidden></p>
+                  <p class="field-error" id="err-photo" role="alert" data-sticky hidden></p>
                   <ul class="photo-thumbs" id="photo-thumbs" aria-label="Photos added" hidden></ul>
                   <p class="field-note">Select a photo to preview or delete it. Photos aren't saved until image storage is connected.</p>
                 </div>
@@ -554,7 +591,7 @@
                       <label class="sr-only" for="tags-filter">Find a tag</label>
                       <input class="input" id="tags-filter" type="search" placeholder="Find a tag" autocomplete="off" data-ms-filter>
                       <div class="ms-options" id="tags-options" role="group" aria-labelledby="tags-label" data-ms-options></div>
-                      <a class="ms-manage" href="/admin/tags" data-link>Add or edit tags</a>
+                      <a class="ms-manage" href="/admin/tags" data-link id="tags-manage">Add or edit tags</a>
                     </div>
                   </div>
                   <ul class="chips" id="tags-chips" aria-label="Chosen tags"></ul>
@@ -581,16 +618,16 @@
           <div class="field-row">
             <div class="field">
               <label class="label" for="tag-new">Tag name</label>
-              <input class="input" id="tag-new" maxlength="40" autocomplete="off" aria-describedby="err-tag-new" data-edit>
+              <input class="input" id="tag-new" maxlength="40" autocomplete="off" aria-describedby="err-tag-new" data-edit="tags">
               <p class="field-error" id="err-tag-new" hidden></p>
             </div>
             <div class="field">
               <label class="label" for="tag-new-vi">Name in Vietnamese</label>
-              <input class="input" id="tag-new-vi" lang="vi" maxlength="40" autocomplete="off" aria-describedby="tag-vi-note" data-edit>
+              <input class="input" id="tag-new-vi" lang="vi" maxlength="40" autocomplete="off" aria-describedby="tag-vi-note" data-edit="tags">
             </div>
           </div>
           <p class="field-note" id="tag-vi-note">The Vietnamese name is optional for now and isn't shown on the website yet.</p>
-          <div class="form-actions"><button class="btn btn-primary" type="submit" data-edit>Add tag</button></div>
+          <div class="form-actions"><button class="btn btn-primary" type="submit" data-edit="tags">Add tag</button></div>
         </form>
         <div class="card">
           <h2>All tags</h2>
@@ -601,6 +638,93 @@
           </table>
           <p class="empty" id="tag-empty" hidden>No tags yet. Add one above.</p>
         </div>
+      </section>
+
+      <!-- People & roles (super-admins only) -->
+      <section data-screen="people" hidden>
+        <div class="page-head">
+          <div>
+            <h1>People &amp; roles</h1>
+            <p class="lead">Managers who can sign in to this admin panel, and what each one can do.</p>
+          </div>
+          <button class="btn btn-primary" type="button" id="add-person"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add Manager</button>
+        </div>
+        <div class="error-summary" role="alert" id="people-error" hidden></div>
+        <ul class="people-list" id="people-list" aria-label="Managers"></ul>
+        <p class="empty" id="people-empty" hidden></p>
+        <p class="field-note">Super-admin accounts aren’t listed here; they’re managed in the D1 Console.</p>
+      </section>
+
+      <!-- Manager form: /admin/people/new to add, /admin/people/<id> to edit -->
+      <section data-screen="person-edit" hidden>
+        <a class="back" href="/admin/people" data-link>← People &amp; roles</a>
+        <h1 id="person-title">Add Manager</h1>
+        <p class="lead" id="person-lead"></p>
+        <div class="error-summary" id="person-errors" tabindex="-1" role="alert" hidden></div>
+        <form class="person-form" id="person-form" novalidate>
+          <div class="card">
+            <fieldset class="plain" id="mf-role-group">
+              <legend class="card-title">Select role</legend>
+              <p class="hint">What this manager can open and change. People &amp; roles is for super-admins only.</p>
+              <div class="options">
+                <label class="option"><input type="radio" name="role" value="editor" id="mf-role-editor" aria-describedby="err-role"><span><strong>Editor</strong><small>Can view and change every page.</small></span></label>
+                <label class="option"><input type="radio" name="role" value="viewer" aria-describedby="err-role"><span><strong>Viewer</strong><small>Can view every page, but can’t change anything.</small></span></label>
+                <label class="option"><input type="radio" name="role" value="custom" aria-describedby="err-role"><span><strong>Custom</strong><small>Choose which pages they can open, and whether they can change each one.</small></span></label>
+              </div>
+              <p class="field-error" id="err-role" hidden></p>
+            </fieldset>
+            <div class="custom-access" id="custom-access" hidden>
+              <h3 id="access-title">Page access</h3>
+              <p class="hint">Turn on each page this manager can open, then choose View only (read) or Can edit (read and write). Home is always open.</p>
+              <ul class="access-list" id="access-list" aria-labelledby="access-title"></ul>
+              <p class="field-error" id="err-access" hidden></p>
+            </div>
+          </div>
+          <div class="card">
+            <label class="card-title" for="mf-email">Email</label>
+            <p class="hint" id="mf-email-hint"></p>
+            <input class="input" id="mf-email" maxlength="254" autocomplete="off" autocapitalize="none" spellcheck="false" aria-describedby="mf-email-hint err-email">
+            <p class="field-error" id="err-email" hidden></p>
+          </div>
+          <div class="card">
+            <!-- Adding: how the password is set -->
+            <fieldset class="plain" id="mf-pw-mode-group">
+              <legend class="card-title">Password mode</legend>
+              <p class="hint">How this manager gets their password.</p>
+              <div class="options">
+                <label class="option"><input type="radio" name="pwmode" value="first" id="mf-pw-first" aria-describedby="err-pwmode"><span><strong>Created at first sign-in</strong><small>You choose a one-time password. They sign in with it once, then must create their own.</small></span></label>
+                <label class="option"><input type="radio" name="pwmode" value="preset" aria-describedby="err-pwmode"><span><strong>Preselected</strong><small>You choose the password now and give it to them privately.</small></span></label>
+              </div>
+              <p class="field-error" id="err-pwmode" hidden></p>
+            </fieldset>
+            <!-- Editing: the current password, shown as stars -->
+            <div id="mf-pw-current">
+              <h2>Password</h2>
+              <div class="pw-row" id="mf-pw-row">
+                <span class="pw-stars" id="mf-pw-stars"><span aria-hidden="true">********</span><span class="sr-only">Password set</span></span>
+                <span class="pw-unset" id="mf-pw-unset">One-time password: they’ll create their own when they first sign in.</span>
+                <button class="btn" type="button" id="mf-pw-edit">Edit Password</button>
+              </div>
+            </div>
+            <div class="field" id="mf-pw-field" hidden>
+              <label class="label" for="mf-password" id="mf-password-label">Password</label>
+              <div class="password-field">
+                <input class="input" id="mf-password" type="password" maxlength="200" autocomplete="new-password" autocapitalize="none" spellcheck="false" aria-describedby="mf-password-note err-password">
+                <button class="eye" type="button" id="mf-eye" aria-controls="mf-password" aria-pressed="false" aria-label="Show password">
+                  <svg viewBox="0 0 24 24" id="mf-eye-show" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <svg viewBox="0 0 24 24" id="mf-eye-hide" aria-hidden="true" hidden><path d="M3 3l18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4.1M6.6 6.6C3.9 8.4 2 12 2 12s3.6 7 10 7a10 10 0 0 0 5.4-1.6"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+                </button>
+              </div>
+              <p class="field-note" id="mf-password-note"></p>
+              <p class="field-error" id="err-password" hidden></p>
+              <button class="link-btn" type="button" id="mf-pw-keep" hidden>Keep the current password</button>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" id="person-save">Add Manager</button>
+            <a class="btn" href="/admin/people" data-link>Cancel</a>
+          </div>
+        </form>
       </section>
 
       <!-- Sections still to be built -->
@@ -620,7 +744,7 @@
       <h2 id="modal-title"></h2>
       <div class="modal-body" id="modal-body"></div>
       <div class="modal-actions">
-        <button class="btn" type="button" id="modal-cancel">Cancel</button>
+        <button class="btn" type="button" id="modal-cancel"></button>
         <button class="btn btn-primary" type="submit" id="modal-ok"></button>
       </div>
     </form>
@@ -655,11 +779,16 @@
     const $ = id => document.getElementById(id);
     const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 
-    /* Signed-in user, set by the Worker */
-    const ROLE = document.body.dataset.role; // superadmin | editor | viewer
+    /* Signed-in user, set by the Worker. ACCESS lists the pages they can open, each 'view' or
+       'edit' (worker/access.js); the Worker checks again on every change. */
+    const ROLE = document.body.dataset.role; // superadmin | editor | viewer | custom
     const NAME = document.body.dataset.name;
+    const ACCESS = (() => { try { return JSON.parse(document.body.dataset.access) || {}; } catch { return {}; } })();
+    ACCESS.home = 'view';
     const isSuper = ROLE === 'superadmin';
-    const canEdit = ROLE !== 'viewer';
+    const canEditPage = page => ACCESS[page] === 'edit';
+    const canEditProducts = canEditPage('products');
+    const canEditTags = canEditPage('tags');
 
     /* Site data */
     const PHOTOS = window.PURE_PHOTOS || {};
@@ -699,6 +828,7 @@
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
       if (data.catalog) applyCatalog(data.catalog);
+      if (data.people) applyPeople(data.people);
       return data;
     }
     /* A change from a button: its error is shown as a toast. Resolves to the answer, or null. */
@@ -728,24 +858,24 @@
 
     /* ── Navigation ──
        Each screen has its own address (/admin/products, /admin/tags, /admin/products/<id>),
-       served by the Worker and switched here without reloading. */
-    const SCREENS = ['home', 'review', 'products', 'tags'];
+       served by the Worker and switched here without reloading. Screens this person can't
+       open (not in ACCESS) go to Home. */
+    const SCREENS = ['home', 'review', 'products', 'tags', 'people'];
     const TITLES = {
       orders: ['Orders', 'See new orders and update their status from pending to delivered.', ['A table of orders, newest first', 'One button per order to move it to the next step', 'Viewers can see orders but not change them']],
       campaigns: ['Campaigns & cases', 'Edit the four programmes and add individual cases.', ['A list of campaigns with status badges', 'Cases cannot be submitted until "consent confirmed" is ticked', 'Editors save drafts; super-admins publish']],
       impact: ['Impact numbers', 'The figures shown on the Impact page.', ['One row per figure with the current value', 'Editors’ changes go to Waiting for review before going live']],
-      money: ['Profit split', 'Quarterly revenue, costs and the 50/50 split.', ['One record per quarter', 'The community share is calculated automatically']],
-      blog: ['Blog posts', 'Stories, campaign updates and transparency recaps.', ['Write in English and Vietnamese side by side', 'Editors submit for review; super-admins publish']],
-      media: ['Photos & files', 'Every photo and document used on the site.', ['Drag photos in to upload', 'A reminder of the no-photos-of-children rule on every upload']],
-      people: ['People & roles', 'Who can sign in, and what they can do.', ['Add someone by email and pick their role', 'Reset passwords and turn accounts off', 'Only super-admins see this section', 'Until then, people are managed in the D1 Console']]
+      money: ['Profit split', 'Quarterly revenue, costs and the 50/50 split.', ['One record per quarter', 'The community share is calculated automatically']]
     };
     const pathFor = view => view === 'home' ? '/admin' : `/admin/${view}`;
 
+    /* Marks the sidebar item, and says so when this page is view-only for them. */
     function setCurrent(view) {
       document.querySelectorAll('.nav-item').forEach(b => {
         if (b.dataset.view === view) b.setAttribute('aria-current', 'page');
         else b.removeAttribute('aria-current');
       });
+      $('viewer-note').hidden = view === 'home' ? ROLE !== 'viewer' : ACCESS[view] !== 'view';
     }
     function showScreen(screen) {
       document.querySelectorAll('[data-screen]').forEach(s => s.hidden = s.dataset.screen !== screen);
@@ -755,9 +885,9 @@
       window.scrollTo(0, 0);
     }
     function show(view) {
-      if ((!SCREENS.includes(view) && !TITLES[view]) || (view === 'people' && !isSuper)) view = 'home';
+      if ((!SCREENS.includes(view) && !TITLES[view]) || !ACCESS[view]) view = 'home';
       if (location.pathname.replace(/\/+$/, '') !== pathFor(view)) history.replaceState(null, '', pathFor(view));
-      editor = null;
+      editor = personEditor = null;
       setCurrent(view);
       const screen = SCREENS.includes(view) ? view : 'other';
       if (screen === 'other') {
@@ -768,37 +898,49 @@
       }
       if (view === 'products') renderProducts();
       if (view === 'tags') { editingTag = null; renderTags(); }
+      if (view === 'people') renderPeople();
       showScreen(screen);
     }
     function route() {
       const [view = 'home', sub] = location.pathname.replace(/\/+$/, '').split('/').slice(2);
-      if (view === 'products' && sub && catalogState === 'loading') {
+      if (!ACCESS[view]) show('home');
+      else if (view === 'products' && sub && catalogState === 'loading') {
         // The editor opens once the catalog has loaded (route() runs again then).
         setCurrent('products');
         renderProducts();
         showScreen('products');
       } else if (view === 'products' && sub) openEditor(decodeURIComponent(sub));
+      else if (view === 'people' && sub && sub !== 'new' && peopleState === 'loading') {
+        // Same for a manager: their form opens once the list has loaded.
+        setCurrent('people');
+        renderPeople();
+        showScreen('people');
+      } else if (view === 'people' && sub) openPerson(sub);
       else show(view);
     }
 
-    /* Leaving the editor with unsaved changes asks first. */
+    /* Leaving the product editor or the manager form with unsaved changes asks first. */
+    function hasUnsavedChanges() {
+      return Boolean((editor && canEditProducts && formState() !== editor.snapshot)
+        || (personEditor && personState() !== personEditor.snapshot));
+    }
     function okToLeave() {
-      if (!editor || !canEdit || formState() === editor.snapshot) return true;
-      return confirm('You have unsaved changes. Leave without saving?');
+      return !hasUnsavedChanges() || confirm('You have unsaved changes. Leave without saving?');
     }
     function go(path) {
       if (!okToLeave()) return;
-      editor = null;
+      editor = personEditor = null;
       if (path !== location.pathname) history.pushState(null, '', path);
       route();
     }
     window.addEventListener('popstate', () => {
-      if (editor && !okToLeave()) { history.pushState(null, '', editor.path); return; }
-      editor = null;
+      const open = editor || personEditor;
+      if (open && !okToLeave()) { history.pushState(null, '', open.path); return; }
+      editor = personEditor = null;
       route();
     });
     window.addEventListener('beforeunload', e => {
-      if (editor && canEdit && formState() !== editor.snapshot) e.preventDefault();
+      if (hasUnsavedChanges()) e.preventDefault();
     });
     document.addEventListener('click', e => {
       const link = e.target.closest('a[data-link]');
@@ -826,24 +968,27 @@
     $('toast-undo').addEventListener('click', () => { if (undoFn) undoFn(); $('toast').classList.remove('show'); });
 
     /* ── Confirmation popup ──
-       openModal({ title, bodyHtml, okText, danger, onOk }). onOk runs when the confirm button
-       is pressed; returning false keeps the popup open (e.g. to show an input error). */
+       openModal({ title, bodyHtml, okText, cancelText, danger, onOk }). onOk runs when the confirm
+       button is pressed; returning false keeps the popup open (e.g. to show an input error), and
+       calling openModal() inside it shows a next step in the same popup. */
     let modalOk = null;
-    function openModal({ title, bodyHtml, okText, danger = false, onOk }) {
+    function openModal({ title, bodyHtml, okText, cancelText = 'Cancel', danger = false, onOk }) {
       $('modal-title').textContent = title;
       $('modal-body').innerHTML = bodyHtml;
       $('modal-ok').textContent = okText;
+      $('modal-cancel').textContent = cancelText;
       $('modal-ok').classList.toggle('btn-danger', danger);
       $('modal-ok').classList.toggle('btn-primary', !danger);
       modalOk = onOk;
-      $('modal').showModal();
+      if (!$('modal').open) $('modal').showModal();
       const input = $('modal-body').querySelector('input');
       (input || $('modal-cancel')).focus();
     }
     $('modal-form').addEventListener('submit', e => {
       e.preventDefault();
-      if (modalOk && modalOk() === false) return;
-      $('modal').close();
+      const onOk = modalOk;
+      if (onOk && onOk() === false) return;
+      if (modalOk === onOk) $('modal').close(); // unless onOk opened a next step
     });
     $('modal-cancel').addEventListener('click', () => $('modal').close());
     $('modal').addEventListener('close', () => { modalOk = null; });
@@ -916,8 +1061,8 @@
           <td>${p.img ? `<img class="thumb" src="${esc(p.img)}" alt="" loading="lazy">` : '<span class="thumb" aria-hidden="true"></span>'}</td>
           <td><strong>${esc(p.name)}</strong><br><span class="sub">${esc(tagNames(p) || 'No tags')}</span></td>
           <td>${esc(priceLabel(p))}</td>
-          <td><button class="switch" type="button" role="switch" aria-checked="${p.shown}" data-id="${esc(p.id)}" ${canEdit ? '' : 'disabled'}><span class="track" aria-hidden="true"></span>${p.shown ? 'Shown' : 'Hidden'}</button></td>
-          <td><a class="btn" href="${editUrl(p.id)}" data-link>${canEdit ? 'Edit' : 'View'}<span class="sr-only"> ${esc(p.name)}</span></a></td>
+          <td><button class="switch" type="button" role="switch" aria-checked="${p.shown}" data-id="${esc(p.id)}" ${canEditProducts ? '' : 'disabled'}><span class="track" aria-hidden="true"></span>${p.shown ? 'Shown' : 'Hidden'}</button></td>
+          <td><a class="btn" href="${editUrl(p.id)}" data-link>${canEditProducts ? 'Edit' : 'View'}<span class="sr-only"> ${esc(p.name)}</span></a></td>
         </tr>`).join('');
       const empty = $('product-empty');
       empty.hidden = list.length > 0 || catalogState === 'failed';
@@ -1144,14 +1289,14 @@
     function openEditor(id) {
       const isNew = id === 'new';
       const product = isNew ? null : products.find(p => p.id === id);
-      if ((isNew && !canEdit) || (!isNew && !product)) {
+      if ((isNew && !canEditProducts) || (!isNew && !product)) {
         show('products');
         if (!isNew) toast('That product wasn’t found.');
         return;
       }
       setCurrent('products');
-      $('editor-title').textContent = isNew ? 'Add a product' : canEdit ? `Edit ${product.name}` : product.name;
-      $('editor-lead').textContent = !canEdit
+      $('editor-title').textContent = isNew ? 'Add a product' : canEditProducts ? `Edit ${product.name}` : product.name;
+      $('editor-lead').textContent = !canEditProducts
         ? 'You have view-only access, so this product can’t be changed.'
         : isNew
           ? 'Fill in every field. Tags are optional, and so are photos until photo saving is connected.'
@@ -1171,9 +1316,9 @@
       renderChips();
       resetPhotos(product);
 
-      $('product-fields').disabled = !canEdit;
-      $('product-save').hidden = !canEdit;
-      $('product-cancel').textContent = canEdit ? 'Cancel' : 'Back to products';
+      $('product-fields').disabled = !canEditProducts;
+      $('product-save').hidden = !canEditProducts;
+      $('product-cancel').textContent = canEditProducts ? 'Cancel' : 'Back to products';
       editor = { path: location.pathname, id: product ? product.id : null, snapshot: formState(), photos: photoState() };
       showScreen('product-edit');
     }
@@ -1192,10 +1337,12 @@
       return errors;
     }
 
-    function showErrors(errors) {
-      form.querySelectorAll('.field-error').forEach(el => { if (el.id !== 'err-photo') el.hidden = true; });
-      form.querySelectorAll('[aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
-      form.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+    /* Shows each error under its field (err-<name>) and in a summary box linking to the fields.
+       Errors are { name, field, group?, text }; messages marked data-sticky are left alone. */
+    function showFormErrors(formEl, summary, errors) {
+      formEl.querySelectorAll('.field-error:not([data-sticky])').forEach(el => el.hidden = true);
+      formEl.querySelectorAll('[aria-invalid]').forEach(el => el.removeAttribute('aria-invalid'));
+      formEl.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
       errors.forEach(err => {
         const msg = $(`err-${err.name}`);
         msg.textContent = err.text;
@@ -1203,24 +1350,24 @@
         if (err.group) $(err.group).classList.add('invalid');
         else $(err.field).setAttribute('aria-invalid', 'true');
       });
-      const summary = $('editor-errors');
       summary.hidden = !errors.length;
       summary.innerHTML = errors.length
         ? `<strong>Check ${errors.length === 1 ? 'this field' : `these ${errors.length} fields`} before saving:</strong>
            <ul>${errors.map(err => `<li><a href="#${err.field}" data-focus="${err.field}">${esc(err.text)}</a></li>`).join('')}</ul>`
         : '';
     }
-    $('editor-errors').addEventListener('click', e => {
+    const showErrors = errors => showFormErrors(form, $('editor-errors'), errors);
+    ['editor-errors', 'person-errors'].forEach(id => $(id).addEventListener('click', e => {
       const link = e.target.closest('[data-focus]');
       if (!link) return;
       e.preventDefault();
       $(link.dataset.focus).focus();
-    });
+    }));
 
     let saving = false;
     form.addEventListener('submit', async e => {
       e.preventDefault();
-      if (!canEdit || !editor || saving) return;
+      if (!canEditProducts || !editor || saving) return;
       const isNew = !editor.id;
       const errors = validate(isNew);
       showErrors(errors);
@@ -1272,7 +1419,7 @@
     const tagPicker = multiSelect(document.querySelector('#product-form .ms'), selected, renderChips);
     function renderChips() {
       const chosen = tags.filter(t => selected.has(t.id));
-      $('tags-chips').innerHTML = chosen.map(t => `<li>${esc(t.name)}<button type="button" data-remove-tag="${esc(t.id)}" aria-label="Remove ${esc(t.name)}" ${canEdit ? '' : 'disabled'}>×</button></li>`).join('');
+      $('tags-chips').innerHTML = chosen.map(t => `<li>${esc(t.name)}<button type="button" data-remove-tag="${esc(t.id)}" aria-label="Remove ${esc(t.name)}" ${canEditProducts ? '' : 'disabled'}>×</button></li>`).join('');
       $('tags-toggle-text').textContent = chosen.length ? `${chosen.length} selected` : 'Choose tags';
     }
     $('tags-chips').addEventListener('click', e => {
@@ -1310,7 +1457,7 @@
     }
     function addPhotos(fileList) {
       const files = [...(fileList || [])];
-      if (!canEdit || !files.length) return;
+      if (!canEditProducts || !files.length) return;
       const problems = [];
       let overLimit = 0;
       files.forEach(file => {
@@ -1377,7 +1524,7 @@
       $('viewer-img').src = p.src;
       $('viewer-img').alt = p.file ? `New photo: ${p.name}` : p.name;
       $('viewer-name').textContent = p.file ? `${p.name}, ${sizeText(p.file.size)}. Not saved yet.` : 'The photo currently in the shop.';
-      $('viewer-delete').hidden = !canEdit;
+      $('viewer-delete').hidden = !canEditProducts;
       viewerConfirm(false);
       $('viewer').showModal();
       $('viewer-close').focus();
@@ -1395,7 +1542,7 @@
     $('viewer-delete').addEventListener('click', () => viewerConfirm(true));
     $('viewer-keep').addEventListener('click', () => { viewerConfirm(false); $('viewer-delete').focus(); });
     $('viewer-confirm-delete').addEventListener('click', () => {
-      if (!canEdit) return;
+      if (!canEditProducts) return;
       const [gone] = photos.splice(viewing, 1);
       $('viewer').close();
       if (gone.file) URL.revokeObjectURL(gone.src);
@@ -1418,7 +1565,7 @@
     const drop = $('photo-drop');
     ['dragenter', 'dragover'].forEach(type => drop.addEventListener(type, e => {
       e.preventDefault();
-      if (canEdit) drop.classList.add('over');
+      if (canEditProducts) drop.classList.add('over');
     }));
     drop.addEventListener('dragleave', e => { if (!drop.contains(e.relatedTarget)) drop.classList.remove('over'); });
     drop.addEventListener('drop', e => {
@@ -1463,8 +1610,8 @@
             <td><strong>${esc(t.name)}</strong>${t.nameVi ? `<br><span class="sub" lang="vi">${esc(t.nameVi)}</span>` : ''}</td>
             <td>${count} ${count === 1 ? 'product' : 'products'}</td>
             <td>
-              <button class="btn" type="button" data-rename-tag="${esc(t.id)}" ${canEdit ? '' : 'disabled'}>Edit<span class="sr-only"> ${esc(t.name)}</span></button>
-              <button class="btn" type="button" data-delete-tag="${esc(t.id)}" ${canEdit ? '' : 'disabled'}>Delete<span class="sr-only"> ${esc(t.name)}</span></button>
+              <button class="btn" type="button" data-rename-tag="${esc(t.id)}" ${canEditTags ? '' : 'disabled'}>Edit<span class="sr-only"> ${esc(t.name)}</span></button>
+              <button class="btn" type="button" data-delete-tag="${esc(t.id)}" ${canEditTags ? '' : 'disabled'}>Delete<span class="sr-only"> ${esc(t.name)}</span></button>
             </td>
           </tr>`;
       }).join('');
@@ -1501,7 +1648,7 @@
       $('tag-rename-form').addEventListener('keydown', e => { if (e.key === 'Escape') { editingTag = null; renderTags(); } });
     }
     $('tag-rows').addEventListener('click', e => {
-      if (!canEdit) return;
+      if (!canEditTags) return;
       const rename = e.target.closest('[data-rename-tag]');
       if (rename) { editingTag = rename.dataset.renameTag; renderTags(); }
       const del = e.target.closest('[data-delete-tag]');
@@ -1527,7 +1674,7 @@
     let addingTag = false;
     $('tag-add-form').addEventListener('submit', async e => {
       e.preventDefault();
-      if (!canEdit || addingTag) return;
+      if (!canEditTags || addingTag) return;
       const input = $('tag-new');
       const name = cleanName(input.value);
       const nameVi = cleanName($('tag-new-vi').value);
@@ -1549,10 +1696,312 @@
       toast(`Tag “${name}” added.`);
     });
 
-    /* Role: hide or turn off what this person can't use */
-    document.querySelectorAll('[data-super-only]').forEach(el => el.hidden = !isSuper);
-    document.querySelectorAll('[data-edit]').forEach(el => el.disabled = !canEdit);
-    $('viewer-note').hidden = canEdit;
+    /* ── People & roles (super-admins only) ──
+       Managers are the editor, viewer and custom accounts; super-admin accounts are managed in
+       the D1 Console. Changes go through /admin/api/people (worker/people.js), which answers
+       with the whole updated list. Passwords are only ever sent to be hashed, never shown back. */
+    const MANAGER_PAGES = [ // pages a Custom role can open; must match PAGES in worker/access.js
+      { id: 'review', name: 'Waiting for review' },
+      { id: 'products', name: 'Products' },
+      { id: 'tags', name: 'Tags' },
+      { id: 'orders', name: 'Orders' },
+      { id: 'campaigns', name: 'Campaigns & cases' },
+      { id: 'impact', name: 'Impact numbers' },
+      { id: 'money', name: 'Profit split' },
+    ];
+    const ROLE_LABELS = { editor: 'Editor', viewer: 'Viewer', custom: 'Custom' };
+    const LEVEL_LABELS = { view: 'View only', edit: 'Can edit' };
+    const PASSWORD_MIN = 12;
+    let people = []; // { id, email, role, permissions, oneTime, lastLogin }; oneTime: hasn't replaced the one-time password yet
+    let peopleState = isSuper ? 'loading' : 'idle'; // loading | ready | failed
+    let personEditor = null; // { path, id, snapshot } while adding (id null) or editing a manager
+    const customAccess = {}; // page id → 'view' | 'edit' on the open form
+    let editingPassword = false; // editing: "Edit Password" was selected
+    const personForm = $('person-form');
+
+    function applyPeople(list) {
+      people = list;
+      peopleState = 'ready';
+      $('people-error').hidden = true;
+    }
+    const nPages = n => n === 1 ? '1 page' : `${n} pages`;
+    function personMeta(p) {
+      const role = p.role === 'custom' ? `Custom · ${nPages(Object.keys(p.permissions).length)}` : ROLE_LABELS[p.role];
+      return p.oneTime ? `${role} · Waiting for first sign-in` : role;
+    }
+    function renderPeople() {
+      $('people-list').innerHTML = people.map(p => `
+        <li class="person">
+          <div class="person-info">
+            <strong class="person-email">${esc(p.email)}</strong>
+            <span class="person-meta">${esc(personMeta(p))}</span>
+          </div>
+          <div class="person-actions">
+            <a class="btn" href="/admin/people/${p.id}" data-link>Edit<span class="sr-only"> ${esc(p.email)}</span></a>
+            <button class="btn btn-danger-outline" type="button" data-delete-person="${p.id}">Delete<span class="sr-only"> ${esc(p.email)}</span></button>
+          </div>
+        </li>`).join('');
+      const empty = $('people-empty');
+      empty.hidden = people.length > 0 || peopleState === 'failed';
+      empty.textContent = peopleState === 'loading' ? 'Loading managers…' : 'No managers yet. Use “Add Manager” to add the first one.';
+    }
+    $('add-person').addEventListener('click', () => go('/admin/people/new'));
+    $('people-list').addEventListener('click', e => {
+      const del = e.target.closest('[data-delete-person]');
+      if (del) confirmDeletePerson(Number(del.dataset.deletePerson));
+    });
+
+    /* Delete: a yes / no question, then typing DELETEUSER. */
+    function confirmDeletePerson(id) {
+      const p = people.find(x => x.id === id);
+      if (!p) return;
+      openModal({
+        title: `Delete ${p.email}?`,
+        bodyHtml: '<p>They will no longer be able to sign in to the admin panel. This can’t be undone.</p>',
+        okText: 'Yes',
+        cancelText: 'No',
+        danger: true,
+        onOk() {
+          openModal({
+            title: 'Confirm the deletion',
+            bodyHtml: `
+              <p class="modal-warn">The account ${esc(p.email)} will be deleted permanently.</p>
+              <div>
+                <label class="label" for="modal-delete-word">Type DELETEUSER to confirm</label>
+                <input class="input" id="modal-delete-word" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-describedby="modal-error">
+                <p class="field-error" id="modal-error" hidden></p>
+              </div>`,
+            okText: 'Delete manager',
+            danger: true,
+            onOk() {
+              const input = $('modal-delete-word');
+              if (input.value.trim() !== 'DELETEUSER') {
+                modalFieldError(input, 'Type DELETEUSER, in capital letters, to delete this manager.');
+                return false;
+              }
+              (async () => {
+                if (!await change('DELETE', `people/${id}`)) return;
+                renderPeople();
+                toast(`Deleted ${p.email}.`);
+              })();
+            },
+          });
+        },
+      });
+    }
+
+    /* Manager form: adding (/admin/people/new) and editing (/admin/people/<id>) share it. */
+    function personState() {
+      const role = personForm.elements.role.value;
+      return JSON.stringify([role, $('mf-email').value.trim(), role === 'custom' ? MANAGER_PAGES.map(pg => customAccess[pg.id] || '') : [],
+        personForm.elements.pwmode.value, editingPassword, $('mf-password').value]);
+    }
+    function openPerson(sub) {
+      const isNew = sub === 'new';
+      const person = isNew ? null : people.find(p => String(p.id) === sub);
+      if (!person && !isNew) {
+        show('people');
+        if (peopleState === 'ready') toast('That manager wasn’t found.');
+        return;
+      }
+      setCurrent('people');
+      $('person-title').textContent = isNew ? 'Add Manager' : `Edit ${person.email}`;
+      $('person-lead').textContent = isNew
+        ? 'Choose a role, the email they’ll sign in with, and how their password is set.'
+        : 'Change this manager’s role or password. The email can’t be changed.';
+      personForm.reset();
+      showFormErrors(personForm, $('person-errors'), []);
+      Object.keys(customAccess).forEach(page => delete customAccess[page]);
+      if (person) {
+        personForm.elements.role.value = person.role;
+        Object.assign(customAccess, person.permissions);
+        $('mf-email').value = person.email;
+        $('mf-pw-unset').hidden = !person.oneTime;
+      }
+      $('mf-email').readOnly = !isNew;
+      $('mf-email-hint').textContent = isNew ? 'Used to sign in. It doesn’t need to be a working email address.' : 'Read only.';
+      $('mf-pw-mode-group').hidden = !isNew;
+      $('mf-pw-current').hidden = isNew;
+      $('person-save').textContent = isNew ? 'Add Manager' : 'Save changes';
+      editingPassword = false;
+      setPasswordVisible(false);
+      personEditor = { path: location.pathname, id: person ? person.id : null, oneTime: Boolean(person && person.oneTime), snapshot: '' };
+      renderAccess();
+      renderPasswordField();
+      personEditor.snapshot = personState();
+      showScreen('person-edit');
+    }
+
+    /* Custom role: a switch per page, and View only / Can edit once it's on. */
+    function renderAccess() {
+      $('custom-access').hidden = personForm.elements.role.value !== 'custom';
+      $('access-list').innerHTML = MANAGER_PAGES.map(pg => {
+        const level = customAccess[pg.id];
+        return `
+          <li class="access-row">
+            <button class="switch" type="button" role="switch" id="mf-access-${pg.id}" aria-checked="${Boolean(level)}" data-access-page="${pg.id}"><span class="track" aria-hidden="true"></span>${esc(pg.name)}</button>
+            ${level ? `<div class="seg" role="group" aria-label="${esc(pg.name)} permission">
+              ${Object.entries(LEVEL_LABELS).map(([key, label]) =>
+                `<button type="button" id="mf-level-${pg.id}-${key}" data-level-page="${pg.id}" data-level="${key}" aria-pressed="${level === key}">${label}</button>`).join('')}
+            </div>` : '<span class="access-off">No access</span>'}
+          </li>`;
+      }).join('');
+    }
+    $('access-list').addEventListener('click', e => {
+      const sw = e.target.closest('[data-access-page]');
+      const lv = e.target.closest('[data-level-page]');
+      if (sw) {
+        const page = sw.dataset.accessPage;
+        if (customAccess[page]) delete customAccess[page];
+        else customAccess[page] = 'view'; // starts with the least access
+        renderAccess();
+        $(`mf-access-${page}`).focus();
+      } else if (lv) {
+        customAccess[lv.dataset.levelPage] = lv.dataset.level;
+        renderAccess();
+        $(lv.id).focus();
+      }
+    });
+
+    /* Password: a field once a password mode is chosen (adding) or after "Edit Password" (editing).
+       It's a one-time password for "Created at first sign-in", or while they still have one. */
+    function renderPasswordField() {
+      const isNew = personEditor.id === null;
+      const mode = personForm.elements.pwmode.value;
+      const oneTime = isNew ? mode === 'first' : personEditor.oneTime;
+      $('mf-pw-field').hidden = isNew ? !mode : !editingPassword;
+      $('mf-pw-row').hidden = !isNew && editingPassword;
+      $('mf-password-label').textContent = `${isNew ? '' : 'New '}${oneTime ? 'one-time password' : 'password'}`.replace(/^./, ch => ch.toUpperCase());
+      $('mf-password-note').textContent = oneTime
+        ? `At least ${PASSWORD_MIN} characters. Give it to them privately; it works for their first sign-in only, then they create their own.`
+        : `At least ${PASSWORD_MIN} characters. It can’t be shown again after saving, so give it to them privately.`;
+      $('mf-pw-keep').hidden = isNew;
+    }
+    function setPasswordVisible(on) {
+      $('mf-password').type = on ? 'text' : 'password';
+      $('mf-eye').setAttribute('aria-pressed', on);
+      $('mf-eye').setAttribute('aria-label', on ? 'Hide password' : 'Show password');
+      $('mf-eye-show').toggleAttribute('hidden', on);
+      $('mf-eye-hide').toggleAttribute('hidden', !on);
+    }
+    personForm.addEventListener('change', e => {
+      if (e.target.name === 'role') renderAccess();
+      if (e.target.name === 'pwmode') renderPasswordField();
+    });
+    $('mf-eye').addEventListener('click', () => {
+      setPasswordVisible($('mf-password').type === 'password');
+      $('mf-password').focus();
+    });
+    $('mf-pw-edit').addEventListener('click', () => {
+      editingPassword = true;
+      renderPasswordField();
+      $('mf-password').focus();
+    });
+    $('mf-pw-keep').addEventListener('click', () => {
+      editingPassword = false;
+      $('mf-password').value = '';
+      setPasswordVisible(false);
+      $('err-password').hidden = true;
+      $('mf-password').removeAttribute('aria-invalid');
+      renderPasswordField();
+      $('mf-pw-edit').focus();
+    });
+
+    function validatePerson() {
+      const isNew = personEditor.id === null;
+      const f = personForm.elements;
+      const errors = [];
+      if (!f.role.value) errors.push({ name: 'role', field: 'mf-role-editor', group: 'mf-role-group', text: 'Choose a role.' });
+      if (f.role.value === 'custom' && !Object.keys(customAccess).length) {
+        errors.push({ name: 'access', field: `mf-access-${MANAGER_PAGES[0].id}`, group: 'custom-access', text: 'Turn on at least one page for the custom role.' });
+      }
+      if (isNew) {
+        const email = $('mf-email').value.trim().toLowerCase();
+        if (!email) errors.push({ name: 'email', field: 'mf-email', text: 'Enter an email.' });
+        else if (people.some(p => p.email.toLowerCase() === email)) errors.push({ name: 'email', field: 'mf-email', text: 'There is already a manager with that email.' });
+        if (!f.pwmode.value) errors.push({ name: 'pwmode', field: 'mf-pw-first', group: 'mf-pw-mode-group', text: 'Choose a password mode.' });
+      }
+      if (!$('mf-pw-field').hidden && $('mf-password').value.length < PASSWORD_MIN) {
+        errors.push({ name: 'password', field: 'mf-password', text: `Use at least ${PASSWORD_MIN} characters for the password.` });
+      }
+      return errors;
+    }
+
+    function personSummaryHtml(body) {
+      const pages = body.role === 'custom'
+        ? `<dt>Pages</dt><dd><ul>${MANAGER_PAGES.filter(pg => body.permissions[pg.id]).map(pg =>
+            `<li>${esc(pg.name)}: ${LEVEL_LABELS[body.permissions[pg.id]]}</li>`).join('')}</ul></dd>`
+        : '';
+      return `
+        <dl class="modal-summary">
+          <dt>Email</dt><dd>${esc(body.email)}</dd>
+          <dt>Role</dt><dd>${ROLE_LABELS[body.role]}</dd>
+          ${pages}
+          <dt>Password</dt><dd>${body.oneTime ? 'One-time: they create their own at first sign-in' : 'Preselected'}</dd>
+        </dl>`;
+    }
+
+    /* Adding asks yes / no first; editing saves straight away. */
+    let savingPerson = false;
+    personForm.addEventListener('submit', e => {
+      e.preventDefault();
+      if (!personEditor || savingPerson) return;
+      const errors = validatePerson();
+      showFormErrors(personForm, $('person-errors'), errors);
+      if (errors.length) { $('person-errors').focus(); return; }
+      const body = { role: personForm.elements.role.value };
+      if (body.role === 'custom') body.permissions = { ...customAccess };
+      if (!$('mf-pw-field').hidden) body.password = $('mf-password').value;
+      if (personEditor.id !== null) { savePerson(body); return; }
+      body.email = $('mf-email').value.trim();
+      body.oneTime = personForm.elements.pwmode.value === 'first';
+      openModal({
+        title: 'Add this manager?',
+        bodyHtml: personSummaryHtml(body),
+        okText: 'Yes, add manager',
+        cancelText: 'No',
+        onOk() { savePerson(body); },
+      });
+    });
+    async function savePerson(body) {
+      const { id, oneTime } = personEditor;
+      const email = $('mf-email').value.trim();
+      savingPerson = true;
+      $('person-save').disabled = true;
+      try {
+        await api(id === null ? 'POST' : 'PUT', id === null ? 'people' : `people/${id}`, body);
+      } catch (err) {
+        toast(err.message);
+        return;
+      } finally {
+        savingPerson = false;
+        $('person-save').disabled = false;
+      }
+      personEditor = null;
+      go('/admin/people');
+      toast(id === null
+        ? `${email} added as ${ROLE_LABELS[body.role]}.${body.oneTime ? ' After signing in with the one-time password, they’ll create their own.' : ''}`
+        : `Saved ${email}.${body.password === undefined ? '' : oneTime ? ' The new one-time password works now.' : ' The new password works now, and they were signed out everywhere.'}`);
+    }
+
+    function loadPeople() {
+      api('GET', 'people').catch(err => {
+        peopleState = 'failed';
+        $('people-error').textContent = `The managers couldn’t be loaded. ${err.message}`;
+        $('people-error').hidden = false;
+      }).finally(() => {
+        // The list, or a manager's form waiting for it, shows the managers now.
+        if (/^\/admin\/people(\/|$)/.test(location.pathname) && !personEditor) route();
+      });
+    }
+
+    /* Access: hide the pages this person can't open, and turn off what they can't change. */
+    document.querySelectorAll('.nav-item').forEach(b => b.hidden = !ACCESS[b.dataset.view]);
+    document.querySelectorAll('.nav-group').forEach(g => g.hidden = !g.querySelector('.nav-item:not([hidden])'));
+    document.querySelectorAll('[data-go]').forEach(b => b.hidden = !ACCESS[b.dataset.go.split('/')[0]]);
+    $('quick-actions').hidden = !document.querySelector('[data-go]:not([hidden])');
+    document.querySelectorAll('[data-edit]').forEach(el => el.disabled = !canEditPage(el.dataset.edit));
+    $('tags-manage').hidden = !ACCESS.tags;
     $('attention-hint').textContent = isSuper
       ? 'Changes submitted by editors wait here for you to publish or send back.'
       : 'Your submitted changes wait here until a super-admin publishes them.';
@@ -1564,13 +2013,16 @@
     $('n-planned').textContent = CAMPAIGNS.filter(c => c.status === 'planned').length;
 
     route();
-    api('GET', 'catalog').catch(err => {
-      catalogState = 'failed';
-      showCatalogError(`The products and tags couldn’t be loaded. ${err.message}`);
-    }).finally(() => {
-      // Screens opened while loading show the catalog now (and the editor can open).
-      if (/^\/admin\/(products|tags)(\/|$)/.test(location.pathname)) route();
-    });
+    if (ACCESS.products || ACCESS.tags) {
+      api('GET', 'catalog').catch(err => {
+        catalogState = 'failed';
+        showCatalogError(`The products and tags couldn’t be loaded. ${err.message}`);
+      }).finally(() => {
+        // Screens opened while loading show the catalog now (and the editor can open).
+        if (/^\/admin\/(products|tags)(\/|$)/.test(location.pathname)) route();
+      });
+    }
+    if (ACCESS.people) loadPeople();
   </script>
 </body>
 </html>
