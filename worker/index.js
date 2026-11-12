@@ -9,12 +9,15 @@
 
    Public routes:
      GET  /api/products    the shop catalog: Shown products and their tags (cached ~1 minute)
+     GET  /api/campaigns   Shown campaigns and their Shown cases (cached ~1 minute)
 
    Admin routes:
      GET  /admin           signed-in dashboard (redirects to sign-in when signed out)
      GET  /admin/<screen>  the same dashboard opened at a screen: products, products/<id>,
-                           products/new, tags, review, orders, people, people/<id>, people/new, ...
-                           (see ADMIN_SCREEN); the page hides screens the person can't open
+                           products/new, tags, campaigns, campaigns/<id>, campaigns/new,
+                           campaigns/<id>/cases/<case id or new>, review, orders, people,
+                           people/<id>, people/new, ... (see ADMIN_SCREEN); the page hides
+                           screens the person can't open
      GET  /admin/login     sign-in page
      POST /admin/login     check email + password, start a session; someone who signed in with a
                            one-time password (users.must_change_password) goes to /admin/setup
@@ -36,10 +39,22 @@
                                         | { action: 'restore', products } (undo)
      POST   /admin/api/tags             add a tag
      PUT    /admin/api/tags/<id>        rename a tag
-     DELETE /admin/api/tags/<id>        delete a tag (and remove it from its products) */
+     DELETE /admin/api/tags/<id>        delete a tag (and remove it from its products)
+
+   Campaigns API (signed in; changes need edit access to Campaigns & cases, and a same-origin JSON
+   request). Every change answers with every campaign and its cases, { campaigns }:
+     GET    /admin/api/campaigns                     every campaign (Shown and Hidden) with its cases
+     POST   /admin/api/campaigns                     add a campaign (its id is made from the title)
+     PUT    /admin/api/campaigns/<id>                save a campaign
+     PATCH  /admin/api/campaigns/<id>                switch Shown / Hidden: { shown }
+     DELETE /admin/api/campaigns/<id>                delete a campaign and its cases
+     POST   /admin/api/campaigns/<id>/cases          add a case (needs { consent: true })
+     PUT    /admin/api/campaigns/<id>/cases/<n>      save a case (needs { consent: true })
+     DELETE /admin/api/campaigns/<id>/cases/<n>      delete a case */
 
 import { accessMap } from './access.js';
 import { DUMMY_HASH, PASSWORD_RULES, hashPassword, newSessionToken, passwordOk, sha256Hex, verifyPassword } from './auth.js';
+import { campaignsApi, publicCampaigns } from './campaigns.js';
 import { adminApi, publicProducts } from './catalog.js';
 import { peopleApi } from './people.js';
 import loginTemplate from '../admin/login.html';
@@ -54,7 +69,7 @@ const MAX_FAILS_PER_IP = 20;
 const ROLE_NAMES = { superadmin: 'Super-admin', editor: 'Editor', viewer: 'Viewer', custom: 'Custom' };
 
 /* Dashboard screen paths; the page itself switches between them (admin/home.html). */
-const ADMIN_SCREEN = /^\/admin\/(review|products|tags|orders|campaigns|impact|money|people|products\/[a-z0-9-]{1,80}|people\/(new|\d{1,10}))$/;
+const ADMIN_SCREEN = /^\/admin\/(review|products|tags|orders|campaigns|impact|money|people|products\/[a-z0-9-]{1,80}|campaigns\/[a-z0-9-]{1,80}(\/cases\/(new|\d{1,10}))?|people\/(new|\d{1,10}))$/;
 
 /* Messages shown on the sign-in page, chosen by ?m=<code>. Only these fixed texts are ever shown. */
 const MESSAGES = {
@@ -86,6 +101,14 @@ export default {
       } catch (err) {
         console.error('catalog error:', err);
         return Response.json({ error: 'The catalog is temporarily unavailable.' }, { status: 503, headers: BASE_HEADERS });
+      }
+    }
+    if (path === '/api/campaigns') {
+      try {
+        return await publicCampaigns(request, env, ctx, url);
+      } catch (err) {
+        console.error('campaigns error:', err);
+        return Response.json({ error: 'The campaigns are temporarily unavailable.' }, { status: 503, headers: BASE_HEADERS });
       }
     }
 
@@ -148,6 +171,7 @@ async function handleAdmin(request, env, ctx, url, path) {
 
   if (isApi) {
     if (path === '/admin/api/people' || path.startsWith('/admin/api/people/')) return peopleApi(request, env, url, path, user);
+    if (path === '/admin/api/campaigns' || path.startsWith('/admin/api/campaigns/')) return campaignsApi(request, env, ctx, url, path, user);
     return adminApi(request, env, ctx, url, path, user);
   }
 

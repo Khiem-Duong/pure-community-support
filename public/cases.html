@@ -634,7 +634,7 @@
   </main>
 
   <!-- Photo wall -->
-  <section class="wall" aria-labelledby="wall-heading">
+  <section class="wall" id="wall" aria-labelledby="wall-heading">
     <div class="wall-head" data-reveal>
       <p class="eyebrow">In pictures</p>
       <h2 class="section-title" id="wall-heading">Across the <em>programmes</em></h2>
@@ -652,7 +652,7 @@
         A case records the support provided to one family or individual: who received it, what it covered and the total amount.
         A case may stand alone or form part of a campaign.
       </p>
-      <p class="cases-status">No cases have been published yet.</p>
+      <p class="cases-status" id="cases-status">No cases have been published yet.</p>
     </div>
     <ol class="principles">
       <li class="principle" data-reveal style="--d:0.05s">
@@ -743,9 +743,8 @@
       root.querySelectorAll('[data-reveal]:not(.in)').forEach(el => revealer ? revealer.observe(el) : el.classList.add('in'));
     }
 
-    /* ── Render from assets/js/campaigns.js ── */
-    const CAMPAIGNS = window.PURE_CAMPAIGNS;
-    const PHOTOS = window.PURE_PHOTOS;
+    /* ── Render the campaigns from D1 (loaded by assets/js/campaigns.js) ── */
+    const PHOTOS = window.PURE_CAMPAIGN_PHOTOS;
     const $ = id => document.getElementById(id);
     const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
     const src = key => `assets/images/campaigns/${key}.jpg`;
@@ -753,42 +752,75 @@
     const num = i => String(i + 1).padStart(2, '0');
     const STATUS = { running: 'Running', planned: 'Planned' };
     const ARROW = '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+    const alt = key => `${esc(PHOTOS[key].alt)} (placeholder photo)`;
     const credit = key => {
       const p = PHOTOS[key];
       return `Placeholder photo: <a href="${p.url}" target="_blank" rel="noopener">${esc(p.author)}</a>, ${esc(p.license)}`;
     };
+    const orTbc = s => esc(s || 'To be confirmed');
 
-    /* Hero mosaic */
-    $('hero-mosaic').innerHTML = CAMPAIGNS.slice(0, 4).map((c, i) => `
-      <a class="tile" href="${url(c)}" data-reveal="mask" style="--d:${0.1 + i * 0.12}s">
-        <img src="${src(c.cover)}" alt="${esc(PHOTOS[c.cover].alt)} (placeholder photo)">
-        <span class="tile-veil" aria-hidden="true"></span>
-        <span class="tile-label">
-          <span class="tile-num">${num(i)} · ${STATUS[c.status]}</span>
-          <span class="tile-name">${esc(c.title)}</span>
-          <span class="tile-go" aria-hidden="true">View campaign ${ARROW}</span>
-        </span>
-      </a>`).join('');
-
-    /* Summary */
-    const running = CAMPAIGNS.filter(c => c.status === 'running').length;
-    const planned = CAMPAIGNS.filter(c => c.status === 'planned').length;
-    const summary = [
-      [CAMPAIGNS.length, 'Programmes'],
-      [running, 'Running now'],
-      [planned, 'In planning'],
-      ['50%', 'Of net profit allocated']
-    ];
-    $('summary').innerHTML = summary.map(([n, label], i) => `
-      <div class="summary-item" data-reveal style="--d:${i * 0.08}s">
-        <span class="summary-num">${n}</span>
-        <span class="summary-label">${label}</span>
-      </div>`).join('');
-
-    /* Filter chips */
-    const FILTERS = [['all', 'All', CAMPAIGNS.length], ['running', 'Running', running], ['planned', 'Planned', planned]];
+    let CAMPAIGNS = [];
+    let FILTERS = [];
     let filter = new URLSearchParams(location.search).get('status');
-    if (!FILTERS.some(([id]) => id === filter)) filter = 'all';
+
+    function render() {
+      /* Hero mosaic */
+      $('hero-mosaic').innerHTML = CAMPAIGNS.slice(0, 4).map((c, i) => `
+        <a class="tile" href="${url(c)}" data-reveal="mask" style="--d:${0.1 + i * 0.12}s">
+          ${c.cover ? `<img src="${src(c.cover)}" alt="${alt(c.cover)}">` : ''}
+          <span class="tile-veil" aria-hidden="true"></span>
+          <span class="tile-label">
+            <span class="tile-num">${num(i)} · ${STATUS[c.status]}</span>
+            <span class="tile-name">${esc(c.title)}</span>
+            <span class="tile-go" aria-hidden="true">View campaign ${ARROW}</span>
+          </span>
+        </a>`).join('');
+
+      /* Summary */
+      const running = CAMPAIGNS.filter(c => c.status === 'running').length;
+      const planned = CAMPAIGNS.filter(c => c.status === 'planned').length;
+      const summary = [
+        [CAMPAIGNS.length, 'Programmes'],
+        [running, 'Running now'],
+        [planned, 'In planning'],
+        ['50%', 'Of net profit allocated']
+      ];
+      $('summary').innerHTML = summary.map(([n, label], i) => `
+        <div class="summary-item" data-reveal style="--d:${i * 0.08}s">
+          <span class="summary-num">${n}</span>
+          <span class="summary-label">${label}</span>
+        </div>`).join('');
+
+      /* Filter chips */
+      FILTERS = [['all', 'All', CAMPAIGNS.length], ['running', 'Running', running], ['planned', 'Planned', planned]];
+      if (!FILTERS.some(([id]) => id === filter)) filter = 'all';
+      renderChips();
+      renderList();
+
+      /* Photo wall: interleave three photos from each campaign */
+      const shots = [];
+      for (let round = 0; round < 3; round++) {
+        CAMPAIGNS.forEach(c => { if (c.gallery[round]) shots.push([c, c.gallery[round]]); });
+      }
+      $('wall').hidden = !shots.length;
+      $('wall-grid').innerHTML = shots.map(([c, k], i) => `
+        <a class="shot" href="${url(c)}#gallery" data-reveal style="--d:${(i % 3) * 0.08}s">
+          <img src="${src(k)}" alt="${alt(k)}" loading="lazy">
+          <span class="shot-cap">
+            <strong>${esc(c.title)}</strong>
+            <span>Placeholder photo: ${esc(PHOTOS[k].author)}, ${esc(PHOTOS[k].license)}</span>
+          </span>
+        </a>`).join('');
+
+      /* Individual cases: published cases are shown on their campaign's page */
+      const withCases = CAMPAIGNS.filter(c => c.cases.length);
+      if (withCases.length) {
+        $('cases-status').innerHTML = `Published cases appear on their campaign’s page: ${withCases.map(c =>
+          `<a href="${url(c)}#c-cases">${esc(c.title)}</a> (${c.cases.length})`).join(', ')}.`;
+      }
+
+      observeReveals();
+    }
 
     function renderChips() {
       $('chips').innerHTML = FILTERS.map(([id, label, count]) =>
@@ -804,27 +836,27 @@
         <article class="feature${flip ? ' flip' : ''}">
           <figure class="feature-figure">
             <a class="feature-media" href="${url(c)}" data-reveal="mask" aria-label="${esc(c.title)}">
-              <img src="${src(c.cover)}" alt="${esc(PHOTOS[c.cover].alt)} (placeholder photo)" loading="lazy">
+              ${c.cover ? `<img src="${src(c.cover)}" alt="${alt(c.cover)}" loading="lazy">` : ''}
               <span class="feature-veil" aria-hidden="true"></span>
               <span class="feature-num-bg" aria-hidden="true">${num(idx)}</span>
               <span class="feature-cta" aria-hidden="true">View campaign ${ARROW}</span>
             </a>
-            <figcaption class="credit">${credit(c.cover)}</figcaption>
+            ${c.cover ? `<figcaption class="credit">${credit(c.cover)}</figcaption>` : ''}
           </figure>
           <div class="feature-body" data-reveal style="--d:0.12s">
             <div class="feature-top">
               <span class="status ${c.status}">${STATUS[c.status]}</span>
-              <span class="feature-focus">${esc(c.focus)}</span>
+              ${c.focus ? `<span class="feature-focus">${esc(c.focus)}</span>` : ''}
             </div>
             <h2><a href="${url(c)}">${esc(c.title)}</a></h2>
-            <p class="feature-vi" lang="vi">${esc(c.titleVi)}</p>
+            ${c.titleVi ? `<p class="feature-vi" lang="vi">${esc(c.titleVi)}</p>` : ''}
             <p class="feature-summary">${esc(c.summary)}</p>
             <dl class="feature-meta">
-              <div><dt>Location</dt><dd>${esc(c.location)}</dd></div>
-              <div><dt>Format</dt><dd>${esc(c.format)}</dd></div>
+              <div><dt>Location</dt><dd>${orTbc(c.location)}</dd></div>
+              <div><dt>Format</dt><dd>${orTbc(c.format)}</dd></div>
               <div><dt>Community funds received</dt><dd class="tbd">To be published</dd></div>
             </dl>
-            <div class="feature-thumbs">${thumbs}</div>
+            ${thumbs ? `<div class="feature-thumbs">${thumbs}</div>` : ''}
             <a class="text-link" href="${url(c)}">Read about this campaign ${ARROW}</a>
           </div>
         </article>`;
@@ -834,7 +866,7 @@
       const list = CAMPAIGNS.filter(c => filter === 'all' || c.status === filter);
       $('campaign-list').innerHTML = list.length
         ? list.map((c, i) => featureHTML(c, i, i % 2 === 1)).join('')
-        : '<p class="programmes-empty">No campaigns match this filter.</p>';
+        : `<p class="programmes-empty">${CAMPAIGNS.length ? 'No campaigns match this filter.' : 'No campaigns have been published yet.'}</p>`;
       observeReveals($('campaign-list'));
     }
 
@@ -850,23 +882,14 @@
       try { history.replaceState(null, '', location.pathname + (query ? `?${query}` : '')); } catch (_) { /* file:// previews */ }
     });
 
-    /* Photo wall: interleave three photos from each campaign */
-    const shots = [];
-    for (let round = 0; round < 3; round++) {
-      CAMPAIGNS.forEach(c => { if (c.gallery[round]) shots.push([c, c.gallery[round]]); });
-    }
-    $('wall-grid').innerHTML = shots.map(([c, k], i) => `
-      <a class="shot" href="${url(c)}#gallery" data-reveal style="--d:${(i % 3) * 0.08}s">
-        <img src="${src(k)}" alt="${esc(PHOTOS[k].alt)} (placeholder photo)" loading="lazy">
-        <span class="shot-cap">
-          <strong>${esc(c.title)}</strong>
-          <span>Placeholder photo: ${esc(PHOTOS[k].author)}, ${esc(PHOTOS[k].license)}</span>
-        </span>
-      </a>`).join('');
-
-    renderChips();
-    renderList();
     observeReveals();
+    window.PURE_LOAD_CAMPAIGNS().then(list => {
+      CAMPAIGNS = list;
+      render();
+    }).catch(() => {
+      $('campaign-list').innerHTML = '<p class="programmes-empty">The campaigns couldn’t be loaded. Please refresh the page.</p>';
+      $('wall').hidden = true;
+    });
 
     /* Scroll to top */
     const scrollBtn = document.getElementById('scroll-top');

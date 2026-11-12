@@ -669,7 +669,7 @@
         <p class="eyebrow" data-reveal>About the programme</p>
         <p class="lede" id="c-summary" data-reveal style="--d:0.06s"></p>
         <div class="body-text" id="c-about" data-reveal style="--d:0.12s"></div>
-        <p class="covers-title" data-reveal>What the programme covers</p>
+        <p class="covers-title" id="c-covers-title" data-reveal>What the programme covers</p>
         <ul class="covers" id="c-covers"></ul>
         <p class="tag" data-reveal>Placeholder · details to be confirmed</p>
       </div>
@@ -738,7 +738,7 @@
     </section>
 
     <!-- Other campaigns -->
-    <section class="others" aria-labelledby="others-heading">
+    <section class="others" id="others" aria-labelledby="others-heading">
       <div class="others-head">
         <div data-reveal>
           <p class="eyebrow">Continue exploring</p>
@@ -839,9 +839,8 @@
       root.querySelectorAll('[data-reveal]:not(.in)').forEach(el => revealer ? revealer.observe(el) : el.classList.add('in'));
     }
 
-    /* ── Render the campaign from assets/js/campaigns.js ── */
-    const CAMPAIGNS = window.PURE_CAMPAIGNS;
-    const PHOTOS = window.PURE_PHOTOS;
+    /* ── Render the campaign from D1 (loaded by assets/js/campaigns.js) ── */
+    const PHOTOS = window.PURE_CAMPAIGN_PHOTOS;
     const $ = id => document.getElementById(id);
     const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
     const src = key => `assets/images/campaigns/${key}.jpg`;
@@ -852,23 +851,33 @@
       const p = PHOTOS[key];
       return `Placeholder photo: <a href="${p.url}" target="_blank" rel="noopener">${esc(p.author)}</a>, ${esc(p.license)}`;
     };
+    const orTbc = s => s || 'To be confirmed';
 
     // /cases/<id> on the live site; campaign.html?id=<id> also works for local previews.
     const pathId = location.pathname.replace(/\/+$/, '').split('/').pop();
     const campaignId = new URLSearchParams(location.search).get('id') || pathId;
-    const c = CAMPAIGNS.find(x => x.id === campaignId);
 
     function setMeta(selector, attr, value) {
       const el = document.querySelector(selector);
       if (el) el.setAttribute(attr, value);
     }
 
-    if (!c) {
+    /* Not found (or not loaded): replaces the campaign with a message. */
+    function showNotFound(title, text) {
       $('campaign').hidden = true;
       document.querySelector('.breadcrumb').hidden = true;
       $('not-found').hidden = false;
-      document.title = 'Campaign not found — Pure Community Support';
-    } else {
+      if (title) {
+        $('not-found').querySelector('h1').textContent = title;
+        $('not-found').querySelector('h1 + p').textContent = text;
+      }
+      document.title = `${title || 'Campaign not found'} — Pure Community Support`;
+    }
+
+    function render(CAMPAIGNS) {
+      const c = CAMPAIGNS.find(x => x.id === campaignId);
+      if (!c) { showNotFound(); return; }
+
       const index = CAMPAIGNS.indexOf(c);
       document.title = `${c.title} — Cases & Campaigns | Pure Community Support`;
       setMeta('meta[name="description"]', 'content', `${c.summary} Funded by 50% of Pure Community Support's net profit.`);
@@ -882,20 +891,26 @@
 
       $('crumb-current').textContent = c.title;
 
-      /* Hero */
+      /* Hero (a plain background when the campaign has no cover photo yet) */
       const hero = $('c-hero');
       const heroImg = $('c-hero-img');
-      heroImg.alt = `${PHOTOS[c.cover].alt} (placeholder photo)`;
-      const markLoaded = () => hero.classList.add('loaded');
-      heroImg.addEventListener('load', markLoaded);
-      heroImg.addEventListener('error', markLoaded);
-      heroImg.src = src(c.cover);
-      if (heroImg.complete) markLoaded();
+      if (c.cover) {
+        heroImg.alt = `${PHOTOS[c.cover].alt} (placeholder photo)`;
+        const markLoaded = () => hero.classList.add('loaded');
+        heroImg.addEventListener('load', markLoaded);
+        heroImg.addEventListener('error', markLoaded);
+        heroImg.src = src(c.cover);
+        if (heroImg.complete) markLoaded();
+        $('c-hero-credit').innerHTML = creditHTML(c.cover);
+      } else {
+        heroImg.hidden = true;
+        $('c-hero-credit').hidden = true;
+      }
       $('c-status').textContent = STATUS[c.status];
       $('c-count').textContent = `Campaign ${String(index + 1).padStart(2, '0')} of ${String(CAMPAIGNS.length).padStart(2, '0')}`;
       $('c-title').textContent = c.title;
       $('c-title-vi').textContent = c.titleVi;
-      $('c-hero-credit').innerHTML = creditHTML(c.cover);
+      $('c-title-vi').hidden = !c.titleVi;
 
       /* Overview */
       $('c-summary').textContent = c.summary;
@@ -905,86 +920,91 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
           ${esc(item)}
         </li>`).join('');
+      $('c-covers').hidden = $('c-covers-title').hidden = !c.covers.length;
       $('f-status').textContent = STATUS[c.status];
-      $('f-focus').textContent = c.focus;
-      $('f-location').textContent = c.location;
-      $('f-format').textContent = c.format;
+      $('f-focus').textContent = orTbc(c.focus);
+      $('f-location').textContent = orTbc(c.location);
+      $('f-format').textContent = orTbc(c.format);
 
       /* Gallery: two large photos, then rows of three; a short last row stretches to fill */
       const photos = c.gallery;
-      const rest = photos.length - 2;
-      const sizeFor = i => {
-        if (i === 0) return 'hero-a';
-        if (i === 1) return 'hero-b';
-        const pos = i - 2;
-        const lastRowStart = rest - (rest % 3 || 3);
-        if (pos < lastRowStart) return '';
-        const inLastRow = rest - lastRowStart;
-        return inLastRow === 1 ? 'full' : inLastRow === 2 ? 'half' : '';
-      };
-      $('gallery-count').textContent = `${photos.length} photographs · placeholders`;
-      $('gallery-grid').innerHTML = photos.map((k, i) => `
-        <button class="g-item ${sizeFor(i)}" type="button" data-index="${i}" data-reveal="mask" style="--d:${(i % 3) * 0.1}s" aria-label="Open photo: ${esc(PHOTOS[k].alt)}">
-          <img src="${src(k)}" alt="${esc(PHOTOS[k].alt)} (placeholder photo)" loading="lazy">
-          <span class="g-zoom" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></span>
-          <span class="g-cap" aria-hidden="true">${esc(PHOTOS[k].alt)}</span>
-        </button>`).join('');
+      $('gallery').hidden = !photos.length;
+      if (photos.length) {
+        const rest = photos.length - 2;
+        const sizeFor = i => {
+          if (i === 0) return 'hero-a';
+          if (i === 1) return 'hero-b';
+          const pos = i - 2;
+          const lastRowStart = rest - (rest % 3 || 3);
+          if (pos < lastRowStart) return '';
+          const inLastRow = rest - lastRowStart;
+          return inLastRow === 1 ? 'full' : inLastRow === 2 ? 'half' : '';
+        };
+        $('gallery-count').textContent = `${photos.length} photographs · placeholders`;
+        $('gallery-grid').innerHTML = photos.map((k, i) => `
+          <button class="g-item ${sizeFor(i)}" type="button" data-index="${i}" data-reveal="mask" style="--d:${(i % 3) * 0.1}s" aria-label="Open photo: ${esc(PHOTOS[k].alt)}">
+            <img src="${src(k)}" alt="${esc(PHOTOS[k].alt)} (placeholder photo)" loading="lazy">
+            <span class="g-zoom" aria-hidden="true"><svg viewBox="0 0 24 24"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg></span>
+            <span class="g-cap" aria-hidden="true">${esc(PHOTOS[k].alt)}</span>
+          </button>`).join('');
 
-      /* Lightbox */
-      const lb = $('lightbox');
-      let current = 0;
-      function showPhoto(i) {
-        current = (i + photos.length) % photos.length;
-        const k = photos[current];
-        const img = $('lb-img');
-        img.style.animation = 'none';
-        img.offsetHeight; // restart the fade-in for each photo
-        img.style.animation = '';
-        img.src = src(k);
-        img.alt = `${PHOTOS[k].alt} (placeholder photo)`;
-        $('lb-caption').innerHTML = `${esc(PHOTOS[k].alt)} · ${creditHTML(k)}`;
-        $('lb-count').textContent = `${current + 1} / ${photos.length}`;
+        /* Lightbox */
+        const lb = $('lightbox');
+        let current = 0;
+        function showPhoto(i) {
+          current = (i + photos.length) % photos.length;
+          const k = photos[current];
+          const img = $('lb-img');
+          img.style.animation = 'none';
+          img.offsetHeight; // restart the fade-in for each photo
+          img.style.animation = '';
+          img.src = src(k);
+          img.alt = `${PHOTOS[k].alt} (placeholder photo)`;
+          $('lb-caption').innerHTML = `${esc(PHOTOS[k].alt)} · ${creditHTML(k)}`;
+          $('lb-count').textContent = `${current + 1} / ${photos.length}`;
+        }
+        $('gallery-grid').addEventListener('click', e => {
+          const item = e.target.closest('[data-index]');
+          if (!item) return;
+          showPhoto(Number(item.dataset.index));
+          lb.showModal();
+        });
+        $('lb-close').addEventListener('click', () => lb.close());
+        $('lb-prev').addEventListener('click', () => showPhoto(current - 1));
+        $('lb-next').addEventListener('click', () => showPhoto(current + 1));
+        lb.addEventListener('click', e => {
+          if (e.target === lb || e.target.classList.contains('lb-stage')) lb.close();
+        });
+        lb.addEventListener('keydown', e => {
+          if (e.key === 'ArrowLeft') showPhoto(current - 1);
+          if (e.key === 'ArrowRight') showPhoto(current + 1);
+        });
+        lb.addEventListener('close', () => {
+          const trigger = document.querySelector(`.g-item[data-index="${current}"]`);
+          if (trigger) trigger.focus({ preventScroll: true });
+        });
       }
-      $('gallery-grid').addEventListener('click', e => {
-        const item = e.target.closest('[data-index]');
-        if (!item) return;
-        showPhoto(Number(item.dataset.index));
-        lb.showModal();
-      });
-      $('lb-close').addEventListener('click', () => lb.close());
-      $('lb-prev').addEventListener('click', () => showPhoto(current - 1));
-      $('lb-next').addEventListener('click', () => showPhoto(current + 1));
-      lb.addEventListener('click', e => {
-        if (e.target === lb || e.target.classList.contains('lb-stage')) lb.close();
-      });
-      lb.addEventListener('keydown', e => {
-        if (e.key === 'ArrowLeft') showPhoto(current - 1);
-        if (e.key === 'ArrowRight') showPhoto(current + 1);
-      });
-      lb.addEventListener('close', () => {
-        const trigger = document.querySelector(`.g-item[data-index="${current}"]`);
-        if (trigger) trigger.focus({ preventScroll: true });
-      });
 
-      /* Individual cases (published only with consent) */
-      if (c.cases && c.cases.length) {
+      /* Individual cases (only cases saved with consent confirmed, and shown, reach this page) */
+      if (c.cases.length) {
         $('c-cases').hidden = false;
         $('c-cases-grid').innerHTML = c.cases.map((cs, i) => `
           <article class="case-card" data-reveal style="--d:${(i % 3) * 0.08}s">
-            ${cs.img ? `<img src="${esc(cs.img)}" alt="${esc(cs.name)}" loading="lazy">` : ''}
             <div class="case-body">
               <h3>${esc(cs.name)}</h3>
-              <p>${esc(cs.story)}</p>
+              ${cs.story.split(/\n\s*\n/).filter(p => p.trim()).map(p => `<p>${esc(p.trim())}</p>`).join('')}
               <span class="case-support">Total support received: ${esc(cs.support || 'To be published')}</span>
             </div>
           </article>`).join('');
       }
 
       /* Other campaigns */
-      $('others-grid').innerHTML = CAMPAIGNS.filter(x => x.id !== c.id).map((o, i) => `
+      const others = CAMPAIGNS.filter(x => x.id !== c.id);
+      $('others').hidden = !others.length;
+      $('others-grid').innerHTML = others.map((o, i) => `
         <a class="o-card" href="${url(o)}" data-reveal style="--d:${i * 0.1}s">
           <span class="o-media">
-            <img src="${src(o.cover)}" alt="${esc(PHOTOS[o.cover].alt)} (placeholder photo)" loading="lazy">
+            ${o.cover ? `<img src="${src(o.cover)}" alt="${esc(PHOTOS[o.cover].alt)} (placeholder photo)" loading="lazy">` : ''}
             <span class="o-veil" aria-hidden="true"></span>
             <span class="o-cta" aria-hidden="true"><span>View campaign</span>${ARROW}</span>
           </span>
@@ -992,7 +1012,16 @@
           <h3>${esc(o.title)}</h3>
           <p>${esc(o.summary)}</p>
         </a>`).join('');
+
+      observeReveals();
+      // Links such as /cases/<id>#gallery: the section exists only now, so scroll to it here.
+      const target = location.hash && document.getElementById(location.hash.slice(1));
+      if (target && !target.hidden) target.scrollIntoView();
     }
+
+    window.PURE_LOAD_CAMPAIGNS().then(render).catch(() => {
+      showNotFound('This campaign couldn’t be loaded', 'Please refresh the page, or try again in a few minutes.');
+    });
 
     observeReveals();
 

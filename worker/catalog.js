@@ -8,7 +8,7 @@
    Prices are stored as whole US cents (price_cents) and sent to pages as dollars (price). */
 
 import { canEdit, canView } from './access.js';
-import { API_HEADERS, ApiError, bad, json, oneLine, readJson } from './api.js';
+import { API_HEADERS, ApiError, bad, flag, freeId, json, readJson, text } from './api.js';
 
 const PUBLIC_MAX_AGE = 60;     // seconds browsers and Cloudflare may reuse /api/products
 const MAX_BATCH = 200;         // most products one batch action can change
@@ -164,17 +164,7 @@ async function adminCatalog(env) {
   };
 }
 
-/* ── Checking what the admin sends ──────────── */
-
-/* Optional text field: trimmed, empty becomes null. */
-function text(body, key, label, max, { required = false, single = false } = {}) {
-  const value = body[key] ?? '';
-  if (typeof value !== 'string') throw bad(`${label} must be text.`);
-  const clean = single ? oneLine(value) : value.trim();
-  if (required && !clean) throw bad(`Enter ${label.toLowerCase()}.`);
-  if (clean.length > max) throw bad(`${label} is too long (up to ${max} characters).`);
-  return clean || null;
-}
+/* ── Checking what the admin sends (text, flag: worker/api.js) ── */
 
 /* Dollars (number) to whole cents; null or empty means "Price TBD". */
 function cents(value, { required = false } = {}) {
@@ -188,12 +178,6 @@ function cents(value, { required = false } = {}) {
     throw bad('Enter a price in US dollars, like 48 or 48.50.');
   }
   return c;
-}
-
-function flag(body, key, fallback) {
-  if (body[key] === undefined) return fallback;
-  if (typeof body[key] !== 'boolean') throw bad('That request could not be read.');
-  return body[key];
 }
 
 function idList(value, label) {
@@ -222,22 +206,6 @@ function cleanProduct(body) {
   };
 }
 
-/* URL-safe id from a name: "Bình gốm" → "binh-gom" (the admin uses the same rule). */
-function slugify(name) {
-  return name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/gi, 'd').toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-+/, '').slice(0, 60).replace(/-+$/, '') || 'item';
-}
-
-/* The slug, or slug-2, slug-3 ... if it is taken. */
-async function freeId(env, table, name) {
-  const base = slugify(name);
-  const { results } = await env.DB.prepare(`SELECT id FROM ${table} WHERE id = ?1 OR id LIKE ?1 || '-%'`).bind(base).all();
-  const taken = new Set(results.map(r => r.id));
-  let id = base, n = 2;
-  while (taken.has(id) || RESERVED_IDS.has(id)) id = `${base}-${n++}`;
-  return id;
-}
-
 /* ── Products ───────────────────────────────── */
 
 const PRODUCT_COLUMNS = 'id, name, name_vi, description, description_vi, price_cents, maker, material, material_vi, colour, colour_vi, shown, is_new, updated_by, sort_order';
@@ -259,7 +227,7 @@ function tagStatements(env, id, tags) {
 
 async function addProduct(env, body, user) {
   const p = cleanProduct(body);
-  const id = await freeId(env, 'products', p.name);
+  const id = await freeId(env, 'products', p.name, RESERVED_IDS);
   await env.DB.batch([
     env.DB.prepare(`INSERT INTO products (${PRODUCT_COLUMNS}) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ${NEXT_SORT})`)
       .bind(...productValues(id, p, user)),
@@ -340,7 +308,7 @@ function cleanTag(body) {
 
 async function addTag(env, body) {
   const t = cleanTag(body);
-  const id = await freeId(env, 'tags', t.name);
+  const id = await freeId(env, 'tags', t.name, RESERVED_IDS);
   await env.DB.prepare(`
     INSERT INTO tags (id, name, name_vi, sort_order)
     VALUES (?1, ?2, ?3, (SELECT COALESCE(MAX(sort_order), -1) + 1 FROM tags))`).bind(id, t.name, t.nameVi).run();

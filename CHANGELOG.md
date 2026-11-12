@@ -12,6 +12,17 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.7.6] - 2026-11-12
+### What changed
+- Campaigns and cases now live in the D1 database (new `campaigns` and `cases` tables in schema.sql; the four existing campaigns in seed-campaigns.sql) and are served by the Worker at /api/campaigns
+- Admin: Campaigns & cases screen with a list of campaigns (cover, status badge, number of cases, Shown / Hidden switch with undo, Edit, Delete), a campaign editor (details, Vietnamese, status and visibility, "At a glance" facts, cases, current photos) and a case form; access follows each person's role, including Custom
+- Cases can only be saved with "Consent confirmed" ticked, checked by the admin and the Worker
+- The /cases and /cases/<id> pages load the campaigns from the database; campaigns without photos are shown without them, and published cases appear on their campaign's page
+- Home: "Add a campaign" quick action; the running and planned programme numbers come from the database
+- Fixed the admin's product thumbnails, which were missing because the campaign photos used the same name as the product photos
+- schema.sql and seed-campaigns.sql no longer contain comments, so they can be pasted into the D1 Console
+- Added under-construction/worker.js, the "Website under construction" page used on the main domain while the site is unfinished
+
 ## [0.7.5] - 2026-10-22
 ### What changed
 - Password rules: at least 8 characters, including a number and a capital letter (was at least 12 characters); applied by the Worker, the admin's People & roles form, the "Create your password" page and scripts/hash-password.mjs. Existing passwords keep working

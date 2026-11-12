@@ -11,7 +11,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
   <!-- Admin dashboard (sidebar design, from -temp/admin-v1-sidebar-dashboard.html).
        Served by worker/index.js to signed-in users at /admin and its screen paths
-       (/admin/products, /admin/products/<id>, /admin/products/new, /admin/tags, /admin/people, ...);
+       (/admin/products, /admin/products/<id>, /admin/products/new, /admin/tags, /admin/campaigns,
+       /admin/campaigns/<id>, /admin/campaigns/<id>/cases/<case id>, /admin/people, ...);
        the Worker fills in the double-brace placeholders, including data-access: the pages this
        person can open, each 'view' or 'edit' (worker/access.js). -->
   <style nonce="{{nonce}}">
@@ -287,6 +288,18 @@
     .modal-summary dd { overflow-wrap: anywhere; }
     .modal-summary ul { padding-left: 18px; }
 
+    /* ── Campaigns & cases ── */
+    .row-actions { text-align: right; white-space: nowrap; }
+    .row-actions .btn + .btn { margin-left: 6px; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 12.5px; font-weight: 700; white-space: nowrap; }
+    .badge-running { background: rgba(101,46,134,.1); color: var(--purple); }
+    .badge-planned { background: rgba(178,150,125,.22); color: var(--brown); }
+    .case-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; list-style: none; }
+    .case-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius); background: #FCFAF7; }
+    .case-row .person-actions { gap: 6px; }
+    .narrow-form { max-width: 680px; }
+    .photo-thumbs.read-only .photo-thumb:hover { border-color: var(--line); }
+
     /* ── Sections still to be built ── */
     .placeholder { padding: 32px; background: var(--white); border: 1px dashed var(--greige); border-radius: var(--radius); }
     .placeholder ul { margin: 12px 0 0 20px; color: var(--muted); }
@@ -316,6 +329,11 @@
       .products-table td { border: none; padding: 0; }
       .products-table td:first-child { width: auto; }
       .products-table td:nth-child(-n+2) { grid-row: span 4; }
+      .campaigns-table thead { display: none; }
+      .campaigns-table tr { display: grid; grid-template-columns: 56px 1fr; gap: 6px 12px; padding: 12px; border-top: 1px solid var(--line); }
+      .campaigns-table td { border: none; padding: 0; }
+      .campaigns-table td:first-child { grid-row: span 5; }
+      .campaigns-table .row-actions { text-align: left; }
       .toolbar .search { flex-basis: 100%; }
     }
 
@@ -407,6 +425,7 @@
                 <button class="action" type="button" data-go="products/new" data-edit="products"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><strong>Add a product</strong><span>New item for the shop</span></button>
                 <button class="action" type="button" data-go="products"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg><strong>Hide a product</strong><span>Change what the shop shows</span></button>
                 <button class="action" type="button" data-go="impact" data-edit="impact"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7"/></svg><strong>Update numbers</strong><span>Impact page figures</span></button>
+                <button class="action" type="button" data-go="campaigns/new" data-edit="campaigns"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><strong>Add a campaign</strong><span>New programme on the website</span></button>
               </div>
             </div>
             <div class="card">
@@ -425,7 +444,7 @@
       <!-- Review -->
       <section data-screen="review" hidden>
         <h1>Waiting for review</h1>
-        <p class="lead">Editors' changes to campaigns, cases and impact numbers appear here before they go live.</p>
+        <p class="lead">Changes that need a super-admin’s approval will appear here before they go live.</p>
         <p class="empty">Nothing is waiting for review.</p>
       </section>
 
@@ -641,6 +660,210 @@
         </div>
       </section>
 
+      <!-- Campaigns & cases -->
+      <section data-screen="campaigns" hidden>
+        <div class="page-head">
+          <div>
+            <h1>Campaigns &amp; cases</h1>
+            <p class="lead">The programmes on the Cases &amp; Campaigns pages. Turn the switch off to hide a campaign from the website. Use Edit to change a campaign’s details and its cases.</p>
+          </div>
+          <button class="btn btn-primary" type="button" id="add-campaign" data-edit="campaigns"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add a campaign</button>
+        </div>
+        <div class="notice">Changes are saved for everyone straight away and reach the website within about a minute. Hidden campaigns and cases don’t appear anywhere on the website.</div>
+        <div class="error-summary" role="alert" id="campaigns-error" hidden></div>
+        <table class="campaigns-table">
+          <thead><tr><th><span class="sr-only">Photo</span></th><th>Campaign</th><th>Status</th><th>Cases</th><th>On the website</th><th><span class="sr-only">Actions</span></th></tr></thead>
+          <tbody id="campaign-rows"></tbody>
+        </table>
+        <p class="empty" id="campaign-empty" hidden></p>
+      </section>
+
+      <!-- Campaign editor: /admin/campaigns/<id> to edit, /admin/campaigns/new to add -->
+      <section data-screen="campaign-edit" hidden>
+        <a class="back" href="/admin/campaigns" data-link>← All campaigns</a>
+        <h1 id="campaign-title">Edit campaign</h1>
+        <p class="lead" id="campaign-lead"></p>
+        <div class="notice">Saving updates the website within about a minute. Photos can’t be changed yet: photo storage isn’t connected.</div>
+        <div class="error-summary" id="campaign-errors" tabindex="-1" role="alert" hidden></div>
+        <form id="campaign-form" novalidate>
+          <fieldset class="plain" id="campaign-fields">
+            <legend class="sr-only">Campaign details</legend>
+            <div class="editor-grid">
+              <div>
+                <div class="card">
+                  <h2>Details</h2>
+                  <p class="hint">What visitors see on the campaign’s page and in the list of campaigns.</p>
+                  <div class="field">
+                    <label class="label" for="cf-title">Title</label>
+                    <input class="input" id="cf-title" name="title" maxlength="120" autocomplete="off" aria-describedby="err-c-title">
+                    <p class="field-error" id="err-c-title" hidden></p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="cf-summary">Summary</label>
+                    <textarea class="input" id="cf-summary" name="summary" maxlength="600" rows="3" aria-describedby="cf-summary-note err-c-summary"></textarea>
+                    <p class="field-note" id="cf-summary-note">One or two sentences, shown in the list of campaigns and at the top of the campaign’s page.</p>
+                    <p class="field-error" id="err-c-summary" hidden></p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="cf-about">About the programme</label>
+                    <textarea class="input" id="cf-about" name="about" maxlength="5000" rows="7" aria-describedby="cf-about-note"></textarea>
+                    <p class="field-note" id="cf-about-note">Leave a blank line between paragraphs.</p>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="cf-covers">What the programme covers</label>
+                    <textarea class="input" id="cf-covers" name="covers" maxlength="2000" rows="4" aria-describedby="cf-covers-note"></textarea>
+                    <p class="field-note" id="cf-covers-note">One item per line. Each line is shown with a tick.</p>
+                  </div>
+                </div>
+                <div class="card">
+                  <h2>Vietnamese</h2>
+                  <p class="hint">The Vietnamese title is shown under the title on the website. The other fields are optional for now and aren’t shown until the Vietnamese pages are built.</p>
+                  <div class="field">
+                    <label class="label" for="cf-title-vi">Title in Vietnamese</label>
+                    <input class="input" id="cf-title-vi" name="titleVi" lang="vi" maxlength="120" autocomplete="off">
+                  </div>
+                  <div class="field">
+                    <label class="label" for="cf-summary-vi">Summary in Vietnamese</label>
+                    <textarea class="input" id="cf-summary-vi" name="summaryVi" lang="vi" maxlength="600" rows="3"></textarea>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="cf-about-vi">About the programme in Vietnamese</label>
+                    <textarea class="input" id="cf-about-vi" name="aboutVi" lang="vi" maxlength="5000" rows="5"></textarea>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="cf-covers-vi">What the programme covers in Vietnamese</label>
+                    <textarea class="input" id="cf-covers-vi" name="coversVi" lang="vi" maxlength="2000" rows="4"></textarea>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div class="card">
+                  <h2>On the website</h2>
+                  <p class="hint">The status badge, and whether the campaign appears at all.</p>
+                  <fieldset class="field plain" id="cf-status-group">
+                    <legend class="label">Status</legend>
+                    <div class="choices">
+                      <label class="choice"><input type="radio" id="cf-status-running" name="status" value="running" aria-describedby="err-c-status">Running</label>
+                      <label class="choice"><input type="radio" name="status" value="planned" aria-describedby="err-c-status">Planned</label>
+                    </div>
+                    <p class="field-error" id="err-c-status" hidden></p>
+                  </fieldset>
+                  <fieldset class="field plain" id="cf-shown-group">
+                    <legend class="label">Visibility</legend>
+                    <div class="choices">
+                      <label class="choice"><input type="radio" id="cf-shown-yes" name="shown" value="yes" aria-describedby="err-c-shown">Shown</label>
+                      <label class="choice"><input type="radio" name="shown" value="no" aria-describedby="err-c-shown">Hidden</label>
+                    </div>
+                    <p class="field-error" id="err-c-shown" hidden></p>
+                  </fieldset>
+                </div>
+                <div class="card">
+                  <h2>At a glance</h2>
+                  <p class="hint">Shown in the “At a glance” box. Empty fields show “To be confirmed”.</p>
+                  <div class="field">
+                    <label class="label" for="cf-focus">Focus</label>
+                    <input class="input" id="cf-focus" name="focus" maxlength="80" autocomplete="off" placeholder="For example: Education">
+                  </div>
+                  <div class="field">
+                    <label class="label" for="cf-location">Location</label>
+                    <input class="input" id="cf-location" name="location" maxlength="120" autocomplete="off">
+                  </div>
+                  <div class="field">
+                    <label class="label" for="cf-format">Format</label>
+                    <input class="input" id="cf-format" name="format" maxlength="120" autocomplete="off" placeholder="For example: Workshop series (dates TBD)">
+                  </div>
+                </div>
+                <div class="card">
+                  <h2 id="cases-label">Cases</h2>
+                  <p class="hint">Individual cases in this campaign, shown on its page. A case is published only with the consent of the people involved.</p>
+                  <ul class="case-list" id="case-list" aria-labelledby="cases-label" hidden></ul>
+                  <p class="empty-note" id="cases-note" hidden></p>
+                  <a class="btn" href="/admin/campaigns" data-link id="add-case"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>Add a case</a>
+                </div>
+                <div class="card">
+                  <h2 id="campaign-photos-label">Photos</h2>
+                  <p class="hint">The cover photo, then the gallery. They come from the website’s files for now; adding and changing photos will be possible once photo storage is connected.</p>
+                  <ul class="photo-thumbs read-only" id="campaign-photos" aria-labelledby="campaign-photos-label" hidden></ul>
+                  <p class="empty-note" id="campaign-no-photos" hidden>No photos yet. The campaign is shown without photos.</p>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" id="campaign-save">Save campaign</button>
+            <a class="btn" href="/admin/campaigns" data-link id="campaign-cancel">Cancel</a>
+          </div>
+        </form>
+      </section>
+
+      <!-- Case form: /admin/campaigns/<id>/cases/new to add, /admin/campaigns/<id>/cases/<n> to edit -->
+      <section data-screen="case-edit" hidden>
+        <a class="back" href="/admin/campaigns" data-link id="case-back">← Campaign</a>
+        <h1 id="case-title">Add a case</h1>
+        <p class="lead" id="case-lead"></p>
+        <div class="notice">A case is published only with the explicit consent of the people involved. Share only the details they have agreed to, and never include photos of children.</div>
+        <div class="error-summary" id="case-errors" tabindex="-1" role="alert" hidden></div>
+        <form class="narrow-form" id="case-form" novalidate>
+          <fieldset class="plain" id="case-fields">
+            <legend class="sr-only">Case details</legend>
+            <div class="card">
+              <h2>Details</h2>
+              <p class="hint">Shown as a card under “Cases in this campaign” on the campaign’s page.</p>
+              <div class="field">
+                <label class="label" for="csf-name">Name</label>
+                <input class="input" id="csf-name" name="name" maxlength="120" autocomplete="off" aria-describedby="csf-name-note err-k-name">
+                <p class="field-note" id="csf-name-note">For example a first name, or “A family in Phú Vang”.</p>
+                <p class="field-error" id="err-k-name" hidden></p>
+              </div>
+              <div class="field">
+                <label class="label" for="csf-story">Story</label>
+                <textarea class="input" id="csf-story" name="story" maxlength="3000" rows="6" aria-describedby="csf-story-note err-k-story"></textarea>
+                <p class="field-note" id="csf-story-note">The support provided and what it covered. Leave a blank line between paragraphs.</p>
+                <p class="field-error" id="err-k-story" hidden></p>
+              </div>
+              <div class="field">
+                <label class="label" for="csf-support">Total support received</label>
+                <input class="input" id="csf-support" name="support" maxlength="60" autocomplete="off" aria-describedby="csf-support-note">
+                <p class="field-note" id="csf-support-note">For example $120. Leave empty to show “To be published”.</p>
+              </div>
+            </div>
+            <div class="card">
+              <h2>Vietnamese</h2>
+              <p class="hint">Optional for now. Saved with the case, but not shown on the website until the Vietnamese pages are built.</p>
+              <div class="field">
+                <label class="label" for="csf-name-vi">Name in Vietnamese</label>
+                <input class="input" id="csf-name-vi" name="nameVi" lang="vi" maxlength="120" autocomplete="off">
+              </div>
+              <div class="field">
+                <label class="label" for="csf-story-vi">Story in Vietnamese</label>
+                <textarea class="input" id="csf-story-vi" name="storyVi" lang="vi" maxlength="3000" rows="5"></textarea>
+              </div>
+            </div>
+            <div class="card">
+              <h2>On the website</h2>
+              <p class="hint">Whether the case appears on the campaign’s page.</p>
+              <fieldset class="field plain" id="csf-shown-group">
+                <legend class="label">Visibility</legend>
+                <div class="choices">
+                  <label class="choice"><input type="radio" id="csf-shown-yes" name="shown" value="yes" aria-describedby="err-k-shown">Shown</label>
+                  <label class="choice"><input type="radio" name="shown" value="no" aria-describedby="err-k-shown">Hidden</label>
+                </div>
+                <p class="field-error" id="err-k-shown" hidden></p>
+              </fieldset>
+              <fieldset class="field plain" id="csf-consent-group">
+                <legend class="label">Consent</legend>
+                <label class="option"><input type="checkbox" id="csf-consent" name="consent" aria-describedby="err-k-consent"><span><strong>Consent confirmed</strong><small>The people involved have given explicit consent to publish this case and the details above.</small></span></label>
+                <p class="field-error" id="err-k-consent" hidden></p>
+              </fieldset>
+            </div>
+          </fieldset>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" id="case-save">Save case</button>
+            <a class="btn" href="/admin/campaigns" data-link id="case-cancel">Cancel</a>
+          </div>
+        </form>
+      </section>
+
       <!-- People & roles (super-admins only) -->
       <section data-screen="people" hidden>
         <div class="page-head">
@@ -799,10 +1022,12 @@
     const canEditPage = page => ACCESS[page] === 'edit';
     const canEditProducts = canEditPage('products');
     const canEditTags = canEditPage('tags');
+    const canEditCampaigns = canEditPage('campaigns');
 
-    /* Site data */
+    /* Site data: product photos (products.js) and campaign photos (campaigns.js) until R2 */
     const PHOTOS = window.PURE_PHOTOS || {};
-    const CAMPAIGNS = window.PURE_CAMPAIGNS || [];
+    const CAMPAIGN_IMAGES = window.PURE_CAMPAIGN_IMAGES || {};
+    const CAMPAIGN_PHOTOS = window.PURE_CAMPAIGN_PHOTOS || {};
     const formatPrice = window.PURE_FORMAT_PRICE || (n => '$' + n);
 
     /* ── Catalog ──
@@ -838,6 +1063,7 @@
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || 'Something went wrong. Please try again.');
       if (data.catalog) applyCatalog(data.catalog);
+      if (data.campaigns) applyCampaigns(data.campaigns);
       if (data.people) applyPeople(data.people);
       return data;
     }
@@ -870,10 +1096,9 @@
        Each screen has its own address (/admin/products, /admin/tags, /admin/products/<id>),
        served by the Worker and switched here without reloading. Screens this person can't
        open (not in ACCESS) go to Home. */
-    const SCREENS = ['home', 'review', 'products', 'tags', 'people'];
+    const SCREENS = ['home', 'review', 'products', 'tags', 'campaigns', 'people'];
     const TITLES = {
       orders: ['Orders', 'See new orders and update their status from pending to delivered.', ['A table of orders, newest first', 'One button per order to move it to the next step', 'Viewers can see orders but not change them']],
-      campaigns: ['Campaigns & cases', 'Edit the four programmes and add individual cases.', ['A list of campaigns with status badges', 'Cases cannot be submitted until "consent confirmed" is ticked', 'Editors save drafts; super-admins publish']],
       impact: ['Impact numbers', 'The figures shown on the Impact page.', ['One row per figure with the current value', 'Editors’ changes go to Waiting for review before going live']],
       money: ['Profit split', 'Quarterly revenue, costs and the 50/50 split.', ['One record per quarter', 'The community share is calculated automatically']]
     };
@@ -897,7 +1122,7 @@
     function show(view) {
       if ((!SCREENS.includes(view) && !TITLES[view]) || !ACCESS[view]) view = 'home';
       if (location.pathname.replace(/\/+$/, '') !== pathFor(view)) history.replaceState(null, '', pathFor(view));
-      editor = personEditor = null;
+      closeEditors();
       setCurrent(view);
       const screen = SCREENS.includes(view) ? view : 'other';
       if (screen === 'other') {
@@ -908,12 +1133,20 @@
       }
       if (view === 'products') renderProducts();
       if (view === 'tags') { editingTag = null; renderTags(); }
+      if (view === 'campaigns') renderCampaigns();
       if (view === 'people') renderPeople();
       showScreen(screen);
     }
     function route() {
-      const [view = 'home', sub] = location.pathname.replace(/\/+$/, '').split('/').slice(2);
+      const [view = 'home', sub, subKind, subId] = location.pathname.replace(/\/+$/, '').split('/').slice(2);
       if (!ACCESS[view]) show('home');
+      else if (view === 'campaigns' && sub && campaignsState === 'loading') {
+        // The campaign or case form opens once the campaigns have loaded (route() runs again then).
+        setCurrent('campaigns');
+        renderCampaigns();
+        showScreen('campaigns');
+      } else if (view === 'campaigns' && sub && subKind === 'cases' && subId) openCase(decodeURIComponent(sub), subId);
+      else if (view === 'campaigns' && sub) openCampaign(decodeURIComponent(sub));
       else if (view === 'products' && sub && catalogState === 'loading') {
         // The editor opens once the catalog has loaded (route() runs again then).
         setCurrent('products');
@@ -929,24 +1162,29 @@
       else show(view);
     }
 
-    /* Leaving the product editor or the manager form with unsaved changes asks first. */
+    /* Leaving the product, campaign, case or manager form with unsaved changes asks first. */
     function hasUnsavedChanges() {
       return Boolean((editor && canEditProducts && formState() !== editor.snapshot)
+        || (campaignEditor && canEditCampaigns && campaignState() !== campaignEditor.snapshot)
+        || (caseEditor && canEditCampaigns && caseState() !== caseEditor.snapshot)
         || (personEditor && personState() !== personEditor.snapshot));
     }
     function okToLeave() {
       return !hasUnsavedChanges() || confirm('You have unsaved changes. Leave without saving?');
     }
+    function closeEditors() {
+      editor = personEditor = campaignEditor = caseEditor = null;
+    }
     function go(path) {
       if (!okToLeave()) return;
-      editor = personEditor = null;
+      closeEditors();
       if (path !== location.pathname) history.pushState(null, '', path);
       route();
     }
     window.addEventListener('popstate', () => {
-      const open = editor || personEditor;
+      const open = editor || personEditor || campaignEditor || caseEditor;
       if (open && !okToLeave()) { history.pushState(null, '', open.path); return; }
-      editor = personEditor = null;
+      closeEditors();
       route();
     });
     window.addEventListener('beforeunload', e => {
@@ -1367,7 +1605,7 @@
         : '';
     }
     const showErrors = errors => showFormErrors(form, $('editor-errors'), errors);
-    ['editor-errors', 'person-errors'].forEach(id => $(id).addEventListener('click', e => {
+    ['editor-errors', 'campaign-errors', 'case-errors', 'person-errors'].forEach(id => $(id).addEventListener('click', e => {
       const link = e.target.closest('[data-focus]');
       if (!link) return;
       e.preventDefault();
@@ -1706,6 +1944,334 @@
       toast(`Tag “${name}” added.`);
     });
 
+    /* ── Campaigns & cases ──
+       Campaigns and their cases live in the D1 database and are changed through
+       /admin/api/campaigns (worker/campaigns.js); every change answers with every campaign, so
+       this page always matches the database. The website catches up within about a minute.
+       Photos aren't stored yet (R2): they come from assets/js/campaigns.js by campaign id. */
+    const STATUS_LABELS = { running: 'Running', planned: 'Planned' };
+    let campaigns = []; // as sent by the Worker, plus cover and gallery (photo keys)
+    let campaignsState = ACCESS.campaigns ? 'loading' : 'idle'; // loading | ready | failed
+    let campaignEditor = null; // { path, id, snapshot } while adding (id null) or editing a campaign
+    let caseEditor = null; // { path, campaignId, id, snapshot } while adding (id null) or editing a case
+    const campaignForm = $('campaign-form');
+    const caseForm = $('case-form');
+    const campaignUrl = id => `/admin/campaigns/${encodeURIComponent(id)}`;
+    const caseUrl = (campaignId, id) => `${campaignUrl(campaignId)}/cases/${id}`;
+    const campaignImg = key => `/assets/images/campaigns/${encodeURIComponent(key)}.jpg`;
+    const nCases = n => n === 1 ? '1 case' : `${n} cases`;
+
+    function applyCampaigns(list) {
+      campaigns = list.map(c => {
+        const images = CAMPAIGN_IMAGES[c.id] || {};
+        return { ...c, cover: images.cover || '', gallery: images.gallery || [] };
+      });
+      campaignsState = 'ready';
+      $('campaigns-error').hidden = true;
+      setProgrammeNumbers(campaigns.filter(c => c.shown));
+    }
+    /* Home: running and planned programmes on the website. */
+    function setProgrammeNumbers(list) {
+      $('n-running').textContent = list.filter(c => c.status === 'running').length;
+      $('n-planned').textContent = list.filter(c => c.status === 'planned').length;
+    }
+
+    function renderCampaigns() {
+      $('campaign-rows').innerHTML = campaigns.map(c => {
+        const hidden = c.cases.filter(k => !k.shown).length;
+        return `
+          <tr>
+            <td>${c.cover ? `<img class="thumb" src="${esc(campaignImg(c.cover))}" alt="" loading="lazy">` : '<span class="thumb" aria-hidden="true"></span>'}</td>
+            <td><strong>${esc(c.title)}</strong><br><span class="sub">${esc(c.focus || 'No focus set')}</span></td>
+            <td><span class="badge badge-${c.status}">${STATUS_LABELS[c.status]}</span></td>
+            <td>${c.cases.length ? nCases(c.cases.length) : '<span class="sub">No cases</span>'}${hidden ? `<br><span class="sub">${hidden} hidden</span>` : ''}</td>
+            <td><button class="switch" type="button" role="switch" aria-checked="${c.shown}" data-campaign-shown="${esc(c.id)}" ${canEditCampaigns ? '' : 'disabled'}><span class="track" aria-hidden="true"></span>${c.shown ? 'Shown' : 'Hidden'}</button></td>
+            <td class="row-actions">
+              <a class="btn" href="${esc(campaignUrl(c.id))}" data-link>${canEditCampaigns ? 'Edit' : 'View'}<span class="sr-only"> ${esc(c.title)}</span></a>
+              ${canEditCampaigns ? `<button class="btn btn-danger-outline" type="button" data-delete-campaign="${esc(c.id)}">Delete<span class="sr-only"> ${esc(c.title)}</span></button>` : ''}
+            </td>
+          </tr>`;
+      }).join('');
+      const empty = $('campaign-empty');
+      empty.hidden = campaigns.length > 0 || campaignsState === 'failed';
+      empty.textContent = campaignsState === 'loading' ? 'Loading campaigns…' : 'No campaigns yet. Use “Add a campaign” to add the first one.';
+    }
+    $('campaign-rows').addEventListener('click', async e => {
+      const del = e.target.closest('[data-delete-campaign]');
+      if (del) { confirmDeleteCampaign(del.dataset.deleteCampaign); return; }
+      const sw = e.target.closest('[data-campaign-shown]');
+      if (!sw || sw.disabled) return;
+      const c = campaigns.find(x => x.id === sw.dataset.campaignShown);
+      if (!c) return;
+      const setShown = async shown => {
+        sw.disabled = true;
+        const done = await change('PATCH', `campaigns/${encodeURIComponent(c.id)}`, { shown });
+        renderCampaigns();
+        return done;
+      };
+      if (await setShown(!c.shown)) {
+        toast(`${c.title} is now ${c.shown ? 'hidden from' : 'shown on'} the website.`, () => setShown(c.shown));
+      }
+    });
+    $('add-campaign').addEventListener('click', () => go('/admin/campaigns/new'));
+
+    /* Delete: one confirmation, naming the cases that go with it. Hiding is the reversible option. */
+    function confirmDeleteCampaign(id) {
+      const c = campaigns.find(x => x.id === id);
+      if (!c || !canEditCampaigns) return;
+      openModal({
+        title: `Delete the campaign “${c.title}”?`,
+        bodyHtml: `
+          ${c.cases.length ? `<p class="modal-warn">Its ${nCases(c.cases.length)} will be deleted too.</p>` : ''}
+          <p>The campaign’s page will stop working. This can’t be undone. To take it off the website for now, hide it instead.</p>`,
+        okText: 'Delete campaign',
+        danger: true,
+        async onOk() {
+          if (!await change('DELETE', `campaigns/${encodeURIComponent(id)}`)) return;
+          renderCampaigns();
+          toast(`Deleted the campaign “${c.title}”.`);
+        },
+      });
+    }
+
+    /* ── Campaign editor ──
+       Adding and editing use the same form. Title, summary, status and visibility are required;
+       the other details can be filled in later. Cases are added once the campaign is saved. */
+    const CAMPAIGN_LINES = ['title', 'summary', 'focus', 'location', 'format', 'titleVi', 'summaryVi']; // one line each
+    const CAMPAIGN_TEXTS = ['about', 'covers', 'aboutVi', 'coversVi']; // several lines
+    const cval = name => campaignForm.elements[name].value.trim();
+    function campaignState() {
+      return JSON.stringify([...CAMPAIGN_LINES.map(cval), ...CAMPAIGN_TEXTS.map(cval), campaignForm.elements.status.value, campaignForm.elements.shown.value]);
+    }
+
+    function openCampaign(id) {
+      const isNew = id === 'new';
+      const c = isNew ? null : campaigns.find(x => x.id === id);
+      if ((isNew && !canEditCampaigns) || (!isNew && !c)) {
+        show('campaigns');
+        if (!isNew && campaignsState === 'ready') toast('That campaign wasn’t found.');
+        return;
+      }
+      setCurrent('campaigns');
+      $('campaign-title').textContent = isNew ? 'Add a campaign' : canEditCampaigns ? `Edit ${c.title}` : c.title;
+      $('campaign-lead').textContent = !canEditCampaigns
+        ? 'You have view-only access, so this campaign can’t be changed.'
+        : isNew
+          ? 'Title, summary, status and visibility are required. Other details can be filled in later, and cases can be added once the campaign is saved.'
+          : 'Title, summary, status and visibility are required. Other details can be filled in later.';
+      campaignForm.reset();
+      showFormErrors(campaignForm, $('campaign-errors'), []);
+      if (c) {
+        [...CAMPAIGN_LINES, ...CAMPAIGN_TEXTS].forEach(name => campaignForm.elements[name].value = c[name]);
+        campaignForm.elements.status.value = c.status;
+        campaignForm.elements.shown.value = c.shown ? 'yes' : 'no';
+      }
+      renderCampaignCases(c);
+      renderCampaignPhotos(c);
+      $('campaign-fields').disabled = !canEditCampaigns;
+      $('campaign-save').hidden = !canEditCampaigns;
+      $('campaign-cancel').textContent = canEditCampaigns ? 'Cancel' : 'Back to campaigns';
+      campaignEditor = { path: location.pathname, id: c ? c.id : null, snapshot: campaignState() };
+      showScreen('campaign-edit');
+    }
+
+    /* The campaign's cases, each with Edit and Delete; "Add a case" once the campaign exists. */
+    function renderCampaignCases(c) {
+      const list = c ? c.cases : [];
+      $('case-list').innerHTML = list.map(k => `
+        <li class="case-row">
+          <div class="person-info">
+            <strong>${esc(k.name)}</strong>
+            <span class="person-meta">${k.shown ? 'Shown' : 'Hidden'} · ${esc(k.support ? `Support received: ${k.support}` : 'Support to be published')}</span>
+          </div>
+          <div class="person-actions">
+            <a class="btn" href="${esc(caseUrl(c.id, k.id))}" data-link>${canEditCampaigns ? 'Edit' : 'View'}<span class="sr-only"> ${esc(k.name)}</span></a>
+            ${canEditCampaigns ? `<button class="btn btn-danger-outline" type="button" data-delete-case="${k.id}">Delete<span class="sr-only"> ${esc(k.name)}</span></button>` : ''}
+          </div>
+        </li>`).join('');
+      $('case-list').hidden = !list.length;
+      const note = !c ? 'Save the campaign first, then add its cases here.' : list.length ? '' : 'No cases yet.';
+      $('cases-note').textContent = note;
+      $('cases-note').hidden = !note;
+      $('add-case').hidden = !c || !canEditCampaigns;
+      if (c) $('add-case').href = caseUrl(c.id, 'new');
+    }
+    $('case-list').addEventListener('click', e => {
+      const del = e.target.closest('[data-delete-case]');
+      if (del && campaignEditor && campaignEditor.id) confirmDeleteCase(campaignEditor.id, Number(del.dataset.deleteCase));
+    });
+    function confirmDeleteCase(campaignId, caseId) {
+      const c = campaigns.find(x => x.id === campaignId);
+      const k = c && c.cases.find(x => x.id === caseId);
+      if (!k || !canEditCampaigns) return;
+      openModal({
+        title: `Delete the case “${k.name}”?`,
+        bodyHtml: '<p>It will be removed from the campaign’s page. This can’t be undone. To take it off the website for now, edit the case and hide it instead.</p>',
+        okText: 'Delete case',
+        danger: true,
+        async onOk() {
+          if (!await change('DELETE', `campaigns/${encodeURIComponent(campaignId)}/cases/${caseId}`)) return;
+          if (campaignEditor && campaignEditor.id === campaignId) renderCampaignCases(campaigns.find(x => x.id === campaignId));
+          toast(`Deleted the case “${k.name}”.`);
+        },
+      });
+    }
+
+    /* Photos are shown, not edited, until R2 is connected. */
+    function renderCampaignPhotos(c) {
+      const keys = c ? [c.cover, ...c.gallery].filter(Boolean) : [];
+      $('campaign-photos').innerHTML = keys.map((key, i) => `
+        <li><span class="photo-thumb"><img src="${esc(campaignImg(key))}" alt="${esc((CAMPAIGN_PHOTOS[key] || {}).alt || '')}" loading="lazy">${i === 0 && c.cover ? '<span class="photo-main">Cover</span>' : ''}</span></li>`).join('');
+      $('campaign-photos').hidden = !keys.length;
+      $('campaign-no-photos').hidden = keys.length > 0;
+    }
+
+    function validateCampaign() {
+      const errors = [];
+      if (!cval('title')) errors.push({ name: 'c-title', field: 'cf-title', text: 'Enter a title.' });
+      if (!cval('summary')) errors.push({ name: 'c-summary', field: 'cf-summary', text: 'Enter a summary.' });
+      if (!campaignForm.elements.status.value) errors.push({ name: 'c-status', field: 'cf-status-running', group: 'cf-status-group', text: 'Choose whether the campaign is running or planned.' });
+      if (!campaignForm.elements.shown.value) errors.push({ name: 'c-shown', field: 'cf-shown-yes', group: 'cf-shown-group', text: 'Choose whether it’s shown on the website.' });
+      return errors;
+    }
+
+    let savingCampaign = false;
+    campaignForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      if (!canEditCampaigns || !campaignEditor || savingCampaign) return;
+      const errors = validateCampaign();
+      showFormErrors(campaignForm, $('campaign-errors'), errors);
+      if (errors.length) { $('campaign-errors').focus(); return; }
+
+      const isNew = !campaignEditor.id;
+      const body = {
+        status: campaignForm.elements.status.value,
+        shown: campaignForm.elements.shown.value === 'yes',
+      };
+      CAMPAIGN_LINES.forEach(name => body[name] = cleanName(cval(name)));
+      CAMPAIGN_TEXTS.forEach(name => body[name] = cval(name));
+      savingCampaign = true;
+      $('campaign-save').disabled = true;
+      $('campaign-save').textContent = 'Saving…';
+      let answer;
+      try {
+        answer = await api(isNew ? 'POST' : 'PUT', isNew ? 'campaigns' : `campaigns/${encodeURIComponent(campaignEditor.id)}`, body);
+      } catch (err) {
+        toast(err.message);
+        return;
+      } finally {
+        savingCampaign = false;
+        $('campaign-save').disabled = false;
+        $('campaign-save').textContent = 'Save campaign';
+      }
+      campaignEditor = null;
+      if (isNew) {
+        // Stay on the new campaign, so its cases can be added straight away.
+        go(campaignUrl(answer.id));
+        toast(`${body.title} added${body.shown ? '. It appears on the website within about a minute' : ' as hidden'}. You can now add its cases.`);
+      } else {
+        go('/admin/campaigns');
+        toast(`${body.title} saved. The website shows the change within about a minute.`);
+      }
+    });
+
+    /* ── Case form ──
+       Name, story, visibility and consent are required. A case can't be saved unless consent is
+       confirmed; the Worker checks this too. */
+    const CASE_LINES = ['name', 'support', 'nameVi'];
+    const CASE_TEXTS = ['story', 'storyVi'];
+    const kval = name => caseForm.elements[name].value.trim();
+    function caseState() {
+      return JSON.stringify([...CASE_LINES.map(kval), ...CASE_TEXTS.map(kval), caseForm.elements.shown.value, caseForm.elements.consent.checked]);
+    }
+
+    function openCase(campaignId, sub) {
+      const c = campaigns.find(x => x.id === campaignId);
+      if (!c) {
+        show('campaigns');
+        if (campaignsState === 'ready') toast('That campaign wasn’t found.');
+        return;
+      }
+      const isNew = sub === 'new';
+      const k = isNew ? null : c.cases.find(x => String(x.id) === sub);
+      if ((isNew && !canEditCampaigns) || (!isNew && !k)) {
+        history.replaceState(null, '', campaignUrl(c.id));
+        openCampaign(c.id);
+        if (!isNew) toast('That case wasn’t found.');
+        return;
+      }
+      setCurrent('campaigns');
+      $('case-back').href = $('case-cancel').href = campaignUrl(c.id);
+      $('case-back').textContent = `← ${c.title}`;
+      $('case-title').textContent = isNew ? 'Add a case' : canEditCampaigns ? `Edit ${k.name}` : k.name;
+      $('case-lead').textContent = !canEditCampaigns
+        ? 'You have view-only access, so this case can’t be changed.'
+        : `${isNew ? 'A new case in' : 'Part of'} ${c.title}. Name, story, visibility and consent are required.`;
+      caseForm.reset();
+      showFormErrors(caseForm, $('case-errors'), []);
+      if (k) {
+        [...CASE_LINES, ...CASE_TEXTS].forEach(name => caseForm.elements[name].value = k[name]);
+        caseForm.elements.shown.value = k.shown ? 'yes' : 'no';
+        caseForm.elements.consent.checked = true; // a saved case always had consent confirmed
+      }
+      $('case-fields').disabled = !canEditCampaigns;
+      $('case-save').hidden = !canEditCampaigns;
+      $('case-cancel').textContent = canEditCampaigns ? 'Cancel' : 'Back to the campaign';
+      caseEditor = { path: location.pathname, campaignId: c.id, id: k ? k.id : null, snapshot: caseState() };
+      showScreen('case-edit');
+    }
+
+    function validateCase() {
+      const errors = [];
+      if (!kval('name')) errors.push({ name: 'k-name', field: 'csf-name', text: 'Enter a name.' });
+      if (!kval('story')) errors.push({ name: 'k-story', field: 'csf-story', text: 'Enter the story.' });
+      if (!caseForm.elements.shown.value) errors.push({ name: 'k-shown', field: 'csf-shown-yes', group: 'csf-shown-group', text: 'Choose whether it’s shown on the website.' });
+      if (!caseForm.elements.consent.checked) errors.push({ name: 'k-consent', field: 'csf-consent', group: 'csf-consent-group', text: 'Confirm that the people involved have given consent to publish this case.' });
+      return errors;
+    }
+
+    let savingCase = false;
+    caseForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      if (!canEditCampaigns || !caseEditor || savingCase) return;
+      const errors = validateCase();
+      showFormErrors(caseForm, $('case-errors'), errors);
+      if (errors.length) { $('case-errors').focus(); return; }
+
+      const { campaignId, id } = caseEditor;
+      const body = { shown: caseForm.elements.shown.value === 'yes', consent: true };
+      CASE_LINES.forEach(name => body[name] = cleanName(kval(name)));
+      CASE_TEXTS.forEach(name => body[name] = kval(name));
+      const base = `campaigns/${encodeURIComponent(campaignId)}/cases`;
+      savingCase = true;
+      $('case-save').disabled = true;
+      $('case-save').textContent = 'Saving…';
+      try {
+        await api(id === null ? 'POST' : 'PUT', id === null ? base : `${base}/${id}`, body);
+      } catch (err) {
+        toast(err.message);
+        return;
+      } finally {
+        savingCase = false;
+        $('case-save').disabled = false;
+        $('case-save').textContent = 'Save case';
+      }
+      caseEditor = null;
+      go(campaignUrl(campaignId));
+      toast(`${body.name} ${id === null ? 'added' : 'saved'}. The website shows the change within about a minute.`);
+    });
+
+    function loadCampaigns() {
+      api('GET', 'campaigns').catch(err => {
+        campaignsState = 'failed';
+        $('campaigns-error').textContent = `The campaigns couldn’t be loaded. ${err.message}`;
+        $('campaigns-error').hidden = false;
+      }).finally(() => {
+        // The list, or a campaign or case form waiting for it, shows the campaigns now.
+        if (/^\/admin\/campaigns(\/|$)/.test(location.pathname) && !campaignEditor && !caseEditor) route();
+      });
+    }
+
     /* ── People & roles (super-admins only) ──
        Managers are the editor, viewer and custom accounts; super-admin accounts are managed in
        the D1 Console. Changes go through /admin/api/people (worker/people.js), which answers
@@ -2031,8 +2597,6 @@
     /* Home */
     const h = new Date().getHours();
     $('greeting').textContent = `${h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'}, ${NAME}`;
-    $('n-running').textContent = CAMPAIGNS.filter(c => c.status === 'running').length;
-    $('n-planned').textContent = CAMPAIGNS.filter(c => c.status === 'planned').length;
 
     route();
     if (ACCESS.products || ACCESS.tags) {
@@ -2043,6 +2607,12 @@
         // Screens opened while loading show the catalog now (and the editor can open).
         if (/^\/admin\/(products|tags)(\/|$)/.test(location.pathname)) route();
       });
+    }
+    if (ACCESS.campaigns) loadCampaigns();
+    else {
+      // Without Campaigns & cases, Home still counts the programmes, from the public list.
+      fetch('/api/campaigns').then(res => res.ok ? res.json() : null)
+        .then(data => { if (data) setProgrammeNumbers(data.campaigns); }).catch(() => {});
     }
     if (ACCESS.people) loadPeople();
   </script>

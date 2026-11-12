@@ -1,9 +1,18 @@
-/* Cases & Campaigns data — shared by cases.html (listing) and campaign.html (/cases/<id>).
-   All descriptions, facts and photos are placeholders until the team confirms final content.
-   Photos: Wikimedia Commons placeholders, see assets/images/campaigns/CREDITS.md.
+/* Cases & Campaigns — shared by cases.html (listing), campaign.html (/cases/<id>) and the admin.
+
+   Campaign details and their cases live in the D1 database and are edited in /admin
+   (Campaigns & cases). Pages load them with PURE_LOAD_CAMPAIGNS(), which asks the Worker's
+   /api/campaigns; hidden campaigns and cases are never included.
+
+   Photos are not in D1 yet (until R2 is connected): each campaign's cover and gallery are listed
+   below by campaign id (PURE_CAMPAIGN_IMAGES), and each photo's description and credit by photo
+   key (PURE_CAMPAIGN_PHOTOS); the files are assets/images/campaigns/<key>.jpg. All of them are
+   Wikimedia Commons placeholders, see assets/images/campaigns/CREDITS.md. Campaigns without an
+   entry (e.g. added in /admin) are shown without photos.
    Site rules: no photos of children, no hardship imagery, no fundraising-appeal language (see spec §2). */
 
-window.PURE_PHOTOS = {
+/* Photo descriptions and placeholder credits, by photo key. */
+window.PURE_CAMPAIGN_PHOTOS = {
   'food-cover':       { alt: 'Baskets of fresh vegetables and herbs at a Vietnamese street market', author: 'Franzfoto', license: 'CC BY-SA 3.0', url: 'https://commons.wikimedia.org/wiki/File:Can_Tho_City_-_Street_Market,_vegetable.jpg' },
   'food-stall':       { alt: 'Dry goods stall at Đông Ba Market, Hue', author: 'Chainwit.', license: 'CC BY 4.0', url: 'https://commons.wikimedia.org/wiki/File:Dong_Ba_Market_(Hue)_-_Ch%E1%BB%A3_%C4%90%C3%B4ng_Ba_Hu%E1%BA%BF_(July_2024)_-_img_07.jpg' },
   'food-shop':        { alt: 'Packaged food and household goods at Đông Ba Market, Hue', author: 'Chainwit.', license: 'CC BY 4.0', url: 'https://commons.wikimedia.org/wiki/File:Dong_Ba_Market_(Hue)_-_Ch%E1%BB%A3_%C4%90%C3%B4ng_Ba_Hu%E1%BA%BF_(July_2024)_-_img_06.jpg' },
@@ -33,77 +42,27 @@ window.PURE_PHOTOS = {
   'craft-potter':     { alt: 'A master potter at work among finished vessels', author: 'Tahirceylan', license: 'CC BY-SA 4.0', url: 'https://commons.wikimedia.org/wiki/File:Pottery_Master.jpg' }
 };
 
-window.PURE_CAMPAIGNS = [
-  {
-    id: 'food-essentials',
-    title: 'Community Food & Essentials Kit',
-    titleVi: 'Bộ thực phẩm & nhu yếu phẩm cộng đồng',
-    status: 'running',
-    focus: 'Living conditions',
-    location: 'Hue, Thừa Thiên Huế',
-    format: 'Recurring distribution (schedule TBD)',
-    summary: 'Regular provision of food staples and household essentials to families in Hue, identified through local community partners.',
-    about: [
-      'The programme provides kits of food staples and everyday household items to families referred by community authority heads and local partners in Hue. Contents are sourced locally wherever possible.',
-      'Distribution is ongoing, with no funding target. Each quarter, the number of kits provided and the amount allocated are recorded and published in the transparency report.'
-    ],
-    covers: ['Rice, cooking oil and other food staples', 'Hygiene and household essentials', 'Locally sourced contents where possible'],
-    cover: 'food-cover',
-    gallery: ['food-stall', 'food-shop', 'food-gate', 'food-boat'],
-    cases: []
-  },
-  {
-    id: 'lotus-art',
-    title: 'Lotus Art for Healing Workshop',
-    titleVi: 'Hội thảo nghệ thuật hoa sen chữa lành',
-    status: 'running',
-    focus: 'Health & wellbeing',
-    location: 'Hue, Thừa Thiên Huế',
-    format: 'Workshop series (dates TBD)',
-    summary: 'Art workshops built around the lotus, a traditional motif of Hue, supporting wellbeing and community connection.',
-    about: [
-      'Participants work with painting and drawing techniques centred on the lotus, a motif closely tied to the culture of Hue. Sessions are led by local artists and run in small groups.',
-      'Materials are provided for each session. Attendance and costs are recorded and included in the quarterly transparency report.'
-    ],
-    covers: ['Guided painting and drawing sessions', 'All art materials provided', 'Small groups led by local artists'],
-    cover: 'lotus-cover',
-    gallery: ['lotus-pads', 'lotus-palette', 'lotus-bloom', 'lotus-still', 'lotus-wall'],
-    cases: []
-  },
-  {
-    id: 'youth-leadership',
-    title: 'Youth Leadership Circle',
-    titleVi: 'Vòng tròn lãnh đạo trẻ',
-    status: 'running',
-    focus: 'Education',
-    location: 'Hue, Thừa Thiên Huế',
-    format: 'Regular mentoring sessions (schedule TBD)',
-    summary: 'Mentoring and skills development for young people in Hue, with a focus on education, confidence and community responsibility.',
-    about: [
-      'The circle brings participants together with volunteer mentors for structured sessions on study skills, communication and planning. Participants are referred through school principals and community partners.',
-      'The programme runs continuously. Session numbers and programme costs are reported each quarter.'
-    ],
-    covers: ['Study skills and learning support', 'Communication and planning workshops', 'Mentoring by trained volunteers'],
-    cover: 'youth-cover',
-    gallery: ['youth-notes', 'youth-river', 'youth-pagoda', 'youth-reading', 'youth-mist'],
-    cases: []
-  },
-  {
-    id: 'heritage-craft',
-    title: 'Heritage Craft Class with Local Artisans',
-    titleVi: 'Lớp thủ công truyền thống cùng nghệ nhân địa phương',
-    status: 'planned',
-    focus: 'Cultural heritage',
-    location: 'Hue, Thừa Thiên Huế',
-    format: 'Class series (start date TBD)',
-    summary: 'A planned programme in which local artisans teach traditional Hue craft skills to members of the community.',
-    about: [
-      'Classes will be taught by artisans from the Pure network and cover techniques such as conical hat making, weaving and embroidery. The aim is to keep these skills in active use in Hue.',
-      'The programme is in planning. Its start date, schedule and participating artisans will be announced on this page.'
-    ],
-    covers: ['Conical hat making, weaving and embroidery', 'Taught by artisans from the Pure network', 'Materials and tools provided'],
-    cover: 'craft-cover',
-    gallery: ['craft-hat', 'craft-incense', 'craft-wheel', 'craft-loom', 'craft-embroidery', 'craft-potter'],
-    cases: []
-  }
-];
+/* Cover and gallery photos, by campaign id. */
+window.PURE_CAMPAIGN_IMAGES = {
+  'food-essentials':  { cover: 'food-cover',  gallery: ['food-stall', 'food-shop', 'food-gate', 'food-boat'] },
+  'lotus-art':        { cover: 'lotus-cover', gallery: ['lotus-pads', 'lotus-palette', 'lotus-bloom', 'lotus-still', 'lotus-wall'] },
+  'youth-leadership': { cover: 'youth-cover', gallery: ['youth-notes', 'youth-river', 'youth-pagoda', 'youth-reading', 'youth-mist'] },
+  'heritage-craft':   { cover: 'craft-cover', gallery: ['craft-hat', 'craft-incense', 'craft-wheel', 'craft-loom', 'craft-embroidery', 'craft-potter'] }
+};
+
+/* Loads the shown campaigns once per page, in page order. Each has: id, title, titleVi, status
+   ('running' | 'planned'), focus, location, format, summary, about (paragraphs), covers (items),
+   cases ({ name, story, support }), plus cover (photo key, or '') and gallery (photo keys).
+   Rejects if they can't be loaded; pages then show a "please refresh" message. */
+window.PURE_LOAD_CAMPAIGNS = (() => {
+  let loading = null;
+  return () => loading || (loading = fetch('/api/campaigns', { headers: { Accept: 'application/json' } })
+    .then(res => {
+      if (!res.ok) throw new Error(`Campaigns request failed (${res.status})`);
+      return res.json();
+    })
+    .then(data => data.campaigns.map(c => {
+      const images = window.PURE_CAMPAIGN_IMAGES[c.id] || {};
+      return { ...c, cover: images.cover || '', gallery: images.gallery || [] };
+    })));
+})();
