@@ -12,6 +12,12 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.7.7] - 2026-11-16
+### What changed
+- Top bar: "Campaigns" is now a plain link to /cases (the list of campaigns from the database) instead of a dropdown of hardcoded campaigns, so it always matches what's set in the admin
+- Top bar: "Impact" is now a plain link to /impact instead of a dropdown; the transparency reports stay linked from the Impact page and the home page
+- Removed the dropdown styles from nav-menu.css and the campaign page's dropdown highlighting
+
 ## [0.7.6] - 2026-11-12
 ### What changed
 - Campaigns and cases now live in the D1 database (new `campaigns` and `cases` tables in schema.sql; the four existing campaigns in seed-campaigns.sql) and are served by the Worker at /api/campaigns
