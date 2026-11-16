@@ -8,7 +8,8 @@
      env.DB      D1 database (purecommunitysupportd1db), tables in schema.sql
 
    Public routes:
-     GET  /api/products    the shop catalog: Shown products and their tags (cached ~1 minute)
+     GET  /api/products    the shop catalog: Shown products, their tags and the home page's
+                           featured products (cached ~1 minute)
      GET  /api/campaigns   Shown campaigns and their Shown cases (cached ~1 minute)
 
    Admin routes:
@@ -40,6 +41,8 @@
      POST   /admin/api/tags             add a tag
      PUT    /admin/api/tags/<id>        rename a tag
      DELETE /admin/api/tags/<id>        delete a tag (and remove it from its products)
+     PUT    /admin/api/featured         the home page's featured products: { ids: [id or null] x up to 4 }
+                                        (needs edit access to Products)
 
    Campaigns API (signed in; changes need edit access to Campaigns & cases, and a same-origin JSON
    request). Every change answers with every campaign and its cases, { campaigns }:

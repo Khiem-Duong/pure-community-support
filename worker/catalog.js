@@ -1,4 +1,5 @@
-/* Pure Community Support — shop catalog in D1 (tables products, tags, product_tags; see schema.sql).
+/* Pure Community Support — shop catalog in D1 (tables products, tags, product_tags,
+   featured_products; see schema.sql).
 
    publicProducts()  GET /api/products, read by the shop, item and order list pages
    adminApi()        /admin/api/*, used by the admin dashboard (admin/home.html); routes are
@@ -14,6 +15,22 @@ const PUBLIC_MAX_AGE = 60;     // seconds browsers and Cloudflare may reuse /api
 const MAX_BATCH = 200;         // most products one batch action can change
 const ID_PATTERN = /^[a-z0-9-]{1,80}$/;
 const RESERVED_IDS = new Set(['new', 'batch']); // would clash with /admin/products/new and /admin/api/products/batch
+const FEATURED_SLOTS = 4;      // products the home page can feature
+
+/* Product ids in the home page's featured slots, in slot order (only existing products; a deleted
+   product's slot is emptied by ON DELETE CASCADE). onlyShown leaves out hidden products. Gives no
+   slots if the featured_products table hasn't been created yet, so the shop keeps working. */
+async function featuredRows(env, onlyShown) {
+  try {
+    const { results } = await env.DB.prepare(`
+      SELECT f.slot, f.product_id FROM featured_products f JOIN products p ON p.id = f.product_id
+      ${onlyShown ? 'WHERE p.shown = 1' : ''} ORDER BY f.slot`).all();
+    return results;
+  } catch (err) {
+    if (/no such table/.test(String(err && err.message))) return [];
+    throw err;
+  }
+}
 
 /* Every product's tag ids, in tag order. */
 const LINKS_SQL = `
@@ -52,7 +69,9 @@ export async function publicProducts(request, env, ctx, url) {
     env.DB.prepare(LINKS_SQL),
   ]);
   const tagsOf = tagsByProduct(links.results);
+  const featured = await featuredRows(env, true);
   const body = {
+    featured: featured.map(f => f.product_id),
     products: products.results.map(r => ({
       id: r.id,
       name: r.name,
@@ -106,9 +125,10 @@ async function adminRoute(request, env, ctx, url, path, user) {
 
   // Every change: a same-origin request from someone who can edit that page.
   if (request.headers.get('Origin') !== url.origin) throw new ApiError(403, 'Forbidden');
-  if (kind !== 'products' && kind !== 'tags') throw new ApiError(404, 'Not found');
-  if (!canEdit(user, kind)) {
-    throw new ApiError(403, canView(user, kind) ? 'Your account has view-only access to this page.' : 'Your account can’t open this page.');
+  if (kind !== 'products' && kind !== 'tags' && kind !== 'featured') throw new ApiError(404, 'Not found');
+  const page = kind === 'featured' ? 'products' : kind; // the featured slots are on the Products screen
+  if (!canEdit(user, page)) {
+    throw new ApiError(403, canView(user, page) ? 'Your account has view-only access to this page.' : 'Your account can’t open this page.');
   }
   const body = method === 'DELETE' ? {} : await readJson(request);
 
@@ -117,6 +137,7 @@ async function adminRoute(request, env, ctx, url, path, user) {
   else if (kind === 'products' && method === 'POST' && id === 'batch') await batchProducts(env, body, user);
   else if (kind === 'products' && method === 'PUT' && id) await saveProduct(env, id, body, user);
   else if (kind === 'products' && method === 'PATCH' && id) await setShown(env, id, body, user);
+  else if (kind === 'featured' && method === 'PUT' && id === undefined) await saveFeatured(env, body);
   else if (kind === 'tags' && method === 'POST' && id === undefined) answer = { id: await addTag(env, body) };
   else if (kind === 'tags' && method === 'PUT' && id) await renameTag(env, id, body);
   else if (kind === 'tags' && method === 'DELETE' && id) await deleteTag(env, id);
@@ -134,7 +155,8 @@ function decodeId(raw) {
   return id;
 }
 
-/* Everything the admin shows: every product (Shown and Hidden) with its Vietnamese fields, and every tag. */
+/* Everything the admin shows: every product (Shown and Hidden) with its Vietnamese fields, every tag,
+   and the home page's featured slots (featured: product id or null for each slot, in order). */
 async function adminCatalog(env) {
   const [products, tags, links] = await env.DB.batch([
     env.DB.prepare('SELECT * FROM products ORDER BY sort_order, name'),
@@ -142,7 +164,10 @@ async function adminCatalog(env) {
     env.DB.prepare(LINKS_SQL),
   ]);
   const tagsOf = tagsByProduct(links.results);
+  const featured = Array(FEATURED_SLOTS).fill(null);
+  for (const f of await featuredRows(env, false)) if (f.slot >= 1 && f.slot <= FEATURED_SLOTS) featured[f.slot - 1] = f.product_id;
   return {
+    featured,
     products: products.results.map(r => ({
       id: r.id,
       name: r.name,
@@ -295,6 +320,26 @@ async function batchProducts(env, body, user) {
     return;
   }
   throw bad('That request could not be read.');
+}
+
+/* ── Featured on the home page ──────────────── */
+
+/* { ids: [product id or null, ...] }, one entry per slot (up to FEATURED_SLOTS); replaces every slot.
+   Ids of products that no longer exist are skipped, leaving that slot empty. */
+async function saveFeatured(env, body) {
+  const ids = body.ids;
+  if (!Array.isArray(ids) || ids.length > FEATURED_SLOTS
+    || !ids.every(id => id === null || (typeof id === 'string' && ID_PATTERN.test(id)))) {
+    throw bad('That request could not be read.');
+  }
+  const chosen = ids.filter(Boolean);
+  if (new Set(chosen).size !== chosen.length) throw bad('Each product can only be in one slot.');
+  await env.DB.batch([
+    env.DB.prepare('DELETE FROM featured_products'),
+    ...ids.flatMap((id, i) => id === null ? [] : [
+      env.DB.prepare('INSERT INTO featured_products (slot, product_id) SELECT ?1, id FROM products WHERE id = ?2').bind(i + 1, id),
+    ]),
+  ]);
 }
 
 /* ── Tags ───────────────────────────────────── */

@@ -68,6 +68,11 @@ CREATE TABLE IF NOT EXISTS product_tags (
 
 CREATE INDEX IF NOT EXISTS idx_product_tags_tag ON product_tags(tag_id);
 
+CREATE TABLE IF NOT EXISTS featured_products (
+  slot       INTEGER PRIMARY KEY CHECK (slot BETWEEN 1 AND 4),
+  product_id TEXT    NOT NULL UNIQUE REFERENCES products(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS campaigns (
   id          TEXT    PRIMARY KEY CHECK (length(id) BETWEEN 1 AND 80),
   title       TEXT    NOT NULL CHECK (length(title) BETWEEN 1 AND 200),

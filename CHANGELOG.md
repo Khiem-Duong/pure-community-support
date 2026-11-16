@@ -12,6 +12,14 @@ Every push to GitHub must include an entry here describing what changed and the 
 
 ---
 
+## [0.7.8] - 2026-11-16
+### What changed
+- Home page: "Featured Products" now shows up to 4 products chosen in the admin, loaded from the database and linking to their shop pages; empty slots and hidden products are left out, and the section is hidden when none are chosen
+- Admin: "Featured on the home page" card on the Products screen with 4 slots; featured products are marked in the product list (new `featured_products` table in schema.sql; needs Products edit access)
+- Home page: "Our Campaigns" no longer shows four hardcoded campaigns; it's now one panel linking to the list of campaigns, with the number of programmes, running and planned taken from the database
+- Home page: the "Want to Contribute?" section is replaced by a "Buy something made in Hue." banner like the one at the end of the About page
+- About page: removed the quote box and the "Community work in practice" section with its hardcoded programme list
+
 ## [0.7.7] - 2026-11-16
 ### What changed
 - Top bar: "Campaigns" is now a plain link to /cases (the list of campaigns from the database) instead of a dropdown of hardcoded campaigns, so it always matches what's set in the admin

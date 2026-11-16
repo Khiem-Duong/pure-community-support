@@ -129,6 +129,16 @@
     .products-table th:first-child, .products-table td:first-child { width: 44px; padding-right: 0; }
     .products-table tr.selected td { background: rgba(101,46,134,.06); }
 
+    /* Featured on the home page (Products) */
+    .featured-card { margin-bottom: 16px; }
+    .featured-slots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; list-style: none; }
+    .featured-slot { display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: #FCFAF7; }
+    .featured-slot .label { margin: 0; }
+    .featured-pick { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .featured-pick .input { flex: 1; min-width: 0; }
+    .featured-note { font-size: 13px; font-weight: 600; color: var(--error); }
+    @media (max-width: 520px) { .featured-slots { grid-template-columns: 1fr; } }
+
     /* Tag filter button (Products toolbar) */
     .filter-ms .ms-toggle { width: auto; max-width: 210px; min-height: 44px; gap: 8px; background: var(--white); font-weight: 500; }
     .filter-ms .ms-toggle[aria-pressed="true"] { border-color: var(--purple); color: var(--purple); }
@@ -335,6 +345,7 @@
       .campaigns-table td:first-child { grid-row: span 5; }
       .campaigns-table .row-actions { text-align: left; }
       .toolbar .search { flex-basis: 100%; }
+      .featured-slots { grid-template-columns: 1fr 1fr; }
     }
 
     /* ── PDF export: printed from the browser ("Save as PDF") ── */
@@ -454,6 +465,16 @@
         <p class="lead">Turn the switch off to hide a product from the shop. Use Edit to change a product's details, or tick products to act on several at once.</p>
         <div class="notice">Changes are saved for everyone straight away and reach the shop within about a minute. Hidden products don't appear anywhere in the shop.</div>
         <div class="error-summary" role="alert" data-catalog-error hidden></div>
+        <form class="card featured-card" id="featured-form" novalidate>
+          <h2 id="featured-label">Featured on the home page</h2>
+          <p class="hint">Choose up to 4 products for the “Featured Products” section of the home page, in order. Empty slots and hidden products are left out; with none chosen, the section isn’t shown.</p>
+          <ol class="featured-slots" id="featured-slots" aria-labelledby="featured-label"></ol>
+          <p class="field-error" id="err-featured" role="alert" hidden></p>
+          <div class="form-actions">
+            <button class="btn btn-primary" type="submit" id="featured-save" data-edit="products">Save featured products</button>
+            <button class="btn" type="button" id="featured-reset" hidden>Undo changes</button>
+          </div>
+        </form>
         <div class="toolbar">
           <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><label class="sr-only" for="product-search">Search products</label><input id="product-search" type="search" placeholder="Search by name"></div>
           <div class="ms filter-ms" id="tag-filter">
@@ -1038,13 +1059,18 @@
     let products = [];
     const tags = [];
     let catalogState = 'loading'; // loading | ready | failed
+    const FEATURED_SLOTS = 4; // home page "Featured Products"; must match worker/catalog.js
+    let featured = Array(FEATURED_SLOTS).fill(null); // saved: product id or null per slot
+    let featuredDraft = null; // unsaved slot choices ('' = empty), or null
 
     function applyCatalog(catalog) {
       products = catalog.products.map(p => ({ ...p, img: PHOTOS[p.id] ? '/' + PHOTOS[p.id].img : '' }));
       tags.splice(0, tags.length, ...catalog.tags);
       for (const id of picked) if (!products.some(p => p.id === id)) picked.delete(id);
+      featured = catalog.featured || Array(FEATURED_SLOTS).fill(null);
       catalogState = 'ready';
       $('n-products').textContent = products.length;
+      if (!featuredDraft) renderFeatured(); // unsaved slot choices stay on screen
     }
 
     /* Calls /admin/api. Resolves to the answer (and applies its catalog); rejects with a message to show. */
@@ -1131,7 +1157,7 @@
         $('other-lead').textContent = lead;
         $('other-list').innerHTML = items.map(i => `<li>${esc(i)}</li>`).join('');
       }
-      if (view === 'products') renderProducts();
+      if (view === 'products') { renderProducts(); renderFeatured(); featuredError(''); }
       if (view === 'tags') { editingTag = null; renderTags(); }
       if (view === 'campaigns') renderCampaigns();
       if (view === 'people') renderPeople();
@@ -1164,7 +1190,8 @@
 
     /* Leaving the product, campaign, case or manager form with unsaved changes asks first. */
     function hasUnsavedChanges() {
-      return Boolean((editor && canEditProducts && formState() !== editor.snapshot)
+      return Boolean(featuredDirty()
+        || (editor && canEditProducts && formState() !== editor.snapshot)
         || (campaignEditor && canEditCampaigns && campaignState() !== campaignEditor.snapshot)
         || (caseEditor && canEditCampaigns && caseState() !== caseEditor.snapshot)
         || (personEditor && personState() !== personEditor.snapshot));
@@ -1174,6 +1201,7 @@
     }
     function closeEditors() {
       editor = personEditor = campaignEditor = caseEditor = null;
+      featuredDraft = null; // leaving Products drops unsaved featured choices (after asking)
     }
     function go(path) {
       if (!okToLeave()) return;
@@ -1183,7 +1211,7 @@
     }
     window.addEventListener('popstate', () => {
       const open = editor || personEditor || campaignEditor || caseEditor;
-      if (open && !okToLeave()) { history.pushState(null, '', open.path); return; }
+      if ((open || featuredDirty()) && !okToLeave()) { history.pushState(null, '', open ? open.path : '/admin/products'); return; }
       closeEditors();
       route();
     });
@@ -1307,7 +1335,7 @@
         <tr${picked.has(p.id) ? ' class="selected"' : ''}>
           <td><input class="check" type="checkbox" data-pick="${esc(p.id)}" ${picked.has(p.id) ? 'checked' : ''} aria-label="Select ${esc(p.name)}"></td>
           <td>${p.img ? `<img class="thumb" src="${esc(p.img)}" alt="" loading="lazy">` : '<span class="thumb" aria-hidden="true"></span>'}</td>
-          <td><strong>${esc(p.name)}</strong><br><span class="sub">${esc(tagNames(p) || 'No tags')}</span></td>
+          <td><strong>${esc(p.name)}</strong><br><span class="sub">${esc(tagNames(p) || 'No tags')}${featured.includes(p.id) ? ` · Featured on the home page (slot ${featured.indexOf(p.id) + 1})` : ''}</span></td>
           <td>${esc(priceLabel(p))}</td>
           <td><button class="switch" type="button" role="switch" aria-checked="${p.shown}" data-id="${esc(p.id)}" ${canEditProducts ? '' : 'disabled'}><span class="track" aria-hidden="true"></span>${p.shown ? 'Shown' : 'Hidden'}</button></td>
           <td><a class="btn" href="${editUrl(p.id)}" data-link>${canEditProducts ? 'Edit' : 'View'}<span class="sr-only"> ${esc(p.name)}</span></a></td>
@@ -1369,6 +1397,74 @@
       tagFilter.clear();
       tagFilterMenu.renderOptions();
       renderProducts();
+    });
+
+    /* Featured on the home page: 4 slots, each a product or empty. Choices stay on this page
+       (featuredDraft) until "Save featured products", which replaces all four at once. */
+    const slotValues = () => featuredDraft || featured.map(id => id || '');
+    const featuredDirty = () => Boolean(featuredDraft) && featuredDraft.join('\n') !== featured.map(id => id || '').join('\n');
+    function renderFeatured() {
+      $('featured-slots').innerHTML = slotValues().map((id, i) => {
+        const p = products.find(x => x.id === id);
+        return `
+          <li class="featured-slot">
+            <label class="label" for="fs-${i}">Slot ${i + 1}</label>
+            <div class="featured-pick">
+              ${p && p.img ? `<img class="thumb" src="${esc(p.img)}" alt="" loading="lazy">` : '<span class="thumb" aria-hidden="true"></span>'}
+              <select class="input" id="fs-${i}" data-featured-slot="${i}" ${canEditProducts && catalogState === 'ready' ? '' : 'disabled'}>
+                <option value="">Empty</option>
+                ${products.map(x => `<option value="${esc(x.id)}" ${x.id === id ? 'selected' : ''}>${esc(x.name)}${x.shown ? '' : ' (hidden)'}</option>`).join('')}
+              </select>
+            </div>
+            ${p && !p.shown ? '<p class="featured-note">Hidden from the shop, so the home page leaves it out.</p>' : ''}
+          </li>`;
+      }).join('');
+      $('featured-save').disabled = !canEditProducts || !featuredDirty() || savingFeatured;
+      $('featured-reset').hidden = !featuredDirty();
+    }
+    function featuredError(text) {
+      $('err-featured').textContent = text;
+      $('err-featured').hidden = !text;
+    }
+    $('featured-slots').addEventListener('change', e => {
+      const select = e.target.closest('[data-featured-slot]');
+      if (!select) return;
+      featuredDraft = [...$('featured-slots').querySelectorAll('[data-featured-slot]')].map(x => x.value);
+      if (!featuredDirty()) featuredDraft = null;
+      featuredError('');
+      renderFeatured();
+      $(select.id).focus();
+    });
+    $('featured-reset').addEventListener('click', () => {
+      featuredDraft = null;
+      featuredError('');
+      renderFeatured();
+      $('fs-0').focus();
+    });
+    let savingFeatured = false;
+    $('featured-form').addEventListener('submit', async e => {
+      e.preventDefault();
+      if (!canEditProducts || !featuredDirty() || savingFeatured) return;
+      const chosen = featuredDraft.filter(Boolean);
+      if (new Set(chosen).size !== chosen.length) {
+        featuredError('Each product can only be in one slot. Choose a different product, or “Empty”.');
+        return;
+      }
+      savingFeatured = true;
+      $('featured-save').disabled = true;
+      $('featured-save').textContent = 'Saving…';
+      try {
+        await api('PUT', 'featured', { ids: featuredDraft.map(id => id || null) });
+        featuredDraft = null;
+        toast('Featured products saved. The home page shows them within about a minute.');
+      } catch (err) {
+        featuredError(err.message);
+      } finally {
+        savingFeatured = false;
+        $('featured-save').textContent = 'Save featured products';
+        renderFeatured();
+        renderProducts();
+      }
     });
 
     /* Batch action: replaces "Add a product" while any product is ticked. */

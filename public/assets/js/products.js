@@ -254,11 +254,12 @@ window.PURE_PHOTOS = {
   }
 };
 
-/* Loads the shop catalog once per page. Resolves to { products, collections }:
+/* Loads the shop catalog once per page. Resolves to { products, collections, featured }:
      products     shown products in shop order: id, name, desc, price (USD number or null),
                   maker, material, colour, isNew, tags (tag ids), collection (first tag),
                   plus img / pos / credit from PURE_PHOTOS
      collections  tags used by at least one shown product: { id, name }, in tag order
+     featured     ids of the (shown) products chosen for the home page, in slot order, up to 4
    Rejects if the catalog can't be loaded; pages then show a "please refresh" message. */
 window.PURE_LOAD_CATALOG = (() => {
   let loading = null;
@@ -274,6 +275,6 @@ window.PURE_LOAD_CATALOG = (() => {
         ...(window.PURE_PHOTOS[p.id] || window.PURE_NO_PHOTO),
       }));
       const collections = data.tags.filter(t => products.some(p => p.tags.includes(t.id)));
-      return { products, collections };
+      return { products, collections, featured: data.featured || [] };
     }));
 })();
